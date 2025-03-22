@@ -8,17 +8,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.cardstackview.databinding.CardBinding;
 import java.util.List;
 
-public class Card_Adapter  extends RecyclerView.Adapter<Card_Adapter.myViewHolder> {
-    List<card> cardList;
+public class CardAdapter extends RecyclerView.Adapter<CardAdapter.myViewHolder> {
+    List<CardActivity> cardList;
 
 
-    public Card_Adapter(List<card> cardList) {
+    public CardAdapter(List<CardActivity> cardList) {
         this.cardList = cardList;
     }
 
     @NonNull
     @Override
-    public Card_Adapter.myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public CardAdapter.myViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         LayoutInflater li=(LayoutInflater) parent.getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         CardBinding binding=CardBinding.inflate(li);
 
@@ -26,8 +26,8 @@ public class Card_Adapter  extends RecyclerView.Adapter<Card_Adapter.myViewHolde
     }
 
     @Override
-    public void onBindViewHolder(@NonNull Card_Adapter.myViewHolder holder, int position) {
-        card cardItem=cardList.get(position);
+    public void onBindViewHolder(@NonNull CardAdapter.myViewHolder holder, int position) {
+        CardActivity cardItem=cardList.get(position);
         holder.binding.content.setText(cardItem.getContent());
         holder.binding.image.setImageDrawable(cardItem.getImage());
     }

@@ -23,17 +23,17 @@ public class MainActivity extends AppCompatActivity {
         binding=ActivityMainBinding.inflate(getLayoutInflater());
         EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
-        List<card> cards=new ArrayList<>();
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
-        cards.add(new card(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
-        Card_Adapter adapter=new Card_Adapter(cards);
+        List<CardActivity> cards=new ArrayList<>();
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
+        CardAdapter adapter=new CardAdapter(cards);
         binding.cardStack.setLayoutManager(new CardStackLayoutManager(getApplicationContext()));
         binding.cardStack.setAdapter(adapter);
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

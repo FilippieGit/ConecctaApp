@@ -2,11 +2,11 @@ package com.example.cardstackview;
 
 import android.graphics.drawable.Drawable;
 
-public class card {
+public class CardActivity {
     String content;
     Drawable image;
 
-    public card(Drawable image, String content) {
+    public CardActivity(Drawable image, String content) {
         this.image = image;
         this.content = content;
     }

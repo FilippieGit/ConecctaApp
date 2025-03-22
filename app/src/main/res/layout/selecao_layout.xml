@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Home"
+    tools:context=".SelecaoActivity"
     android:orientation="vertical"
     android:gravity="center"
     android:background="@color/primary"
@@ -13,20 +13,21 @@
 
 
     <ImageView
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="230dp"
+        android:layout_height="230dp"
         android:src="@drawable/logoviii"
+        android:layout_marginBottom="70dp"
         />
 
     <Button
+        style="@style/Widget.Material3.Button.ElevatedButton"
+        android:id="@+id/btnEmpresa"
         android:layout_width="300dp"
         android:layout_height="60dp"
+        android:backgroundTint="#FFFFFF"
         android:text="Empresa"
-
         android:textSize="30dp"
-        android:backgroundTint="@color/diferencial"
-        android:id="@+id/btnEmpresa"
-        />
+        android:textColor="@color/diferencial"/>
 
     <Button
         android:layout_width="300dp"
