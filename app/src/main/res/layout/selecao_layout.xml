@@ -29,7 +29,6 @@
         android:textColor="#FFFFFF"/>
 
     <Button
-
         android:id="@+id/btnCandidato"
         android:layout_marginTop="20dp"
         android:layout_width="300dp"
