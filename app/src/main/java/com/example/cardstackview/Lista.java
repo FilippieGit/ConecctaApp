@@ -3,6 +3,8 @@ package com.example.cardstackview;
 public class Lista {
     private String titulo;
 
+
+
     private int image;
 
     public Lista(String titulo, int image) {
