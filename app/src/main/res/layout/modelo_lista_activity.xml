@@ -1,67 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal"
-    tools:context=".Modelo_lista"
-    android:layout_margin="30dp"
-    >
-    
+    android:layout_height="wrap_content"
+    android:padding="16dp"
+    tools:context=".Modelo_lista">
+
     <Button
         android:id="@+id/buttondaempresa"
         android:layout_width="match_parent"
         android:layout_height="120dp"
         android:background="@drawable/button_shape"
-        >
-    </Button>
+        />
 
     <de.hdodenhof.circleimageview.CircleImageView
-        android:layout_marginStart="25dp"
-        android:layout_marginTop="20dp"
         android:id="@+id/idlogodaempresa"
         android:layout_width="80dp"
+        android:layout_height="80dp"
         android:src="@drawable/perfil"
-        android:layout_height="80dp"/>
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="20dp"/>
 
     <TextView
         android:id="@+id/idnomeempresa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginStart="120dp"
-        android:fontFamily="@font/font_bold"
+        android:layout_toEndOf="@id/idlogodaempresa"
+        android:layout_marginStart="16dp"
+        android:fontFamily="@font/font"
         android:text="Nome da Empresa"
-        android:textSize="20dp"
+        android:textSize="20sp"
         />
 
     <TextView
         android:id="@+id/idinfoempresa"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:layout_marginStart="120dp"
-        android:text="Ocupação da vaga"
+        android:layout_below="@id/idnomeempresa"
+        android:layout_toEndOf="@id/idlogodaempresa"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/font"
+        android:text="Ocupação da vaga"
         />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="70dp"
-        android:layout_marginStart="120dp"
+        android:layout_below="@id/idinfoempresa"
+        android:layout_toEndOf="@id/idlogodaempresa"
+        android:layout_marginStart="16dp"
         android:fontFamily="@font/font"
-        android:text="informações principais da vaga ...................."
+        android:text="informações principais da vaga..."
         />
+
     <ImageView
+        android:id="@+id/arrow"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:src="@drawable/arrow"
-        android:layout_marginStart="310dp"
-        android:layout_marginTop="80dp"
-        />
-
-
-
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="16dp"/>
 </RelativeLayout>
