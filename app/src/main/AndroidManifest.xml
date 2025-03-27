@@ -16,6 +16,7 @@
             android:name=".Modelo_lista"
             android:exported="false" />
         <activity android:name=".Lista"
+            android:name=".DrawerActivity"
             android:exported="false" />
         <activity
             android:name=".teste"
@@ -25,19 +26,20 @@
             android:exported="false" />
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
+            android:exported="true" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".SelecaoActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

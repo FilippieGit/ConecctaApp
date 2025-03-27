@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
     ActivityMainBinding binding;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
