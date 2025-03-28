@@ -1,25 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/main_item"
-        android:title="mail_subheader_title">
-        <menu>
-            <item
-                android:id="@+id/inbox_item"
-                android:checkable="true"
-                android:icon="@drawable/baseline_inbox"
-                android:title="inbox_title" />
-            <item
-                android:id="@+id/outbox_item"
-                android:checkable="true"
-                android:icon="@drawable/baseline_outbox"
-                android:title="outbox_title" />
-            <item
-                android:id="@+id/favourites_item"
-                android:checkable="true"
-                android:icon="@drawable/baseline_favorite"
-                android:title="favourites_title" />
-        </menu>
-    </item>
+        android:id="@+id/idLoginItemMenu"
+        android:checkable="true"
+        android:icon="@drawable/personimg"
+        android:title="Login" />
+    <item
+        android:id="@+id/idVagasItemMenu"
+        android:checkable="true"
+        android:icon="@drawable/searchimg"
+        android:title="Achar vagas" />
 
+    <item
+        android:id="@+id/idConfigItemMenu"
+        android:checkable="true"
+        android:icon="@drawable/settingsimg"
+        android:title="Configurações" />
+    <item
+        android:id="@+id/idAjudaItemMenu"
+        android:checkable="true"
+        android:icon="@drawable/helpimg"
+        android:title="Ajuda e feedback" />
+    <item
+        android:id="@+id/idSobreItemMenu"
+        android:checkable="true"
+        android:icon="@drawable/infoimg"
+        android:title="Sobre" />
 </menu>
