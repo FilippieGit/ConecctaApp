@@ -1,27 +1,90 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:contentDescription="Imagem do cabeçalho"
-        app:srcCompat="@mipmap/ic_launcher_round" />
 
-    <TextView
+    <RelativeLayout
+        android:id="@+id/idGrupoNomePerfil"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Título do cabeçalho"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/textView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SubTitulo do cabeçalho" />
+        <ImageView
+            android:id="@+id/idImgFundoPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="120dp"
+            android:src="@color/primary" />
 
-</LinearLayout>
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/idFundoLogodaEmpresa"
+            android:layout_width="55dp"
+            android:layout_height="90dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="25dp"
+            android:src="@color/TEXT">
+
+        </de.hdodenhof.circleimageview.CircleImageView>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/idLogodaEmpresa"
+            android:layout_width="50dp"
+            android:layout_height="80dp"
+            android:layout_marginStart="18.5dp"
+            android:layout_marginTop="30dp"
+            android:src="@drawable/perfil" />
+
+
+        <TextView
+            android:id="@+id/idNomePerfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="85dp"
+            android:layout_marginTop="60dp"
+            android:text="Nome de perfil"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <!--Abaixo da barra azul!-->
+
+        <RelativeLayout
+            android:id="@+id/idGrupoSelecaoPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginTop="130dp">
+
+            <Button
+                android:id="@+id/idBtnAcharVagasPerfil"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="-50dp"
+                android:text="Achar vagas"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textSize="15sp"
+                android:textStyle="normal"/>
+
+            <Button
+                android:id="@+id/idBtnLoginPerfil"
+                android:layout_alignBottom="@id/idBtnAcharVagasPerfil"
+                style="@style/Widget.Material3.Button.TextButton"
+                android:layout_width="match_parent"
+                android:layout_height="49dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginBottom="-50dp"
+                android:text="Achar vagas"
+                android:textAlignment="viewStart"
+                android:textColor="@color/black"
+                android:textSize="14sp"
+                android:textStyle="normal" />
+
+
+
+        </RelativeLayout>
+    </RelativeLayout>
+
+
+</RelativeLayout>
