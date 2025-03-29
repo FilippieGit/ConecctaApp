@@ -19,26 +19,24 @@
         android:layout_marginBottom="70dp"
         />
 
-    <Button
-        style="@style/Widget.Material3.Button.ElevatedButton"
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEmpresa"
         android:layout_width="300dp"
         android:layout_height="60dp"
-        android:backgroundTint="#FFFFFF"
         android:text="Empresa"
         android:textSize="30dp"
-        android:textColor="@color/diferencial"/>
+        android:backgroundTint="@color/diferencial"
+        android:textColor="#FFFFFF"/>
 
     <Button
-
+        android:id="@+id/btnCandidato"
+        android:layout_marginTop="20dp"
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:text="Candidato"
         android:textSize="30dp"
-
         android:backgroundTint="@color/diferencial"
-        android:layout_marginTop="20dp"
-        android:id="@+id/btnCandidato"
+        android:textColor="#FFFFFF"
         />
 
 
