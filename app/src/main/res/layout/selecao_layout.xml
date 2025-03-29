@@ -37,7 +37,6 @@
         android:textSize="30dp"
         android:backgroundTint="@color/diferencial"
         android:textColor="#FFFFFF"
-
         />
 
 
