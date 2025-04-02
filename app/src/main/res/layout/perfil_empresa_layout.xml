@@ -41,7 +41,7 @@
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_gravity="center"
-                    android:src="@drawable/coffee" />
+                    android:src="@drawable/nubank" />
 
                 <LinearLayout
                     android:layout_width="wrap_content"
@@ -55,7 +55,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="Davi"
+                        android:text="Nubank"
                         android:textAlignment="center"
                         android:textColor="@color/black"
                         android:textSize="20sp"
@@ -75,20 +75,22 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/perfilSetor"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:fontFamily="@font/chillax_light"
-                        android:text="Marketing | Graphic Design"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                <TextView
+                    android:id="@+id/perfilSetor"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/chillax_light"
+                    android:text="Fintech"
+                    android:textAlignment="center"
+                    android:textColor="@color/black"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
 
                 </LinearLayout>
+
+            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -161,113 +163,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="Experiência Profissional"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/perfilExpProfissional"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_marginTop="15dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Formação Acadêmica"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/perfilFormAcademica"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_marginTop="15dp"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Certificados"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/perfilCertificados"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
-                </RelativeLayout>
-
-
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:cardCornerRadius="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="15dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Informações do usuário"
+                        android:text="Informações da Empresa"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -285,7 +181,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="Nome de usuário"
+                        android:text="Nome da empresa"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -295,7 +191,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="mogitures"
+                        android:text="Nubank"
                         android:textColor="#6E6C6C"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -313,7 +209,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="Gênero"
+                        android:text="Localização"
                         android:textColor="@color/black"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -323,7 +219,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="Masculino"
+                        android:text="Rua das fintechs"
                         android:textColor="#6E6C6C"
                         android:textSize="15sp"
                         android:textStyle="bold" />
@@ -336,25 +232,6 @@
                     android:layout_marginTop="15dp"
                     android:layout_marginEnd="10dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Idade"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="19"
-                        android:textColor="#6E6C6C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
                 </RelativeLayout>
 
                 <RelativeLayout
@@ -393,7 +270,7 @@
                         android:textStyle="bold" />
 
                     <TextView
-                        android:id="@+id/perfilTelefone"
+                        android:id="@+id/perfilEmpTelefone"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -427,7 +304,7 @@
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
                         android:fontFamily="@font/chillax_medium"
-                        android:text="davi@gmail.com"
+                        android:text="nu@bank.com"
                         android:textColor="#6E6C6C"
                         android:textSize="15sp"
                         android:textStyle="bold" />
