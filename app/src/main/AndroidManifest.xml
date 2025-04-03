@@ -14,6 +14,25 @@
         tools:targetApi="31">
         <activity
             android:name=".PerfilEmpresaActivity"
+            android:name=".rec_senha_Activity"
+            android:exported="false" />
+        <activity
+            android:name=".config_geral"
+            android:exported="false" />
+        <activity
+            android:name=".Modelo_lista"
+            android:exported="false" />
+        <activity
+            android:name=".Lista"
+            android:exported="false" />
+        <activity
+            android:name=".DrawerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".teste"
+            android:exported="false" />
+        <activity
+            android:name=".CadastroActivity"
             android:exported="false" />
         <activity
             android:name=".PerfilActivity"
@@ -38,7 +57,7 @@
             android:exported="false" />
         <activity
             android:name=".MainActivity"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

@@ -16,6 +16,9 @@ public class SelecaoActivity extends AppCompatActivity {
 
     MaterialButton btnEmpresa;
 
+    MaterialButton btnCandidato;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -29,15 +32,27 @@ public class SelecaoActivity extends AppCompatActivity {
 
         btnEmpresa = findViewById(R.id.btnEmpresa);
 
+        btnCandidato = findViewById(R.id.btnCandidato);
+
 
 
         btnEmpresa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                startActivity(new Intent(SelecaoActivity.this, MainActivity.class));
                 finish();
             }
+
+
         });
+
+    btnCandidato.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View v) {
+            startActivity(new Intent(SelecaoActivity.this, teste.class));
+            finish();
+        }
+    });
 
 
     }
