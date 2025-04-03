@@ -52,7 +52,7 @@
         android:layout_toEndOf="@id/idlogodaempresa"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/font"
-        android:text="informações principais da vaga..."
+        android:text="informações principais da vaga"
         />
 
     <ImageView

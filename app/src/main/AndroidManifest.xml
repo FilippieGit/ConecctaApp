@@ -13,6 +13,9 @@
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
         <activity
+            android:name=".Login_pessoa_fisica"
+            android:exported="false" />
+        <activity
             android:name=".config_geral"
             android:exported="false" />
         <activity
