@@ -17,6 +17,9 @@
             android:exported="false" />
         <activity         
         <activity
+            android:name=".TelaFeedBack"
+            android:exported="false" />
+        <activity
             android:name=".Login_pessoa_fisica"
             android:exported="false" />
         <activity
