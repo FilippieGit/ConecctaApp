@@ -10,6 +10,15 @@
     tools:context=".rec_senha_Activity">
 
     <ImageView
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/imgEsqSenhabtnVoltar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/baseline_arrow_back"
+        />
+
+    <ImageView
         android:layout_marginTop="40dp"
         android:layout_gravity="center"
         android:layout_width="120dp"
