@@ -16,6 +16,10 @@
             android:name=".Login_pessoa_fisica"
             android:exported="false" />
         <activity
+            android:name=".rec_senha_Activity"
+            android:exported="false" />
+        <activity
+        <activity
             android:name=".config_geral"
             android:exported="false" />
         <activity
