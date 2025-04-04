@@ -9,6 +9,21 @@
     android:orientation="vertical"
     >
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="?attr/colorPrimary">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:menu="@menu/menu_bar"
+            app:navigationIcon="@drawable/baseline_menu"
+            app:title="Aplicativo" />
+    </com.google.android.material.appbar.AppBarLayout>
+
     <LinearLayout
 
         android:layout_width="match_parent"
@@ -16,13 +31,13 @@
         android:orientation="vertical"
         android:layout_marginRight="20dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="20dp"
+
         >
     <ImageView
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_gravity="center_horizontal"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="50dp"
         android:foreground="#007DA8C5"
         android:src="@drawable/logo" />
 

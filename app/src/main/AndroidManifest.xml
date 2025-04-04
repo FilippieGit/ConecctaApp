@@ -19,7 +19,7 @@
             android:name=".TelaFeedBack"
             android:exported="false" />
         <activity
-            android:name=".Login_pessoa_fisica"
+            android:name=".SplashActivity"
             android:exported="false" />
         <activity
             android:name=".config_geral"
@@ -40,7 +40,7 @@
             android:name=".CadastroActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Login_pessoa_fisica"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
