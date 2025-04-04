@@ -13,13 +13,13 @@
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
         <activity
-            android:name=".ConfigEmpresaActivity"
+            android:name=".EdicaoPerfilEmpresaActivity"
             android:exported="false" />
         <activity
             android:name=".PerfilEmpresaActivity"
             android:exported="false" />
         <activity
-            android:name=".cad_p_juridica"
+            android:name=".CadPJuridicaAcitivy"
             android:exported="false" />
         <activity
             android:name=".sobrenos"
@@ -28,10 +28,16 @@
             android:name=".TelaFeedBack"
             android:exported="false" />
         <activity
-            android:name=".rec_senha_Activity"
-            android:exported="false" />
+            android:name=".RecSenhaActivity"
+            android:exported="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
-            android:name=".ConfigPessoaActivity"
+            android:name=".EdicaoPerfilPessoaActivity"
             android:exported="false" />
         <activity
             android:name=".Modelo_lista"
@@ -54,11 +60,6 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity
             android:name=".SelecaoActivity"

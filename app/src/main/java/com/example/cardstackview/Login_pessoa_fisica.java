@@ -69,7 +69,7 @@ public class Login_pessoa_fisica extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                startActivity(new Intent(getApplicationContext(), rec_senha_Activity.class));
+                startActivity(new Intent(getApplicationContext(), RecSenhaActivity.class));
 
             }
         });
@@ -80,7 +80,7 @@ public class Login_pessoa_fisica extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                startActivity(new Intent(getApplicationContext(), cad_p_juridica.class));
+                startActivity(new Intent(getApplicationContext(), CadPJuridicaAcitivy.class));
                 finish();
 
             }

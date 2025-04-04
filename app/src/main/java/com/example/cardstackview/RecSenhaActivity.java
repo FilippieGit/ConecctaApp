@@ -1,6 +1,5 @@
 package com.example.cardstackview;
 
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +12,7 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class rec_senha_Activity extends AppCompatActivity {
+public class RecSenhaActivity extends AppCompatActivity {
     Button btnEsqSenha;
     ImageView imgEsqSenhabtnVoltar;
 
@@ -36,7 +35,7 @@ public class rec_senha_Activity extends AppCompatActivity {
         btnEsqSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Toast.makeText(rec_senha_Activity.this, "Cheque o e-mail que lhe enviamos.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RecSenhaActivity.this, "Cheque o e-mail que lhe enviamos.", Toast.LENGTH_SHORT).show();
                 finish(); // Isso volta para a tela anterior (ex: LoginActivity)
             }
         });
