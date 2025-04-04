@@ -24,22 +24,18 @@
         android:layout_width="300dp"
         android:layout_height="60dp"
         android:text="Empresa"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:backgroundTint="@color/diferencial"
         android:textColor="#FFFFFF"/>
 
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCandidato"
-        android:layout_marginTop="20dp"
         android:layout_width="300dp"
+        android:layout_marginTop="20dp"
         android:layout_height="60dp"
         android:text="Candidato"
-        android:textSize="30dp"
+        android:textSize="30sp"
         android:backgroundTint="@color/diferencial"
-        android:textColor="#FFFFFF"
-        />
-
-
-
+        android:textColor="#FFFFFF"/>
 
 </LinearLayout>

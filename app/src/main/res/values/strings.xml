@@ -2,4 +2,10 @@
     <string name="app_name">Coneccta</string>
     <string name="open_drawer">Abrir</string>
     <string name="close_drawer">Fechar</string>
+    <string name="criar_nova_conta">Criar nova conta</string>
+    <string name="ou">OU</string>
+    <string name="redefinir_senha">Redefinir senha</string>
+    <string name="digite_seu_e_mail">Digite seu e-mail</string>
+    <string name="para_redefinir_sua_senha_informe_o_e_mail_cadastrado_na_sua_conta_e_lhe_enviaremos_um_link_com_as_instru_es">Para redefinir sua senha, informe o e-mail cadastrado na sua conta e lhe enviaremos um link com as instruções.</string>
+    <string name="esqueci_a_senha">Esqueci a senha</string>
 </resources>

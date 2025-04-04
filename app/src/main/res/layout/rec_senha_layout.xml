@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/TEXT"
+    android:orientation="vertical"
+    tools:context=".rec_senha_Activity">
+
+    <ImageView
+        android:layout_marginTop="30dp"
+        android:layout_marginLeft="20dp"
+        android:id="@+id/imgEsqSenhabtnVoltar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:src="@drawable/baseline_arrow_back"
+        />
+
+    <ImageView
+        android:layout_marginTop="40dp"
+        android:layout_gravity="center"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:src="@drawable/baseline_lock_reset"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:fontFamily="@font/font"
+            android:text="@string/esqueci_a_senha"
+            android:textAlignment="center"
+            android:textSize="22sp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="30dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/font"
+            android:text="@string/para_redefinir_sua_senha_informe_o_e_mail_cadastrado_na_sua_conta_e_lhe_enviaremos_um_link_com_as_instru_es"
+            android:textAlignment="center"
+            android:textSize="14sp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:hint="@string/digite_seu_e_mail"
+            app:boxCornerRadiusBottomEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusTopStart="10dp"
+            app:startIconDrawable="@drawable/baseline_person">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/txtNome"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEsqSenha"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="10dp"
+            android:backgroundTint="@color/diferencial"
+            android:fontFamily="@font/font"
+            android:text="@string/redefinir_senha"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp" />
+
+
+        <RelativeLayout
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="20dp">
+
+        <View
+            android:layout_marginTop="9dp"
+            android:id="@+id/lineEsqSenha1"
+            android:layout_width="160dp"
+            android:layout_height="1dp"
+            android:background="@color/cardview_dark_background"
+            android:focusable="false" />
+
+        <TextView
+            android:id="@+id/txtOuEsqSenha"
+            android:layout_width="20dp"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:text="@string/ou"
+            android:layout_toRightOf="@id/lineEsqSenha1"
+            />
+
+            <View
+                android:layout_marginTop="9dp"
+                android:id="@+id/lineEsqSenha2"
+                android:layout_toRightOf="@id/txtOuEsqSenha"
+                android:layout_width="150dp"
+                android:layout_height="1dp"
+                android:background="@color/cardview_dark_background"
+                android:focusable="false" />
+
+
+        </RelativeLayout>
+
+
+
+        <Button
+            style="@style/Widget.Material3.Button.TextButton"
+            android:id="@+id/btnCriarContEsqSenha"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/cardview_dark_background"
+            android:layout_gravity="center"
+            android:text="@string/criar_nova_conta"
+            />
+
+
+
+
+
+    </LinearLayout>
+</LinearLayout>
