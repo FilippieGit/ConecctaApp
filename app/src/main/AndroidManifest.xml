@@ -13,16 +13,23 @@
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
         <activity
-            android:name=".PerfilEmpresaActivity"
+            android:name=".EdicaoPerfilEmpresaActivity"
             android:exported="false" />
         <activity
-            android:name=".PerfilActivity"
+            android:name=".TesteActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PerfilEmpresaActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".PerfilActivity"
+            android:exported="false">
         </activity>
         <activity
             android:name=".teste"
@@ -32,7 +39,7 @@
             android:exported="false" />
         <activity
             android:name=".SplashActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
         <activity
             android:name=".SelecaoActivity"
             android:exported="false" />
