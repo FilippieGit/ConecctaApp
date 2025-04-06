@@ -55,7 +55,7 @@
            android:fontFamily="@font/font"
            android:layout_marginStart="20dp"
            android:layout_marginEnd="20dp"
-           android:id="@+id/edtLoginEmail"
+           android:id="@+id/txtPessoaLoginEmail"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:hint="Insira seu e-mail"
@@ -79,7 +79,7 @@
        <com.google.android.material.textfield.TextInputEditText
            android:layout_marginStart="20dp"
            android:layout_marginEnd="20dp"
-           android:id="@+id/edtLoginSenha"
+           android:id="@+id/txtPessoaLoginSenha"
            android:layout_width="match_parent"
            android:layout_height="wrap_content"
            android:layout_marginTop="20sp"
@@ -100,7 +100,7 @@
             android:fontFamily="@font/font"
             android:layout_marginStart="20dp"
             android:layout_marginEnd="20dp"
-            android:id="@+id/btnLoginEntrar"
+            android:id="@+id/btnPessoaLoginEntrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="50dp"
@@ -119,14 +119,14 @@
 
             <Button
                 style="@style/Widget.Material3.Button.TextButton"
-                android:id="@+id/btnLoginCadastrar"
+                android:id="@+id/btnPessoaLoginCriarConta"
                 android:layout_alignParentStart="true"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Cadastrar Conta"/>
 
             <Button
-
+                android:id="@+id/btnPessoaLoginEsqSenha"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
