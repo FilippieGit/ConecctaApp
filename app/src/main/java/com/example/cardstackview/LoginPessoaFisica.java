@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
 
-public class Login_pessoa_fisica extends AppCompatActivity {
+public class LoginPessoaFisica extends AppCompatActivity {
 
     Button btnPessoaLoginEntrar, btnPessoaLoginCriarConta, btnPessoaLoginEsqSenha;
     TextInputEditText txtPessoaLoginEmail, txtPessoaLoginSenha;
@@ -80,7 +80,7 @@ public class Login_pessoa_fisica extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                startActivity(new Intent(getApplicationContext(), CadPJuridicaAcitivy.class));
+                startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
                 finish();
 
             }
