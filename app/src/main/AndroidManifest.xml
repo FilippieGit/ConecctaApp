@@ -11,11 +11,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CardStackView"
-        tools:targetApi="31">   
+        tools:targetApi="31">
         <activity
-            android:name=".PerfilEmpresaActivity"
+            android:name=".Login_pessoa_fisica"
             android:exported="false" />
-        <activity         
+        <activity
+            android:name=".Modelo_lista"
+            android:exported="false" />
         <activity
             android:name=".cad_p_juridica"
             android:exported="false" />
@@ -29,11 +31,6 @@
             android:name=".SplashActivity"
             android:exported="false" />
         <activity
-        <activity
-            android:name=".rec_senha_Activity"
-            android:exported="false" />
-        <activity
-        <activity
             android:name=".config_geral"
             android:exported="false" />
         <activity
@@ -44,20 +41,15 @@
             android:exported="false" />
         <activity
             android:name=".DrawerActivity"
-            android:exported="false" />
+            android:exported="true" />
         <activity
             android:name=".teste"
             android:exported="false" />
-      
-      <activity
-            android:name=".Login_pessoa_fisica"
-            android:exported="false" />
-    
         <activity
             android:name=".CadastroActivity"
             android:exported="false" />
         <activity
-            android:name=".PerfilActivity"
+            android:name=".ModeloVafaga"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -65,15 +57,6 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity
-            android:name=".teste"
-            android:exported="false" />
-        <activity
-            android:name=".CadastroActivity"
-            android:exported="false" />
-        <activity
-            android:name=".SplashActivity"
-            android:exported="false"></activity>
         <activity
             android:name=".SelecaoActivity"
             android:exported="false" />
