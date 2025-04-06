@@ -1,5 +1,6 @@
 package com.example.cardstackview;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -13,7 +14,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 public class RecSenhaActivity extends AppCompatActivity {
-    Button btnEsqSenha;
+    Button btnEsqSenha, btnCriarContEsqSenha;
     ImageView imgEsqSenhabtnVoltar;
 
     @Override
@@ -50,6 +51,20 @@ public class RecSenhaActivity extends AppCompatActivity {
                 finish(); // Apenas volta para a tela anterior
             }
         });
+
+        btnCriarContEsqSenha = findViewById(R.id.btnCriarContEsqSenha);
+
+        btnCriarContEsqSenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
+                finish();
+
+            }
+        });
+
+
 
     }
 }

@@ -39,7 +39,7 @@ public class SelecaoActivity extends AppCompatActivity {
         btnEmpresa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(SelecaoActivity.this, MainActivity.class));
+                startActivity(new Intent(SelecaoActivity.this, LoginPessoaJuridica.class));
                 finish();
             }
 
@@ -49,7 +49,7 @@ public class SelecaoActivity extends AppCompatActivity {
     btnCandidato.setOnClickListener(new View.OnClickListener() {
         @Override
         public void onClick(View v) {
-            startActivity(new Intent(SelecaoActivity.this, teste.class));
+            startActivity(new Intent(SelecaoActivity.this, LoginPessoaFisica.class));
             finish();
         }
     });
