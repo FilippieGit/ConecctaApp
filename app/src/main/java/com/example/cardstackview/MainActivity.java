@@ -3,19 +3,27 @@ package com.example.cardstackview;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.cardstackview.databinding.ActivityMainBinding;
+import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.navigation.NavigationView;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+
+    MaterialToolbar idTopAppBar;
+    DrawerLayout idDrawer;
+    NavigationView idNavView;
 
     ActivityMainBinding binding;
     @Override
@@ -41,6 +49,20 @@ public class MainActivity extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+
         });
+
+
+        //drawer
+        idTopAppBar = findViewById(R.id.idMainTopAppBar);
+
+        idDrawer = findViewById(R.id.idDrawer);
+
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(MainActivity.this, idDrawer, idTopAppBar, R.string.open_drawer, R.string.close_drawer);
+        idDrawer.addDrawerListener(toggle);
+
+        toggle.syncState();
+
     }
 }
