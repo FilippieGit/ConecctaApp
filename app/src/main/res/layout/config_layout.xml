@@ -12,6 +12,7 @@
     <!-- CONTEÚDO PRINCIPAL DENTRO DO COORDINATOR -->
 
     <!-- NAVIGATION VIEW -->
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -33,7 +34,9 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:layout_marginTop="15dp">
+
 
                 <!-- Notificações -->
                 <TextView
@@ -47,6 +50,7 @@
                     android:textColor="@color/diferencial"
                     android:textSize="16sp" />
 
+
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -57,15 +61,28 @@
                     android:text="Notificações"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:fontFamily="@font/font"
-                    android:text="Você receberá atualizações de suas candidaturas, mensagens e novos alertas."
-                    android:textSize="13sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="310dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp"
+                        android:fontFamily="@font/font"
+                        android:text="Você receberá atualizações de suas candidaturas, mensagens e novos alertas."
+                        android:textSize="13sp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="20dp" />
+
+                </RelativeLayout>
+
 
                 <!-- Vagas de emprego -->
                 <TextView
@@ -78,15 +95,28 @@
                     android:text="Vagas de emprego"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:fontFamily="@font/font"
-                    android:text="Você receberá notificações de vagas de emprego."
-                    android:textSize="13sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="310dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp"
+                        android:fontFamily="@font/font"
+                        android:text="Você receberá notificações de vagas de emprego."
+                        android:textSize="13sp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="20dp" />
+
+                </RelativeLayout>
+
 
                 <!-- Candidaturas -->
                 <TextView
@@ -99,15 +129,28 @@
                     android:text="Candidaturas"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:fontFamily="@font/font"
-                    android:text="Você receberá notificações relacionadas às suas candidaturas."
-                    android:textSize="13sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="310dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp"
+                        android:fontFamily="@font/font"
+                        android:text="Você receberá notificações relacionadas às suas candidaturas."
+                        android:textSize="13sp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="20dp" />
+
+                </RelativeLayout>
 
                 <!-- Conselhos -->
                 <TextView
@@ -120,15 +163,28 @@
                     android:text="Conselhos"
                     android:textSize="16sp" />
 
-                <TextView
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:fontFamily="@font/font"
-                    android:text="Você receberá notificações com dicas sobre conseguir um novo emprego."
-                    android:textSize="13sp" />
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="310dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp"
+                        android:fontFamily="@font/font"
+                        android:text="Você receberá notificações com dicas sobre conseguir um novo emprego."
+                        android:textSize="13sp" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_alignParentEnd="true"
+                        android:layout_marginRight="20dp" />
+
+                </RelativeLayout>
 
                 <!-- Exibição -->
                 <TextView
@@ -142,7 +198,10 @@
                     android:textColor="@color/diferencial"
                     android:textSize="16sp" />
 
-                <TextView
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnTemaConfig"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
@@ -150,17 +209,30 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_semibold"
                     android:text="Tema"
-                    android:textSize="16sp" />
+                    android:textAlignment="textStart"
+                    android:textColor="#48444E"
+                    android:textSize="16sp"
+                    app:icon="@drawable/baseline_format_paint"
+                    app:iconPadding="8dp"
+                    app:iconSize="22dp"
+                    app:iconTint="@color/black" />
 
-                <TextView
-                    android:layout_width="310dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="30dp"
-                    android:layout_marginTop="5dp"
-                    android:layout_marginRight="10dp"
-                    android:fontFamily="@font/font"
-                    android:text="Aqui você poderá alterar o tema do seu aplicativo."
-                    android:textSize="13sp" />
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="310dp"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:layout_marginLeft="30dp"
+                        android:layout_marginRight="10dp"
+                        android:fontFamily="@font/font"
+                        android:text="Aqui você poderá alterar o tema do seu aplicativo."
+                        android:textSize="13sp" />
+
+                </RelativeLayout>
+
 
                 <!-- Conta -->
                 <TextView
@@ -174,7 +246,10 @@
                     android:textColor="@color/diferencial"
                     android:textSize="16sp" />
 
-                <TextView
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnSairContaConfig"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
@@ -182,18 +257,33 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_semibold"
                     android:text="Sair da conta"
-                    android:textSize="16sp" />
+                    android:textAlignment="textStart"
+                    android:textColor="#48444E"
+                    android:textSize="16sp"
+                    app:icon="@drawable/baseline_exit_to_app"
+                    app:iconPadding="8dp"
+                    app:iconSize="22dp"
+                    app:iconTint="@color/black" />
 
-                <TextView
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnDeletarContaConfig"
+                    style="@style/Widget.Material3.Button.TextButton"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="30dp"
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_semibold"
-                    android:text="Deletar conta"
+                    android:text="Sair da conta"
+                    android:textAlignment="textStart"
                     android:textColor="#C81818"
-                    android:textSize="16sp" />
+                    android:textSize="16sp"
+                    app:icon="@drawable/baseline_person_remove"
+                    app:iconPadding="8dp"
+                    app:iconSize="22dp"
+                    app:iconTint="#C81818" />
+
 
             </LinearLayout>
         </ScrollView>
@@ -207,5 +297,6 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/menu_nav_drawer" />
+
 
 </androidx.drawerlayout.widget.DrawerLayout>

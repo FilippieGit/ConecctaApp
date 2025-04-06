@@ -15,17 +15,23 @@
         <activity
             android:name=".LoginPessoaJuridica"
             android:exported="false" />
-        <activity android:name=".LoginPessoaFisica"
-            android:exported="false"
-            />
-
+        <activity
+            android:name=".LoginPessoaFisica"
+            android:exported="false" />
         <activity
             android:name=".Modelo_lista"
             android:exported="false" />
 
         <activity
             android:name=".ConfigActivity"
-            android:exported="true" />
+            android:exported="true" >
+
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".EdicaoPerfilEmpresaActivity"
             android:exported="false" />
@@ -37,9 +43,6 @@
             android:exported="false" />
         <activity
             android:name=".sobrenos"
-            android:exported="false" />
-        <activity
-            android:name=".config_geral"
             android:exported="false" />
         <activity
             android:name=".TelaFeedBack"
@@ -61,13 +64,7 @@
             android:exported="false" />
         <activity
             android:name=".SplashActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true"/>
         <activity
             android:name=".PerfilActivity"
             android:exported="false" />
