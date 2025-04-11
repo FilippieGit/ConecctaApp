@@ -13,7 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
-public class SobreNosActivity extends AppCompatActivity {
+public class FeedbackActivity extends AppCompatActivity {
 
     MaterialToolbar idTopAppBar;
     DrawerLayout idDrawer;
@@ -22,14 +22,14 @@ public class SobreNosActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.sobre_nos_layout);
+        setContentView(R.layout.feedback_layout);
 
-        // Inicializar componentes
-        idTopAppBar = findViewById(R.id.idSobreTopAppBar);
+        // Inicializa os componentes
+        idTopAppBar = findViewById(R.id.idConfigTopAppBar);
         idDrawer = findViewById(R.id.idDrawer);
         idNavView = findViewById(R.id.idNavView);
 
-        // Configurar toggle do menu
+        // Configuração do Drawer Toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this,
                 idDrawer,
@@ -37,10 +37,11 @@ public class SobreNosActivity extends AppCompatActivity {
                 R.string.open_drawer,
                 R.string.close_drawer
         );
+
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Itens do menu
+        // Define ações para os itens do menu lateral
         idNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -49,16 +50,13 @@ public class SobreNosActivity extends AppCompatActivity {
                 if (id == R.id.idLoginItemMenu) {
                     goToLoginCandidato();
                 } else if (id == R.id.idVagasItemMenu) {
-                    Intent intent = new Intent(SobreNosActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(FeedbackActivity.this, MainActivity.class));
                 } else if (id == R.id.idConfigItemMenu) {
-                    Intent intent = new Intent(SobreNosActivity.this, ConfigActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(FeedbackActivity.this, ConfigActivity.class));
                 } else if (id == R.id.idAjudaItemMenu) {
-                    Intent intent = new Intent(SobreNosActivity.this, FeedbackAcitivity.class);
-                    startActivity(intent);
+                    Toast.makeText(FeedbackActivity.this, "Você já está em Ajuda/Feedback", Toast.LENGTH_SHORT).show();
                 } else if (id == R.id.idSobreItemMenu) {
-                    Toast.makeText(SobreNosActivity.this, "Você já está em Sobre Nós", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(FeedbackActivity.this, SobreNosActivity.class));
                 }
 
                 idDrawer.closeDrawers();
@@ -76,9 +74,8 @@ public class SobreNosActivity extends AppCompatActivity {
         }
     }
 
-    // Função para redirecionar para login
     private void goToLoginCandidato() {
-        Intent intent = new Intent(SobreNosActivity.this, LoginPessoaFisica.class);
+        Intent intent = new Intent(FeedbackActivity.this, LoginPessoaFisica.class);
         startActivity(intent);
         finish();
     }

@@ -13,14 +13,26 @@
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
         <activity
+            android:name=".FeedbackActivity"
+            android:exported="false" />
+        <activity
             android:name=".SobreNosActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".SplashActivity"
-            android:exported="false" />
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <!--
         <activity
             android:name=".ListaMatchVaga"
             android:exported="false" />
+            !
+        -->
         <activity
             android:name=".LoginPessoaJuridica"
             android:exported="false" />
@@ -29,7 +41,7 @@
             android:exported="false" />
         <activity
             android:name=".ConfigActivity"
-            android:exported="true"/>
+            android:exported="true" />
         <activity
             android:name=".EdicaoPerfilEmpresaActivity"
             android:exported="false" />
@@ -40,7 +52,7 @@
             android:name=".CadPJuridicaAcitivy"
             android:exported="false" />
         <activity
-            android:name=".TelaFeedBack"
+            android:name=".FeedbackAcitivity"
             android:exported="false" />
         <activity
             android:name=".RecSenhaActivity"
@@ -59,13 +71,7 @@
             android:exported="false" />
         <activity
             android:name=".Modelo_Match_Vaga"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:exported="true" />
         <activity
             android:name=".PerfilActivity"
             android:exported="false" />

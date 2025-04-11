@@ -65,9 +65,11 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtNome"
+                android:fontFamily="@font/font"
                 android:layout_width="match_parent"
+                android:maxLength="50"
                 android:layout_height="wrap_content"
-                android:inputType="text" />
+                android:inputType="textEmailAddress" />
 
         </com.google.android.material.textfield.TextInputLayout>
 

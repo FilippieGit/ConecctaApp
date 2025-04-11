@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.idConfigItemMenu) {
                     startActivity(new Intent(MainActivity.this, ConfigActivity.class));
                 } else if (id == R.id.idAjudaItemMenu) {
-                    startActivity(new Intent(MainActivity.this, TelaFeedBack.class));
+                    startActivity(new Intent(MainActivity.this, FeedbackAcitivity.class));
                 } else if (id == R.id.idSobreItemMenu) {
                     startActivity(new Intent(MainActivity.this, SobreNosActivity.class));
                 }
