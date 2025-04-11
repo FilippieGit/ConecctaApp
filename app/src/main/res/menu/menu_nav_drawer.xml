@@ -9,7 +9,7 @@
         android:id="@+id/idVagasItemMenu"
         android:checkable="true"
         android:icon="@drawable/searchimg"
-        android:title="Achar vagas" />
+        android:title="Encontrar vagas" />
 
     <item
         android:id="@+id/idConfigItemMenu"
