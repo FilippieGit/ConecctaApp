@@ -16,13 +16,16 @@
             android:name=".SobreNosActivity"
             android:exported="true"/>
         <activity
+            android:name=".SplashActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ListaMatchVaga"
+            android:exported="false" />
+        <activity
             android:name=".LoginPessoaJuridica"
             android:exported="false" />
         <activity
             android:name=".LoginPessoaFisica"
-            android:exported="false" />
-        <activity
-            android:name=".Modelo_lista"
             android:exported="false" />
         <activity
             android:name=".ConfigActivity"
@@ -55,7 +58,7 @@
             android:name=".CadastroActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
+            android:name=".Modelo_Match_Vaga"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
