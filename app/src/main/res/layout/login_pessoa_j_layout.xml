@@ -6,19 +6,25 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/TEXT"
-    android:orientation="vertical"
-    >
+    android:orientation="vertical">
 
-
+    <ImageView
+        android:id="@+id/imgEsqSenhabtnVoltar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/baseline_arrow_back" />
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:orientation="vertical"
-        android:layout_marginRight="20dp"
-        android:layout_marginLeft="20dp"
 
         >
+
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
@@ -31,36 +37,34 @@
             android:id="@+id/btnempresaentrar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ConecctaBusiness"
             android:layout_gravity="center"
-            android:fontFamily="@font/font"
             android:layout_marginBottom="10dp"
-            android:textSize="20dp"
-            />
+            android:fontFamily="@font/font"
+            android:text="ConecctaBusiness"
+            android:textSize="20dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginBottom="15dp"
+            android:hint="@string/insira_seu_e_mail"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
-            android:layout_marginBottom="15dp"
-            >
+            app:startIconDrawable="@drawable/baseline_person">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:fontFamily="@font/font"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
                 android:id="@+id/txtPessoaEmpresaEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Insira seu e-mail"
+                android:fontFamily="@font/font"
                 android:inputType="textEmailAddress"
                 android:maxLength="50"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
-                android:textSize="20sp"/>
+                android:textColor="@color/cinza"
+                android:textSize="20sp" />
 
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -68,41 +72,42 @@
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:hint="Insira sua senha"
             app:boxCornerRadiusBottomEnd="10dp"
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
-            >
+            app:passwordToggleEnabled="true">
+
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+
                 android:id="@+id/txtPessoaEmpresaSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20sp"
-                android:hint="Insira sua senha"
+                android:fontFamily="@font/font"
                 android:inputType="textPassword"
                 android:maxLength="12"
-                android:fontFamily="@font/font"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
+                android:textColor="@color/cinza"
                 android:textSize="20sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
 
-
         <com.google.android.material.button.MaterialButton
-            android:backgroundTint="@color/diferencial"
-            android:fontFamily="@font/font"
-            android:layout_marginStart="20dp"
-            android:layout_marginEnd="20dp"
             android:id="@+id/btnPessoaEmpresaEntrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
             android:layout_marginTop="50dp"
+            android:layout_marginEnd="20dp"
+            android:backgroundTint="@color/diferencial"
+            android:fontFamily="@font/font"
             android:padding="15sp"
             android:text="Entrar"
+            android:textColor="@color/TEXT"
             android:textSize="20sp" />
 
 
@@ -110,17 +115,16 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            >
+            android:layout_marginRight="20dp">
 
 
             <Button
-                style="@style/Widget.Material3.Button.TextButton"
                 android:id="@+id/btnPessoaEmpresaCriarConta"
-                android:layout_alignParentStart="true"
+                style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Cadastrar Conta"/>
+                android:layout_alignParentStart="true"
+                android:text="Cadastrar conta" />
 
             <Button
                 android:id="@+id/btnPessoaEmpresaEsqSenha"
@@ -128,7 +132,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="Esqueci a senha"/>
+                android:text="Esqueci a senha" />
 
 
         </RelativeLayout>
