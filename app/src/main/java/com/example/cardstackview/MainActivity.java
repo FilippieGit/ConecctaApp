@@ -94,6 +94,20 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             }
         });
+
+        // 🎯 Listener da Bottom Navigation
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_profile) {
+                Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
+                startActivity(intent);
+                return true;
+            }
+
+            // Adicione mais ações aqui se tiver outros itens
+            return false;
+        });
     }
 
     @Override

@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,6 +19,7 @@ public class LoginPessoaFisica extends AppCompatActivity {
 
     Button btnPessoaLoginEntrar, btnPessoaLoginCriarConta, btnPessoaLoginEsqSenha;
     TextInputEditText txtPessoaLoginEmail, txtPessoaLoginSenha;
+    ImageView imgLoginPbtnVoltar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +40,18 @@ public class LoginPessoaFisica extends AppCompatActivity {
 
         txtPessoaLoginEmail = findViewById(R.id.txtPessoaLoginEmail);
         txtPessoaLoginSenha = findViewById(R.id.txtPessoaLoginSenha);
+
+        //Função de voltar
+
+        imgLoginPbtnVoltar = findViewById(R.id.imgLoginPbtnVoltar);
+
+        imgLoginPbtnVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
+                finish(); // Apenas volta para a tela anterior
+            }
+        });
 
         //Verificar a senha e o e-mail
 
