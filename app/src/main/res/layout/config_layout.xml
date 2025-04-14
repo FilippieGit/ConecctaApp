@@ -31,7 +31,9 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="20dp">
+            android:layout_marginLeft="10dp">
+
+
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -260,7 +262,7 @@
                     android:fontFamily="@font/chillax_semibold"
                     android:text="Sair da conta"
                     android:textAlignment="textStart"
-                    android:textColor="#48444E"
+                    android:textColor="@color/cinza"
                     android:textSize="16sp"
                     app:icon="@drawable/baseline_exit_to_app"
                     app:iconPadding="8dp"
