@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
                 } else if (id == R.id.idConfigItemMenu) {
                     startActivity(new Intent(MainActivity.this, ConfigActivity.class));
                 } else if (id == R.id.idAjudaItemMenu) {
-                    startActivity(new Intent(MainActivity.this, TelaFeedBack.class));
+                    startActivity(new Intent(MainActivity.this, FeedbackActivity.class));
                 } else if (id == R.id.idSobreItemMenu) {
                     startActivity(new Intent(MainActivity.this, SobreNosActivity.class));
                 }
@@ -93,6 +93,20 @@ public class MainActivity extends AppCompatActivity {
                 idDrawer.closeDrawers();
                 return true;
             }
+        });
+
+        // 🎯 Listener da Bottom Navigation
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.nav_profile) {
+                Intent intent = new Intent(MainActivity.this, PerfilActivity.class);
+                startActivity(intent);
+                return true;
+            }
+
+            // Adicione mais ações aqui se tiver outros itens
+            return false;
         });
     }
 

@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/idDrawer"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
+    tools:context=".FeedbackAcitivity"
+    tools:openDrawer="start">
+
+    <!-- Conteúdo principal com AppBar e formulário -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <!-- AppBar -->
+        <include
+            android:id="@+id/app_bar_main"
+            layout="@layout/feedback_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
+
+        <!-- Formulário de Feedback -->
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <LinearLayout
+                android:id="@+id/telafeedback"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingBottom="32dp"
+                tools:context=".FeedbackAcitivity">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/CampoNomeFeedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="50dp"
+                    app:boxCornerRadiusBottomStart="50dp"
+                    app:boxCornerRadiusTopEnd="50dp"
+                    app:boxCornerRadiusTopStart="50dp"
+                    app:boxStrokeColor="@color/black"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textNomeFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Digite seu nome completo" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/CampoEmailFeedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="50dp"
+                    app:boxCornerRadiusBottomStart="50dp"
+                    app:boxCornerRadiusTopEnd="50dp"
+                    app:boxCornerRadiusTopStart="50dp"
+                    app:boxStrokeColor="@color/black"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/TextEmailFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Digite seu e-mail" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/CampoTelFeedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="50dp"
+                    app:boxCornerRadiusBottomStart="50dp"
+                    app:boxCornerRadiusTopEnd="50dp"
+                    app:boxCornerRadiusTopStart="50dp"
+                    app:boxStrokeColor="@color/black"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/TextTelFeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Digite seu telefone" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/campofeedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:paddingStart="30dp"
+                    android:paddingEnd="30dp"
+                    app:boxBackgroundMode="outline"
+                    app:boxCornerRadiusBottomEnd="50dp"
+                    app:boxCornerRadiusBottomStart="50dp"
+                    app:boxCornerRadiusTopEnd="50dp"
+                    app:boxCornerRadiusTopStart="50dp"
+                    app:boxStrokeColor="@color/black"
+                    app:endIconMode="clear_text">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/textfeedback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Escreva seu FeedBack" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/Btnfeedback"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="75dp"
+                    android:layout_marginTop="25dp"
+                    android:layout_marginEnd="75dp"
+                    android:text="Enviar"
+                    app:cornerRadius="50dp" />
+
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <!-- Navigation Drawer -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/idNavView"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_main"
+        app:menu="@menu/menu_nav_drawer" />
+
+</androidx.drawerlayout.widget.DrawerLayout>

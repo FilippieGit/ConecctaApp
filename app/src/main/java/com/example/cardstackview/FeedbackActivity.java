@@ -13,7 +13,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 
-public class ConfigActivity extends AppCompatActivity {
+public class FeedbackActivity extends AppCompatActivity {
 
     MaterialToolbar idTopAppBar;
     DrawerLayout idDrawer;
@@ -22,14 +22,14 @@ public class ConfigActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.config_layout);
+        setContentView(R.layout.feedback_layout);
 
-        // Inicializar os componentes
+        // Inicializa os componentes
         idTopAppBar = findViewById(R.id.idConfigTopAppBar);
         idDrawer = findViewById(R.id.idDrawer);
         idNavView = findViewById(R.id.idNavView);
 
-        // Configuração do ActionBarDrawerToggle
+        // Configuração do Drawer Toggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this,
                 idDrawer,
@@ -41,7 +41,7 @@ public class ConfigActivity extends AppCompatActivity {
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Configura o NavigationView para responder aos cliques
+        // Define ações para os itens do menu lateral
         idNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(MenuItem item) {
@@ -50,16 +50,13 @@ public class ConfigActivity extends AppCompatActivity {
                 if (id == R.id.idLoginItemMenu) {
                     goToLoginCandidato();
                 } else if (id == R.id.idVagasItemMenu) {
-                    Intent intent = new Intent(ConfigActivity.this, MainActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(FeedbackActivity.this, MainActivity.class));
                 } else if (id == R.id.idConfigItemMenu) {
-                    Toast.makeText(ConfigActivity.this, "Você já está em Configurações", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(FeedbackActivity.this, ConfigActivity.class));
                 } else if (id == R.id.idAjudaItemMenu) {
-                    Intent intent = new Intent(ConfigActivity.this, FeedbackActivity.class);
-                    startActivity(intent);
+                    Toast.makeText(FeedbackActivity.this, "Você já está em Ajuda/Feedback", Toast.LENGTH_SHORT).show();
                 } else if (id == R.id.idSobreItemMenu) {
-                    Intent intent = new Intent(ConfigActivity.this, SobreNosActivity.class);
-                    startActivity(intent);
+                    startActivity(new Intent(FeedbackActivity.this, SobreNosActivity.class));
                 }
 
                 idDrawer.closeDrawers();
@@ -77,10 +74,9 @@ public class ConfigActivity extends AppCompatActivity {
         }
     }
 
-    // Função para redirecionar para a tela de Login de Candidato
     private void goToLoginCandidato() {
-        Intent intent = new Intent(ConfigActivity.this, LoginPessoaFisica.class);
+        Intent intent = new Intent(FeedbackActivity.this, LoginPessoaFisica.class);
         startActivity(intent);
-        finish(); // Fecha a tela atual, se desejar
+        finish();
     }
 }
