@@ -40,6 +40,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
+            android:textColor="@color/cinza"
             android:fontFamily="@font/font"
             android:text="ConecctaBusiness"
             android:textSize="20dp" />
@@ -62,6 +63,7 @@
                 android:inputType="textEmailAddress"
                 android:maxLength="50"
                 android:paddingLeft="10sp"
+                android:textColor="@color/cinza"
                 android:paddingRight="10sp"
                 android:textSize="20sp" />
 
@@ -85,6 +87,7 @@
                 android:hint="Nome da Empresa"
                 android:inputType="textPassword"
                 android:maxLength="12"
+                android:textColor="@color/cinza"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
                 android:textSize="20sp" />
@@ -108,6 +111,7 @@
                 android:inputType="textPassword"
                 android:maxLength="12"
                 android:paddingLeft="10sp"
+                android:textColor="@color/cinza"
                 android:paddingRight="10sp"
                 android:textSize="20sp" />
 
@@ -130,6 +134,7 @@
                 android:inputType="textPassword"
                 android:maxLength="12"
                 android:paddingLeft="10sp"
+                android:textColor="@color/cinza"
                 android:paddingRight="10sp"
                 android:textSize="20sp" />
 
@@ -146,6 +151,7 @@
             android:backgroundTint="@color/diferencial"
             android:fontFamily="@font/font"
             android:padding="15sp"
+            android:textColor="@color/TEXT"
             android:text="Cadastrar"
             android:textSize="20sp" />
 

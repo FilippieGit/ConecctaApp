@@ -38,6 +38,7 @@
             android:layout_gravity="center"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/font"
+            android:textColor="@color/cinza"
             android:text="ConecctaPersonal"
             android:textSize="20dp" />
 
@@ -59,6 +60,7 @@
                 android:fontFamily="@font/font"
                 android:inputType="textEmailAddress"
                 android:maxLength="50"
+
                 android:textColor="@color/cinza"
                 android:textSize="20sp"
                 />

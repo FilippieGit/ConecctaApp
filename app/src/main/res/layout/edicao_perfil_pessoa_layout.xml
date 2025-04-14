@@ -10,12 +10,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
         android:orientation="vertical"
         android:padding="15dp">
 
         <ImageView
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="20dp"
             android:id="@+id/imgVoltarPerfilPessoa"
             android:layout_width="30dp"
             android:layout_height="30dp"

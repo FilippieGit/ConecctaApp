@@ -15,6 +15,7 @@
         android:layout_marginLeft="20dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/baseline_arrow_back" />
+
     <LinearLayout
 
         android:layout_width="match_parent"
@@ -38,6 +39,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
+            android:textColor="@color/cinza"
             android:layout_marginBottom="10dp"
             android:fontFamily="@font/font"
             android:text="ConecctaBusiness"
@@ -60,6 +62,7 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font"
                 android:inputType="textEmailAddress"
+
                 android:maxLength="50"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
