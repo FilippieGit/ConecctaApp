@@ -1,34 +1,42 @@
 package com.example.cardstackview;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModeloVafaga extends AppCompatActivity {
+public class ModeloVafaga extends Fragment {
 
-    RecyclerView recyclerView;
-    List<ListaVaga> listaVagaList;
+    private RecyclerView recyclerView;
+    private List<ListaVaga> listaVagaList;
+
+    public ModeloVafaga() {
+        // Construtor público vazio obrigatório
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.lista_vaga_layout);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
 
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+        View view = inflater.inflate(R.layout.lista_vaga_layout, container, false);
+
+        ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+        recyclerView = view.findViewById(R.id.recyclerView);
 
         listaVagaList = new ArrayList<>();
         listaVagaList.add(new ListaVaga("Vaga1", R.drawable.logo));
@@ -37,11 +45,12 @@ public class ModeloVafaga extends AppCompatActivity {
         listaVagaList.add(new ListaVaga("Vaga4", R.drawable.logo));
         listaVagaList.add(new ListaVaga("Vaga5", R.drawable.logo));
 
-        recyclerView = findViewById(R.id.idRecLista);
-        AdapterVaga adapter = new AdapterVaga(this, listaVagaList);
+        AdapterVaga adapter = new AdapterVaga(requireContext(), listaVagaList);
 
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
+        return view;
     }
 }

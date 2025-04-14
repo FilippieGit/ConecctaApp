@@ -1,5 +1,5 @@
 package com.example.cardstackview;
-
+import com.example.cardstackview.MatchVaga;
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,9 +15,9 @@ import java.util.List;
 public class Adapter_Match_Vaga extends RecyclerView.Adapter<Adapter_Match_Vaga.ViewHolder> {
 
     private Context context;
-    private List<ListaMatchVaga> listaMatchVagas;
+    private List<MatchVaga> listaMatchVagas; // ← Corrigido
 
-    public Adapter_Match_Vaga(Context context, List<ListaMatchVaga> listamatch) {
+    public Adapter_Match_Vaga(Context context, List<MatchVaga> listamatch) { // ← Corrigido
         this.context = context;
         this.listaMatchVagas = listamatch;
     }
@@ -28,8 +28,6 @@ public class Adapter_Match_Vaga extends RecyclerView.Adapter<Adapter_Match_Vaga.
         View view = LayoutInflater.from(context).inflate(R.layout.modelo_vaga, parent, false);
         return new ViewHolder(view);
     }
-
-
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
