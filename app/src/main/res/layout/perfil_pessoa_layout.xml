@@ -2,9 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/perfil"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -14,12 +14,11 @@
         android:padding="15dp">
 
         <ImageView
-            android:layout_marginTop="30dp"
             android:id="@+id/imgPerfilPbtnVoltar"
             android:layout_width="30dp"
             android:layout_height="30dp"
-            android:src="@drawable/baseline_arrow_back"
-            />
+            android:layout_marginTop="30dp"
+            android:src="@drawable/baseline_arrow_back" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -104,31 +103,35 @@
 
         <RelativeLayout
             android:layout_width="wrap_content"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="5dp">
 
             <Button
+                android:id="@+id/btnPEditarPerfil"
                 style="?attr/materialButtonOutlinedStyle"
-                android:id="@+id/btnEditarPerfil"
-                android:layout_width="wrap_content"
+                android:layout_width="185dp"
                 android:layout_height="wrap_content"
                 android:text="Editar perfil"
-                />
+                android:textSize="12sp"
+                app:cornerRadius="4dp" />
+
 
             <Button
+                android:id="@+id/btnPCompartilharPerfil"
                 style="?attr/materialButtonOutlinedStyle"
-                android:id="@+id/btnCompartilharPerfil"
-                android:layout_width="wrap_content"
+                android:layout_width="185dp"
                 android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
                 android:text="Compartilhar perfil"
-                />
+                android:textSize="12sp"
+                app:cornerRadius="4dp" />
         </RelativeLayout>
-
 
 
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="5dp"
             app:cardCornerRadius="10dp">
 
             <LinearLayout
@@ -213,10 +216,10 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_marginTop="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="10dp">
 
                     <TextView
@@ -243,10 +246,10 @@
                 </RelativeLayout>
 
                 <RelativeLayout
-                    android:layout_marginTop="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="10dp">
 
                     <TextView
@@ -394,8 +397,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="15dp">
+                    android:layout_marginTop="15dp"
+                    android:layout_marginEnd="10dp">
 
                     <TextView
                         android:layout_width="wrap_content"

@@ -53,7 +53,6 @@ public class RecSenhaActivity extends AppCompatActivity {
         });
 
         btnCriarContEsqSenha = findViewById(R.id.btnCriarContEsqSenha);
-
         btnCriarContEsqSenha.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -63,6 +62,7 @@ public class RecSenhaActivity extends AppCompatActivity {
 
             }
         });
+
 
 
 
