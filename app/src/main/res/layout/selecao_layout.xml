@@ -8,17 +8,16 @@
     tools:context=".SelecaoActivity"
     android:orientation="vertical"
     android:gravity="center"
-    android:background="@color/primary"
-    >
+    android:background="@color/primary">
 
-
+    <!-- Logo -->
     <ImageView
         android:layout_width="230dp"
         android:layout_height="230dp"
         android:src="@drawable/logoviii"
-        android:layout_marginBottom="70dp"
-        />
+        android:layout_marginBottom="70dp"/>
 
+    <!-- Botão Empresa -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnEmpresa"
         android:layout_width="300dp"
@@ -28,6 +27,7 @@
         android:backgroundTint="@color/diferencial"
         android:textColor="#FFFFFF"/>
 
+    <!-- Botão Candidato -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/btnCandidato"
         android:layout_width="300dp"
@@ -37,5 +37,14 @@
         android:textSize="30sp"
         android:backgroundTint="@color/diferencial"
         android:textColor="#FFFFFF"/>
+
+    <!-- Contêiner para o fragmento -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:visibility="visible" />
+
 
 </LinearLayout>

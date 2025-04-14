@@ -1,22 +1,15 @@
-<?xml version="1.0" encoding="utf-8"?>
+<!-- res/menu/bottom_nav_menu.xml -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-
-
-
     <item
         android:id="@+id/nav_favorite"
         android:icon="@drawable/arrow"
-        android:title="Favoritos"
-        />
-
+        android:title="Favoritos" />
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/logocc"
         android:title="Home" />
-
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/perfil"
         android:title="Perfil" />
-
 </menu>

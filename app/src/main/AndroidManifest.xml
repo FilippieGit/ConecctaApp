@@ -13,7 +13,7 @@
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
         <activity
-            android:name=".FeedbackActivity"
+            android:name=".TelaEmpresaActivity"
             android:exported="false" />
         <activity
             android:name=".SobreNosActivity"
@@ -28,6 +28,9 @@
             </intent-filter>
         </activity>
         <!--
+        <activity
+            android:name=".SobreNosActivity"
+            android:exported="true" />
         <activity
             android:name=".ListaMatchVaga"
             android:exported="false" />
@@ -61,20 +64,17 @@
             android:name=".DrawerActivity"
             android:exported="true" />
         <activity
-            android:name=".teste"
-            android:exported="false" />
-        <activity
             android:name=".CadastroActivity"
             android:exported="false" />
         <activity
+            android:name=".SplashActivity"
+            android:exported="true">
+        </activity>
             android:name=".Modelo_Match_Vaga"
             android:exported="true" />
         <activity
             android:name=".PerfilActivity"
             android:exported="false" />
-        <activity
-            android:name=".ModeloVafaga"
-            android:exported="true" />
         <activity
             android:name=".SelecaoActivity"
             android:exported="false" />

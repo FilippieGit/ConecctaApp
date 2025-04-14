@@ -1,27 +1,41 @@
 package com.example.cardstackview;
 
-public class ListaMatchVaga {
-    private String titulo;
-    private int image;
+import android.os.Bundle;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 
-    public ListaMatchVaga(String titulo, int image) {
-        this.titulo = titulo;
-        this.image = image;
+import com.example.cardstackview.databinding.ActivityMainBinding;
+
+public class ListaMatchVaga extends AppCompatActivity {
+
+    ActivityMainBinding binding;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+
+        // Fragment inicial
+        replaceFragment(new teste());
+
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_home) {
+                replaceFragment(new ModeloVafaga());
+            } else if (id == R.id.nav_favorite) {
+                replaceFragment(new Modelo_Match_Vaga());
+            } else if (id == R.id.nav_profile) {
+                replaceFragment(new teste());
+            }
+            return true;
+        });
     }
 
-    public String getTitulo() {
-        return titulo;
-    }
-
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
-
-    public int getImage() {
-        return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
+    private void replaceFragment(Fragment fragment) {
+        getSupportFragmentManager()
+                .beginTransaction()
+                .replace(R.id.fragment_container, fragment)
+                .commit();
     }
 }
