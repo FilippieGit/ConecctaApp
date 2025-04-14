@@ -20,7 +20,7 @@ public class ListaMatchVaga extends AppCompatActivity {
         replaceFragment(new teste());
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            int id = item.getItemId(); // 👈 solução alternativa ao switch
+            int id = item.getItemId();
             if (id == R.id.nav_home) {
                 replaceFragment(new ModeloVafaga());
             } else if (id == R.id.nav_favorite) {
