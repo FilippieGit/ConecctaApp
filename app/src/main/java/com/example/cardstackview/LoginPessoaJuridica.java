@@ -65,7 +65,7 @@ public class LoginPessoaJuridica extends AppCompatActivity {
                 if (email.equals("empresa")&& senha.equals("empresa")){
 
                     startActivity(new Intent(getApplicationContext(),
-                            teste.class));
+                            TelaEmpresaActivity.class));
                     finish();
 
                 }else {
