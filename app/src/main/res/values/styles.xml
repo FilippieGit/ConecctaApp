@@ -5,4 +5,9 @@
         <item name="itemIconTint">@color/cinza</item> <!-- Cor do ícone -->
         <item name="itemTextColor">@color/cinza</item> <!-- Cor do texto -->
     </style>
+
+    <style name="BottomNavText" parent="TextAppearance.AppCompat.Caption">
+        <item name="android:textSize">12sp</item> <!-- Texto menor para destacar o ícone -->
+    </style>
+
 </resources>
