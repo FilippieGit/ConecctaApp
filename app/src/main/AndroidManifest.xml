@@ -12,6 +12,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
+
+        <activity
+            android:name=".teste"
+            android:exported="false" />
+
         <activity
             android:name=".TelaEmpresaActivity"
             android:exported="false" />
@@ -23,19 +28,9 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <!--
-        <activity
-            android:name=".SobreNosActivity"
-            android:exported="true" />
-        <activity
-            android:name=".ListaMatchVaga"
-            android:exported="false" />
-            !
-        -->
         <activity
             android:name=".LoginPessoaJuridica"
             android:exported="false" />
@@ -48,6 +43,10 @@
         <activity
             android:name=".EdicaoPerfilEmpresaActivity"
             android:exported="false" />
+        <activity
+            android:name=".TesteActivity"
+            android:exported="true" />
+
         <activity
             android:name=".PerfilEmpresaActivity"
             android:exported="false" />

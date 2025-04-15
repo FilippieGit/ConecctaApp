@@ -1,52 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/frame_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".SelecaoActivity"
-    android:orientation="vertical"
-    android:gravity="center"
-    android:background="@color/primary">
+    tools:context=".SelecaoActivity">
 
-    <!-- Logo -->
-    <ImageView
-        android:layout_width="230dp"
-        android:layout_height="230dp"
-        android:src="@drawable/logoviii"
-        android:layout_marginBottom="70dp"/>
-
-    <!-- Botão Empresa -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnEmpresa"
-        android:layout_width="300dp"
-        android:layout_height="60dp"
-        android:text="Empresa"
-        android:textSize="30sp"
-        android:fontFamily="@font/chillax_medium"
-        android:backgroundTint="@color/diferencial"
-        android:textColor="#FFFFFF"/>
-
-    <!-- Botão Candidato -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/btnCandidato"
-        android:layout_width="300dp"
-        android:layout_marginTop="20dp"
-        android:layout_height="60dp"
-        android:text="Candidato"
-        android:textSize="30sp"
-        android:fontFamily="@font/chillax_medium"
-        android:backgroundTint="@color/diferencial"
-        android:textColor="#FFFFFF"/>
-
-    <!-- Contêiner para o fragmento -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <!-- Elementos por cima -->
+    <LinearLayout
+        android:id="@+id/main"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:visibility="visible"/>
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:background="@color/primary"
+        android:padding="16dp">
 
+        <!-- Logo -->
+        <ImageView
+            android:layout_width="230dp"
+            android:layout_height="230dp"
+            android:src="@drawable/logoviii"
+            android:layout_marginTop="80dp"
+            android:layout_marginBottom="70dp"/>
 
-</LinearLayout>
+        <!-- Botão Empresa -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnEmpresa"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:text="Empresa"
+            android:textSize="30sp"
+            android:fontFamily="@font/chillax_medium"
+            android:backgroundTint="@color/diferencial"
+            android:textColor="#FFFFFF"/>
+
+        <!-- Botão Candidato -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCandidato"
+            android:layout_width="300dp"
+            android:layout_marginTop="20dp"
+            android:layout_height="60dp"
+            android:text="Candidato"
+            android:textSize="30sp"
+            android:fontFamily="@font/chillax_medium"
+            android:backgroundTint="@color/diferencial"
+            android:textColor="#FFFFFF"/>
+
+        <!-- Contêiner para o fragmento -->
+        <FrameLayout
+            android:id="@+id/fragment_container"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="visible"/>
+    </LinearLayout>
+
+</FrameLayout>
