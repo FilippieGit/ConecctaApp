@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">26dp</item> <!-- Tamanho do ícone -->
+        <item name="itemIconTint">@color/cinza</item> <!-- Cor do ícone -->
+        <item name="itemTextColor">@color/cinza</item> <!-- Cor do texto -->
+    </style>
+</resources>
