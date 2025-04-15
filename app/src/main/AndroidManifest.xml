@@ -67,12 +67,6 @@
             android:name=".CadastroActivity"
             android:exported="false" />
         <activity
-            android:name=".SplashActivity"
-            android:exported="true">
-        </activity>
-            android:name=".Modelo_Match_Vaga"
-            android:exported="true" />
-        <activity
             android:name=".PerfilActivity"
             android:exported="false" />
         <activity

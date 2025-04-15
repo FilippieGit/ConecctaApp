@@ -28,31 +28,29 @@ public class teste extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.bancodetelentos, container, false);
+        View view = inflater.inflate(R.layout.bancodetalentos, container, false);
 
+        // Ajuste de padding para barras do sistema (EdgeToEdge)
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.bancodetalentos);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        // Inicialização do RecyclerView
         recyclerView = view.findViewById(R.id.idRecLista);
-
         listaList = new ArrayList<>();
+
+        // Adiciona dados fictícios
         listaList.add(new Lista("Empresa1", R.drawable.logo));
         listaList.add(new Lista("Empresa2", R.drawable.logo));
         listaList.add(new Lista("Empresa3", R.drawable.logo));
         listaList.add(new Lista("Empresa4", R.drawable.logo));
         listaList.add(new Lista("Empresa5", R.drawable.logo));
 
+        // Configura o Adapter
         Adapter adapter = new Adapter(requireContext(), listaList);
-
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
