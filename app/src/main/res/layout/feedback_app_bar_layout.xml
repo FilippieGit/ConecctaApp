@@ -10,7 +10,7 @@
         android:theme="@style/Widget.Design.AppBarLayout">
 
         <com.google.android.material.appbar.MaterialToolbar
-            android:id="@+id/idConfigTopAppBar"
+            android:id="@+id/idFeedbackTopAppBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"

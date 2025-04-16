@@ -29,6 +29,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
                 finish();
             }
-        }, 3000);
+        }, 0);//Voltar delay após testes
     }
 }

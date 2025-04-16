@@ -11,7 +11,9 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class FeedbackActivity extends AppCompatActivity {
 
@@ -25,7 +27,7 @@ public class FeedbackActivity extends AppCompatActivity {
         setContentView(R.layout.feedback_layout);
 
         // Inicializa os componentes
-        idTopAppBar = findViewById(R.id.idConfigTopAppBar);
+        idTopAppBar = findViewById(R.id.idFeedbackTopAppBar);
         idDrawer = findViewById(R.id.idDrawer);
         idNavView = findViewById(R.id.idNavView);
 
@@ -42,25 +44,37 @@ public class FeedbackActivity extends AppCompatActivity {
         toggle.syncState();
 
         // Define ações para os itens do menu lateral
-        idNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                int id = item.getItemId();
+        idNavView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
 
-                if (id == R.id.idLoginItemMenu) {
-                    goToLoginCandidato();
-                } else if (id == R.id.idVagasItemMenu) {
-                    startActivity(new Intent(FeedbackActivity.this, MainActivity.class));
-                } else if (id == R.id.idConfigItemMenu) {
-                    startActivity(new Intent(FeedbackActivity.this, ConfigActivity.class));
-                } else if (id == R.id.idAjudaItemMenu) {
-                    Toast.makeText(FeedbackActivity.this, "Você já está em Ajuda/Feedback", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.idSobreItemMenu) {
-                    startActivity(new Intent(FeedbackActivity.this, SobreNosActivity.class));
-                }
+            if (id == R.id.idLoginItemMenu) {
+                goToLoginCandidato();
+            } else if (id == R.id.idVagasItemMenu) {
+                startActivity(new Intent(FeedbackActivity.this, MainActivity.class));
+            } else if (id == R.id.idConfigItemMenu) {
+                startActivity(new Intent(FeedbackActivity.this, ConfigActivity.class));
+            } else if (id == R.id.idAjudaItemMenu) {
+                Toast.makeText(FeedbackActivity.this, "Você já está em Ajuda/Feedback", Toast.LENGTH_SHORT).show();
+            } else if (id == R.id.idSobreItemMenu) {
+                startActivity(new Intent(FeedbackActivity.this, SobreNosActivity.class));
+            }
 
-                idDrawer.closeDrawers();
-                return true;
+            idDrawer.closeDrawers();
+            return true;
+        });
+
+        // Adicionar ação ao botão de enviar feedback
+        MaterialButton btnFeedback = findViewById(R.id.Btnfeedback);
+        btnFeedback.setOnClickListener(v -> {
+            String nome = ((TextInputEditText) findViewById(R.id.textNomeFeedback)).getText().toString();
+            String email = ((TextInputEditText) findViewById(R.id.TextEmailFeedback)).getText().toString();
+            String telefone = ((TextInputEditText) findViewById(R.id.TextTelFeedback)).getText().toString();
+            String feedback = ((TextInputEditText) findViewById(R.id.textfeedback)).getText().toString();
+
+            if (nome.isEmpty() || email.isEmpty() || telefone.isEmpty() || feedback.isEmpty()) {
+                Toast.makeText(FeedbackActivity.this, "Por favor, preencha todos os campos.", Toast.LENGTH_SHORT).show();
+            } else {
+                Toast.makeText(FeedbackActivity.this, "Feedback enviado com sucesso!", Toast.LENGTH_SHORT).show();
             }
         });
     }

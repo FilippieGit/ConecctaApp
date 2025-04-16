@@ -15,11 +15,6 @@ public class TelaEmpresaActivity extends AppCompatActivity {
 
         BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // Fragmento inicial
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container_empresa, new Modelo_Match_Vaga())
-                .commit();
-
         // Listener do BottomNavigationView
         bottomNavigationView.setOnItemSelectedListener(item -> {
             Fragment selectedFragment = null;
@@ -31,7 +26,7 @@ public class TelaEmpresaActivity extends AppCompatActivity {
             } else if (id == R.id.nav_home) {
                 selectedFragment = new Modelo_Match_Vaga();
             } else if (id == R.id.nav_profile) {
-                selectedFragment = new ModeloVafaga(); // ou qualquer outro fragment
+                selectedFragment = new ModeloVafaga();
             }
 
             if (selectedFragment != null) {
@@ -43,5 +38,8 @@ public class TelaEmpresaActivity extends AppCompatActivity {
             return true;
         });
 
+        // Define visualmente o item nav_home como selecionado
+        bottomNavigationView.setSelectedItemId(R.id.nav_home);
     }
+
 }
