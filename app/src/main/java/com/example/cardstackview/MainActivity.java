@@ -3,6 +3,8 @@ package com.example.cardstackview;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,17 +21,26 @@ import com.example.cardstackview.databinding.ActivityMainBinding;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
+import com.yuyakaido.android.cardstackview.CardStackListener;
+import com.yuyakaido.android.cardstackview.Direction;
+import com.yuyakaido.android.cardstackview.StackFrom;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
     MaterialToolbar idTopAppBar;
     DrawerLayout idDrawer;
     NavigationView idNavView;
 
     ActivityMainBinding binding;
+
+    List<String> aceitos = new ArrayList<>();
+    List<String> negados = new ArrayList<>();
+
+    // 👇 Adicione aqui fora
+    CardStackLayoutManager layoutManager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +59,48 @@ public class MainActivity extends AppCompatActivity {
         cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
 
         CardAdapter adapter = new CardAdapter(cards);
-        binding.cardStack.setLayoutManager(new CardStackLayoutManager(getApplicationContext()));
+
+        // Crie o CardStackListener antes
+        CardStackListener cardStackListener = new CardStackListener() {
+            @Override
+            public void onCardSwiped(Direction direction) {
+                int position = layoutManager.getTopPosition() - 1;
+                if (position >= 0 && position < cards.size()) {
+                    String texto = cards.get(position).getContent();
+
+                    // Referência para os TextViews
+                    TextView tvAceitos = findViewById(R.id.tvAceitos);
+                    TextView tvRecusados = findViewById(R.id.tvRecusados);
+
+                    if (direction == Direction.Right) {
+                        aceitos.add(texto);
+                        Toast.makeText(MainActivity.this, "Aceito: " + texto, Toast.LENGTH_SHORT).show();
+                    } else if (direction == Direction.Left) {
+                        negados.add(texto);
+                        Toast.makeText(MainActivity.this, "Negado: " + texto, Toast.LENGTH_SHORT).show();
+                    }
+
+                    // Atualizar os TextViews na tela
+                    tvAceitos.setText("Aceitos: " + String.join(", ", aceitos));
+                    tvRecusados.setText("Recusados: " + String.join(", ", negados));
+                }
+            }
+
+
+            @Override public void onCardDragging(Direction direction, float ratio) {}
+            @Override public void onCardRewound() {}
+            @Override public void onCardCanceled() {}
+            @Override public void onCardAppeared(View view, int position) {}
+            @Override public void onCardDisappeared(View view, int position) {}
+        };
+
+// Inicialize o layoutManager agora que a variável existe
+        layoutManager = new CardStackLayoutManager(this, cardStackListener);
+        layoutManager.setStackFrom(StackFrom.None);
+        layoutManager.setVisibleCount(3);
+
+
+        binding.cardStack.setLayoutManager(layoutManager);
         binding.cardStack.setAdapter(adapter);
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {

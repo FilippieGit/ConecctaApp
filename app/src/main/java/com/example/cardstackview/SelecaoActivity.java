@@ -51,7 +51,7 @@ public class SelecaoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navegar para a tela de login de pessoa física
-                startActivity(new Intent(SelecaoActivity.this, LoginPessoaFisica.class));//Trocar para LoginPessoaFisica
+                startActivity(new Intent(SelecaoActivity.this, MainActivity.class));//Trocar para LoginPessoaFisica
                 finish();  // Finaliza a atividade atual
             }
         });
