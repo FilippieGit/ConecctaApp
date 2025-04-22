@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -15,60 +14,63 @@ import java.util.List;
 
 public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPrincipal.ViewHolder> {
 
-    private Context context;
-    private List<MatchVaga> listaMatchVagas;
-    private OnItemClickListener listener;
+    private final Context context;
+    private final List<MatchVaga> listaMatchVagaList;
+    private OnItemClickListener onItemClickListener;
 
-    // Interface para o clique
-    public interface OnItemClickListener {
-        void onItemClick(MatchVaga vaga);
-    }
-
-    public void setOnItemClickListener(OnItemClickListener listener) {
-        this.listener = listener;
-    }
-
-    public AdaptadorTelaPrincipal(Context context, List<MatchVaga> listamatch) {
+    public AdaptadorTelaPrincipal(Context context, List<MatchVaga> listaMatchVagaList) {
         this.context = context;
-        this.listaMatchVagas = listamatch;
+        this.listaMatchVagaList = listaMatchVagaList;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.telaprincipal_modelo_vaga_layout, parent, false);
+        // Verifique se o nome do layout está correto
+        View view = LayoutInflater.from(context).inflate(R.layout.item_vaga_layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (position < listaMatchVagas.size()) {
-            MatchVaga vaga = listaMatchVagas.get(position);
-            holder.modeloinfoempresa.setText(vaga.getTitulo());
-            holder.modelofotoempresa.setImageResource(vaga.getImage());
+        MatchVaga vaga = listaMatchVagaList.get(position);
 
-            // Clique no item inteiro
-            holder.itemView.setOnClickListener(v -> {
-                if (listener != null) {
-                    listener.onItemClick(vaga);
-                }
-            });
-        }
+        // Exemplo de como configurar os dados no item da lista
+        holder.titulo.setText(vaga.getTitulo());
+        holder.imagem.setImageResource(vaga.getImage());
+
+        holder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null) {
+                onItemClickListener.onItemClick(vaga);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return listaMatchVagas.size();
+        return listaMatchVagaList.size();
     }
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView modelofotoempresa;
-        TextView modeloinfoempresa;
+    // Define o listener de clique
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.onItemClickListener = listener;
+    }
 
-        public ViewHolder(@NonNull View itemView) {
+    // Interface para o listener de clique
+    public interface OnItemClickListener {
+        void onItemClick(MatchVaga vaga);
+    }
+
+    // ViewHolder para o item
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+        TextView titulo;
+        ImageView imagem;
+
+        public ViewHolder(View itemView) {
             super(itemView);
-            modelofotoempresa = itemView.findViewById(R.id.idlogodaempresa);
-            modeloinfoempresa = itemView.findViewById(R.id.idinfoempresa);
+            titulo = itemView.findViewById(R.id.textTituloItem);
+            imagem = itemView.findViewById(R.id.imageItemVaga);
         }
     }
 }
+

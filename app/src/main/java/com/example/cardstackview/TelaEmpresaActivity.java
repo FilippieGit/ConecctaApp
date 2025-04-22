@@ -22,11 +22,11 @@ public class TelaEmpresaActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_favorite) {
-                selectedFragment = new BancoTalentosActivity(); // ou qualquer outro fragment
+                selectedFragment = new ModeloBancoTalentosActivity(); // ou qualquer outro fragment
             } else if (id == R.id.nav_home) {
-                selectedFragment = new TelaPrincipalActivity();
+                selectedFragment = new ModeloTelaPrincipalActivity();
             } else if (id == R.id.nav_profile) {
-                selectedFragment = new ModeloVafaga();
+                selectedFragment = new ModeloCurrAleatActivity();
             }
 
             if (selectedFragment != null) {

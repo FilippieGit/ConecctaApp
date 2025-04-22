@@ -1,9 +1,9 @@
 package com.example.cardstackview;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -25,15 +25,16 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TelaPrincipalActivity extends Fragment {
+public class ModeloTelaPrincipalActivity extends Fragment {
 
     private RecyclerView recyclerView;
     private List<MatchVaga> listaMatchVagaList;
     MaterialToolbar idTopAppBar;
     DrawerLayout idDrawer;
     NavigationView idNavView;
+    private AdaptadorTelaPrincipal adapter;
 
-    public TelaPrincipalActivity() {
+    public ModeloTelaPrincipalActivity() {
         // Construtor vazio obrigatório
     }
 
@@ -43,7 +44,7 @@ public class TelaPrincipalActivity extends Fragment {
 
         View view = inflater.inflate(R.layout.tela_principal_layout, container, false);
 
-        // Aplicando os insets para evitar que o conteúdo fique sobrepondo a barra de status
+        // Evita sobreposição com a barra de status
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -55,7 +56,7 @@ public class TelaPrincipalActivity extends Fragment {
         idDrawer = view.findViewById(R.id.idDrawer);
         idNavView = view.findViewById(R.id.idNavView);
 
-        // Configuração do ActionBarDrawerToggle
+        // Configurando o Drawer com a Toolbar
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(),
                 idDrawer,
@@ -66,7 +67,7 @@ public class TelaPrincipalActivity extends Fragment {
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Configuração do NavigationView
+        // Itens do menu lateral
         idNavView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -89,32 +90,33 @@ public class TelaPrincipalActivity extends Fragment {
             return true;
         });
 
-        // Configurando o RecyclerView
+        // Configurando o FAB para abrir a tela de criação de vaga
+        View fab = view.findViewById(R.id.idAFAB);
+        fab.setOnClickListener(v -> {
+            // Abre a tela de criação de vaga
+            Intent intent = new Intent(getActivity(), CriarVagaActivity.class);  // Corrigido para CriarVagaActivity
+            startActivityForResult(intent, 1);  // Inicia a atividade e aguarda o resultado
+        });
+
+        // RecyclerView
         recyclerView = view.findViewById(R.id.idRecLista);
-
         listaMatchVagaList = new ArrayList<>();
+
+        // Exemplo de vagas
         listaMatchVagaList.add(new MatchVaga("Match1", R.drawable.logo));
         listaMatchVagaList.add(new MatchVaga("Match2", R.drawable.logo));
         listaMatchVagaList.add(new MatchVaga("Match3", R.drawable.logo));
         listaMatchVagaList.add(new MatchVaga("Match4", R.drawable.logo));
         listaMatchVagaList.add(new MatchVaga("Match5", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match1", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match2", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match3", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match4", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match5", R.drawable.logo));
 
+        adapter = new AdaptadorTelaPrincipal(requireContext(), listaMatchVagaList);
 
-
-        AdaptadorTelaPrincipal adapter = new AdaptadorTelaPrincipal(requireContext(), listaMatchVagaList);
-
-        // Ação ao clicar em qualquer card
+        // Clique no item
         adapter.setOnItemClickListener(vaga -> {
-            Toast.makeText(getActivity(), "Clicou em: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
-            // Exemplo: abrir outra tela com os dados
-            // Intent intent = new Intent(getActivity(), DetalheVagaActivity.class);
-            // intent.putExtra("vaga", vaga);
-            // startActivity(intent);
+            Intent intent = new Intent(getActivity(), DetalheVagaActivity.class);
+            intent.putExtra("titulo", vaga.getTitulo());
+            intent.putExtra("imagem", vaga.getImage());
+            startActivity(intent);
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
@@ -123,6 +125,23 @@ public class TelaPrincipalActivity extends Fragment {
 
         return view;
     }
+
+    // Método que será chamado após a CriarVagaActivity retornar
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {  // Use Activity.RESULT_OK
+            String titulo = data.getStringExtra("titulo");
+            String descricao = data.getStringExtra("descricao");
+
+            // Adiciona a nova vaga na lista e notifica o adapter
+            MatchVaga novaVaga = new MatchVaga(titulo, R.drawable.logo);  // Use uma imagem padrão ou forneça uma
+            listaMatchVagaList.add(novaVaga);
+            adapter.notifyDataSetChanged();  // Atualiza a RecyclerView
+        }
+    }
+
 
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);

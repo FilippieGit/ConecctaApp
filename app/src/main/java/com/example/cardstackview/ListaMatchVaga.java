@@ -17,16 +17,16 @@ public class ListaMatchVaga extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         // Fragment inicial
-        replaceFragment(new BancoTalentosActivity());
+        replaceFragment(new ModeloBancoTalentosActivity());
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
-                replaceFragment(new ModeloVafaga());
+                replaceFragment(new ModeloCurrAleatActivity());
             } else if (id == R.id.nav_favorite) {
-                replaceFragment(new TelaPrincipalActivity());
+                replaceFragment(new ModeloTelaPrincipalActivity());
             } else if (id == R.id.nav_profile) {
-                replaceFragment(new BancoTalentosActivity());
+                replaceFragment(new ModeloBancoTalentosActivity());
             }
             return true;
         });

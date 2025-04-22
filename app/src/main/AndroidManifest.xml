@@ -13,7 +13,13 @@
         android:theme="@style/Theme.CardStackView"
         tools:targetApi="31">
         <activity
-            android:name=".BancoTalentosActivity"
+            android:name=".CriarVagaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".DetalheVagaActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ModeloBancoTalentosActivity"
             android:exported="false" />
         <activity
             android:name=".TelaEmpresaActivity"
@@ -26,6 +32,7 @@
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -45,7 +52,7 @@
             android:name=".PerfilEmpresaActivity"
             android:exported="false" />
         <activity
-            android:name=".CadPJuridicaAcitivy"
+            android:name=".CadPJuridicaActivity"
             android:exported="false" />
         <activity
             android:name=".RecSenhaActivity"

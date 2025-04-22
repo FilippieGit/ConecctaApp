@@ -24,7 +24,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BancoTalentosActivity extends Fragment {
+public class ModeloBancoTalentosActivity extends Fragment {
 
     private RecyclerView recyclerView;
     private List<Lista> listaList;
@@ -32,7 +32,7 @@ public class BancoTalentosActivity extends Fragment {
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
 
-    public BancoTalentosActivity() {
+    public ModeloBancoTalentosActivity() {
         // Construtor público vazio obrigatório
     }
 
