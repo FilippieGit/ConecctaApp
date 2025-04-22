@@ -1,23 +1,34 @@
 package com.example.cardstackview;
-import com.example.cardstackview.MatchVaga;
+
 import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.List;
 
-public class Adapter_Match_Vaga extends RecyclerView.Adapter<Adapter_Match_Vaga.ViewHolder> {
+public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPrincipal.ViewHolder> {
 
     private Context context;
-    private List<MatchVaga> listaMatchVagas; // ← Corrigido
+    private List<MatchVaga> listaMatchVagas;
+    private OnItemClickListener listener;
 
-    public Adapter_Match_Vaga(Context context, List<MatchVaga> listamatch) { // ← Corrigido
+    // Interface para o clique
+    public interface OnItemClickListener {
+        void onItemClick(MatchVaga vaga);
+    }
+
+    public void setOnItemClickListener(OnItemClickListener listener) {
+        this.listener = listener;
+    }
+
+    public AdaptadorTelaPrincipal(Context context, List<MatchVaga> listamatch) {
         this.context = context;
         this.listaMatchVagas = listamatch;
     }
@@ -25,21 +36,29 @@ public class Adapter_Match_Vaga extends RecyclerView.Adapter<Adapter_Match_Vaga.
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.modelo_vaga, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.telaprincipal_modelo_vaga_layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         if (position < listaMatchVagas.size()) {
-            holder.modeloinfoempresa.setText(listaMatchVagas.get(position).getTitulo());
-            holder.modelofotoempresa.setImageResource(listaMatchVagas.get(position).getImage());
+            MatchVaga vaga = listaMatchVagas.get(position);
+            holder.modeloinfoempresa.setText(vaga.getTitulo());
+            holder.modelofotoempresa.setImageResource(vaga.getImage());
+
+            // Clique no item inteiro
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onItemClick(vaga);
+                }
+            });
         }
     }
 
     @Override
     public int getItemCount() {
-        return Math.min(listaMatchVagas.size(), 5);
+        return listaMatchVagas.size();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

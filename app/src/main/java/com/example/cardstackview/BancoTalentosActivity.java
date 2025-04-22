@@ -3,7 +3,6 @@ package com.example.cardstackview;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
@@ -25,7 +24,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class teste extends Fragment {
+public class BancoTalentosActivity extends Fragment {
 
     private RecyclerView recyclerView;
     private List<Lista> listaList;
@@ -33,7 +32,7 @@ public class teste extends Fragment {
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
 
-    public teste() {
+    public BancoTalentosActivity() {
         // Construtor público vazio obrigatório
     }
 
@@ -41,21 +40,22 @@ public class teste extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.bancodetalentos, container, false);
+        // Infla o layout
+        View view = inflater.inflate(R.layout.bancodetalentos_layout, container, false);
 
-        // Aplicando paddings para barras de sistema
+        // Aplicando paddings para barras de sistema (status bar, navigation bar)
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Inicialização de componentes
+        // Inicialização dos componentes
         idTopAppBar = view.findViewById(R.id.idBancoTopAppBar);
         idDrawer = view.findViewById(R.id.idDrawer);
         idNavView = view.findViewById(R.id.idNavView);
 
-        // Drawer toggle
+        // Configuração do DrawerToggle (para o menu lateral)
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(),
                 idDrawer,
@@ -66,7 +66,7 @@ public class teste extends Fragment {
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Navigation menu item click handling
+        // Configuração do NavigationView (Menu lateral)
         idNavView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -89,8 +89,9 @@ public class teste extends Fragment {
             return true;
         });
 
-        // RecyclerView
+        // Configuração do RecyclerView
         recyclerView = view.findViewById(R.id.idRecLista);
+
         listaList = new ArrayList<>();
         listaList.add(new Lista("Empresa1", R.drawable.logo));
         listaList.add(new Lista("Empresa2", R.drawable.logo));
@@ -98,32 +99,34 @@ public class teste extends Fragment {
         listaList.add(new Lista("Empresa4", R.drawable.logo));
         listaList.add(new Lista("Empresa5", R.drawable.logo));
 
-        Adapter adapter = new Adapter(requireContext(), listaList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-        recyclerView.setHasFixedSize(true);
+        // Adapter e LayoutManager para o RecyclerView
+        AdaptadorBancoTalentos adapter = new AdaptadorBancoTalentos(requireContext(), listaList);
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext())); // Layout linear
+        recyclerView.setHasFixedSize(true); // Melhora performance
         recyclerView.setAdapter(adapter);
 
         return view;
     }
 
+    // Função para redirecionar para a tela de Login
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);
         startActivity(intent);
-        getActivity().finish(); // Fecha tela atual
+        getActivity().finish(); // Fecha tela atual após login
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Comportamento do botão de voltar
+        // Comportamento customizado para o botão de voltar
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (idDrawer.isDrawerOpen(GravityCompat.START)) {
-                    idDrawer.closeDrawer(GravityCompat.START);
+                    idDrawer.closeDrawer(GravityCompat.START); // Fecha o drawer se estiver aberto
                 } else {
-                    requireActivity().onBackPressed();
+                    requireActivity().onBackPressed(); // Comportamento normal de voltar
                 }
             }
         });

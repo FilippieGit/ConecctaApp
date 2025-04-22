@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context=".teste"
+    tools:context=".BancoTalentosActivity"
     tools:openDrawer="start">
 
     <!-- CONTAINER PRINCIPAL (conteúdo da tela) -->
@@ -17,20 +17,39 @@
         android:orientation="vertical"
         android:fitsSystemWindows="true">
 
-        <!-- App Bar (include) -->
+        <!-- App Bar -->
         <include
             android:id="@+id/app_bar_main"
             layout="@layout/telaprincipal_app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
-        <!-- RecyclerView -->
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/idRecLista"
+        <!-- Container para sobreposição -->
+        <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1">
+
+            <!-- RecyclerView -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/idRecLista"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <!-- Botão flutuante -->
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/idAFAB"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="16dp"
+                android:src="@drawable/baseline_add"
+                app:backgroundTint="@color/primary" />
+        </FrameLayout>
     </LinearLayout>
+
+
+
 
     <!-- MENU LATERAL (Navigation Drawer) -->
     <com.google.android.material.navigation.NavigationView

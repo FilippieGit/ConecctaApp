@@ -22,9 +22,9 @@ public class TelaEmpresaActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.nav_favorite) {
-                selectedFragment = new teste(); // ou qualquer outro fragment
+                selectedFragment = new BancoTalentosActivity(); // ou qualquer outro fragment
             } else if (id == R.id.nav_home) {
-                selectedFragment = new Modelo_Match_Vaga();
+                selectedFragment = new TelaPrincipalActivity();
             } else if (id == R.id.nav_profile) {
                 selectedFragment = new ModeloVafaga();
             }

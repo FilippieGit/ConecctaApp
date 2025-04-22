@@ -25,7 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Modelo_Match_Vaga extends Fragment {
+public class TelaPrincipalActivity extends Fragment {
 
     private RecyclerView recyclerView;
     private List<MatchVaga> listaMatchVagaList;
@@ -33,7 +33,7 @@ public class Modelo_Match_Vaga extends Fragment {
     DrawerLayout idDrawer;
     NavigationView idNavView;
 
-    public Modelo_Match_Vaga() {
+    public TelaPrincipalActivity() {
         // Construtor vazio obrigatório
     }
 
@@ -41,7 +41,7 @@ public class Modelo_Match_Vaga extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.lista_model, container, false);
+        View view = inflater.inflate(R.layout.tela_principal_layout, container, false);
 
         // Aplicando os insets para evitar que o conteúdo fique sobrepondo a barra de status
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
@@ -51,9 +51,9 @@ public class Modelo_Match_Vaga extends Fragment {
         });
 
         // Inicializando os componentes
-        idTopAppBar = view.findViewById(R.id.idTelaPrincipalTopAppBar);  // MaterialToolbar
-        idDrawer = view.findViewById(R.id.idDrawer);  // DrawerLayout
-        idNavView = view.findViewById(R.id.idNavView);  // NavigationView
+        idTopAppBar = view.findViewById(R.id.idTelaPrincipalTopAppBar);
+        idDrawer = view.findViewById(R.id.idDrawer);
+        idNavView = view.findViewById(R.id.idNavView);
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -66,30 +66,27 @@ public class Modelo_Match_Vaga extends Fragment {
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Configuração do NavigationView para responder aos cliques
-        idNavView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
-            @Override
-            public boolean onNavigationItemSelected(MenuItem item) {
-                int id = item.getItemId();
+        // Configuração do NavigationView
+        idNavView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
 
-                if (id == R.id.idLoginItemMenu) {
-                    goToLoginCandidato();
-                } else if (id == R.id.idVagasItemMenu) {
-                    Intent intent = new Intent(getActivity(), MainActivity.class);
-                    startActivity(intent);
-                } else if (id == R.id.idConfigItemMenu) {
-                    Toast.makeText(getActivity(), "Você já está em Configurações", Toast.LENGTH_SHORT).show();
-                } else if (id == R.id.idAjudaItemMenu) {
-                    Intent intent = new Intent(getActivity(), FeedbackActivity.class);
-                    startActivity(intent);
-                } else if (id == R.id.idSobreItemMenu) {
-                    Intent intent = new Intent(getActivity(), SobreNosActivity.class);
-                    startActivity(intent);
-                }
-
-                idDrawer.closeDrawers();
-                return true;
+            if (id == R.id.idLoginItemMenu) {
+                goToLoginCandidato();
+            } else if (id == R.id.idVagasItemMenu) {
+                Intent intent = new Intent(getActivity(), MainActivity.class);
+                startActivity(intent);
+            } else if (id == R.id.idConfigItemMenu) {
+                Toast.makeText(getActivity(), "Você já está em Configurações", Toast.LENGTH_SHORT).show();
+            } else if (id == R.id.idAjudaItemMenu) {
+                Intent intent = new Intent(getActivity(), FeedbackActivity.class);
+                startActivity(intent);
+            } else if (id == R.id.idSobreItemMenu) {
+                Intent intent = new Intent(getActivity(), SobreNosActivity.class);
+                startActivity(intent);
             }
+
+            idDrawer.closeDrawers();
+            return true;
         });
 
         // Configurando o RecyclerView
@@ -101,8 +98,24 @@ public class Modelo_Match_Vaga extends Fragment {
         listaMatchVagaList.add(new MatchVaga("Match3", R.drawable.logo));
         listaMatchVagaList.add(new MatchVaga("Match4", R.drawable.logo));
         listaMatchVagaList.add(new MatchVaga("Match5", R.drawable.logo));
+        listaMatchVagaList.add(new MatchVaga("Match1", R.drawable.logo));
+        listaMatchVagaList.add(new MatchVaga("Match2", R.drawable.logo));
+        listaMatchVagaList.add(new MatchVaga("Match3", R.drawable.logo));
+        listaMatchVagaList.add(new MatchVaga("Match4", R.drawable.logo));
+        listaMatchVagaList.add(new MatchVaga("Match5", R.drawable.logo));
 
-        Adapter_Match_Vaga adapter = new Adapter_Match_Vaga(requireContext(), listaMatchVagaList);
+
+
+        AdaptadorTelaPrincipal adapter = new AdaptadorTelaPrincipal(requireContext(), listaMatchVagaList);
+
+        // Ação ao clicar em qualquer card
+        adapter.setOnItemClickListener(vaga -> {
+            Toast.makeText(getActivity(), "Clicou em: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
+            // Exemplo: abrir outra tela com os dados
+            // Intent intent = new Intent(getActivity(), DetalheVagaActivity.class);
+            // intent.putExtra("vaga", vaga);
+            // startActivity(intent);
+        });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
         recyclerView.setHasFixedSize(true);
@@ -111,27 +124,24 @@ public class Modelo_Match_Vaga extends Fragment {
         return view;
     }
 
-    // Função para redirecionar para a tela de Login de Candidato
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);
         startActivity(intent);
-        getActivity().finish(); // Fecha a tela atual, se desejar
+        getActivity().finish();
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        // Substitui o comportamento do botão de voltar
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (idDrawer.isDrawerOpen(GravityCompat.START)) {
-                    idDrawer.closeDrawer(GravityCompat.START); // Fecha o Drawer
+                    idDrawer.closeDrawer(GravityCompat.START);
                 } else {
-                    requireActivity().onBackPressed(); // Chama o comportamento padrão
+                    requireActivity().onBackPressed();
                 }
             }
         });
     }
 }
-

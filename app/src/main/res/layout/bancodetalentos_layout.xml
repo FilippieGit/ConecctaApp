@@ -20,16 +20,20 @@
         <!-- App Bar (include) -->
         <include
             android:id="@+id/app_bar_main"
-            layout="@layout/curriculos_app_bar_layout"
+            layout="@layout/bancodetalentos_app_bar_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
+            android:id="@+id/idRecLista"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_margin="8dp"
+            android:clipToPadding="false"
+            android:scrollbars="vertical"/>
+
     </LinearLayout>
 
     <!-- MENU LATERAL (Navigation Drawer) -->
@@ -41,4 +45,5 @@
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_main"
         app:menu="@menu/menu_nav_drawer" />
+
 </androidx.drawerlayout.widget.DrawerLayout>
