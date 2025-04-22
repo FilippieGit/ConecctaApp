@@ -142,7 +142,6 @@ public class ModeloTelaPrincipalActivity extends Fragment {
         }
     }
 
-
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);
         startActivity(intent);
