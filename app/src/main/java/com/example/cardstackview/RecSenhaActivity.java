@@ -2,7 +2,6 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -13,58 +12,61 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+
 public class RecSenhaActivity extends AppCompatActivity {
+
     Button btnEsqSenha, btnCriarContEsqSenha;
     ImageView imgEsqSenhabtnVoltar;
+    TextInputEditText txtEmailRecSenha;
+
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.rec_senha_layout);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
+        mAuth = FirebaseAuth.getInstance();
 
-        //Mostra um aviso na tela
-
+        txtEmailRecSenha = findViewById(R.id.txtNome); // Este campo é o e-mail
         btnEsqSenha = findViewById(R.id.btnEsqSenha);
-
-        btnEsqSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(RecSenhaActivity.this, "Cheque o e-mail que lhe enviamos.", Toast.LENGTH_SHORT).show();
-                finish(); // Isso volta para a tela anterior (ex: LoginActivity)
-            }
-        });
-
-        //Função de voltar
-
         imgEsqSenhabtnVoltar = findViewById(R.id.imgEsqSenhabtnVoltar);
-
-        imgEsqSenhabtnVoltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                finish(); // Apenas volta para a tela anterior
-            }
-        });
-
         btnCriarContEsqSenha = findViewById(R.id.btnCriarContEsqSenha);
-        btnCriarContEsqSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
 
-                startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
-                finish();
+        btnEsqSenha.setOnClickListener(view -> {
+            String email = txtEmailRecSenha.getText().toString().trim();
 
+            if (email.isEmpty()) {
+                Toast.makeText(this, "Por favor, digite seu e-mail.", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            mAuth.sendPasswordResetEmail(email)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(this, "" +
+                                    "Verifique seu e-mail para redefinir a senha.", Toast.LENGTH_LONG).show();
+                            finish(); // volta para a tela anterior
+                        } else {
+                            Toast.makeText(this, "Erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
 
+        imgEsqSenhabtnVoltar.setOnClickListener(view -> finish());
 
-
-
+        btnCriarContEsqSenha.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
+            finish();
+        });
     }
 }

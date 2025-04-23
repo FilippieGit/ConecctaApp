@@ -1,10 +1,10 @@
 package com.example.cardstackview;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -30,16 +30,15 @@ public class LoginPessoaFisica extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.login_pessoa_fisica_layoyt);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Firebase Auth
         mAuth = FirebaseAuth.getInstance();
 
-        // Inicializando os elementos da interface
         btnPessoaLoginEntrar = findViewById(R.id.btnPessoaLoginEntrar);
         btnPessoaLoginEsqSenha = findViewById(R.id.btnPessoaLoginEsqSenha);
         btnPessoaLoginCriarConta = findViewById(R.id.btnPessoaLoginCriarConta);
@@ -49,13 +48,11 @@ public class LoginPessoaFisica extends AppCompatActivity {
 
         imgLoginPbtnVoltar = findViewById(R.id.imgLoginPbtnVoltar);
 
-        // Botão voltar
         imgLoginPbtnVoltar.setOnClickListener(view -> {
             startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
             finish();
         });
 
-        // Botão entrar
         btnPessoaLoginEntrar.setOnClickListener(view -> {
             String email = txtPessoaLoginEmail.getText().toString().trim();
             String password = txtPessoaLoginSenha.getText().toString().trim();
@@ -68,21 +65,24 @@ public class LoginPessoaFisica extends AppCompatActivity {
             mAuth.signInWithEmailAndPassword(email, password)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(getApplicationContext(), "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                            finish();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null && user.isEmailVerified()) {
+                                Toast.makeText(getApplicationContext(), "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Verifique seu e-mail antes de entrar.", Toast.LENGTH_LONG).show();
+                            }
                         } else {
                             Toast.makeText(getApplicationContext(), "Erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
         });
 
-        // Botão esqueci a senha
         btnPessoaLoginEsqSenha.setOnClickListener(view -> {
             startActivity(new Intent(getApplicationContext(), RecSenhaActivity.class));
         });
 
-        // Botão criar conta
         btnPessoaLoginCriarConta.setOnClickListener(view -> {
             startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
             finish();
