@@ -8,10 +8,9 @@
     <item
         android:id="@+id/nav_home"
         android:icon="@drawable/logopng"
-        android:title="Home"
-        />
+        android:title="Home" />
     <item
         android:id="@+id/nav_profile"
-        android:icon="@drawable/baseline_person"
+        android:icon="@drawable/perfil"
         android:title="Perfil" />
 </menu>

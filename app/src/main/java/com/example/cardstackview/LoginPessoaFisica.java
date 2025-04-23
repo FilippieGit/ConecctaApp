@@ -1,5 +1,7 @@
 package com.example.cardstackview;
 
+import com.google.firebase.auth.FirebaseAuth;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -21,6 +23,8 @@ public class LoginPessoaFisica extends AppCompatActivity {
     TextInputEditText txtPessoaLoginEmail, txtPessoaLoginSenha;
     ImageView imgLoginPbtnVoltar;
 
+    FirebaseAuth mAuth;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,8 +36,10 @@ public class LoginPessoaFisica extends AppCompatActivity {
             return insets;
         });
 
-        //Apresentando as variáveis do java para o xml
+        // Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
 
+        // Inicializando os elementos da interface
         btnPessoaLoginEntrar = findViewById(R.id.btnPessoaLoginEntrar);
         btnPessoaLoginEsqSenha = findViewById(R.id.btnPessoaLoginEsqSenha);
         btnPessoaLoginCriarConta = findViewById(R.id.btnPessoaLoginCriarConta);
@@ -41,65 +47,45 @@ public class LoginPessoaFisica extends AppCompatActivity {
         txtPessoaLoginEmail = findViewById(R.id.txtPessoaLoginEmail);
         txtPessoaLoginSenha = findViewById(R.id.txtPessoaLoginSenha);
 
-        //Função de voltar
-
         imgLoginPbtnVoltar = findViewById(R.id.imgLoginPbtnVoltar);
 
-        imgLoginPbtnVoltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
-                finish(); // Apenas volta para a tela anterior
-            }
+        // Botão voltar
+        imgLoginPbtnVoltar.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
+            finish();
         });
 
-        //Verificar a senha e o e-mail
+        // Botão entrar
+        btnPessoaLoginEntrar.setOnClickListener(view -> {
+            String email = txtPessoaLoginEmail.getText().toString().trim();
+            String password = txtPessoaLoginSenha.getText().toString().trim();
 
-
-        btnPessoaLoginEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email, password;
-
-                email = txtPessoaLoginEmail.getText().toString().trim();
-                password = txtPessoaLoginSenha.getText().toString().trim();
-
-                if (email.equals("etecia") && password.equals("etecia")) {
-                    startActivity(new Intent(getApplicationContext(),
-                            MainActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Usuários ou senha inválidos",
-                            Toast.LENGTH_SHORT).show();
-                }
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            Toast.makeText(getApplicationContext(), "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                            finish();
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
 
-        //Leva do "Login" para o "Esqueci a senha"
-
-
-        btnPessoaLoginEsqSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(getApplicationContext(), RecSenhaActivity.class));
-
-            }
+        // Botão esqueci a senha
+        btnPessoaLoginEsqSenha.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), RecSenhaActivity.class));
         });
 
-        //Leva do "Login" para o "Cadastrar"
-
-        btnPessoaLoginCriarConta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
-                finish();
-
-            }
+        // Botão criar conta
+        btnPessoaLoginCriarConta.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
+            finish();
         });
-
-
     }
 }
