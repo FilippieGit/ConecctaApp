@@ -25,7 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModeloTelaPrincipalActivity extends Fragment {
+public class ModeloTelaPrincipalFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private List<MatchVaga> listaMatchVagaList;
@@ -34,7 +34,7 @@ public class ModeloTelaPrincipalActivity extends Fragment {
     NavigationView idNavView;
     private AdaptadorTelaPrincipal adapter;
 
-    public ModeloTelaPrincipalActivity() {
+    public ModeloTelaPrincipalFragment() {
         // Construtor vazio obrigatório
     }
 

@@ -12,6 +12,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 public class CadastroActivity extends AppCompatActivity {
 
@@ -41,9 +42,17 @@ public class CadastroActivity extends AppCompatActivity {
             mAuth.createUserWithEmailAndPassword(email, senha)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
-                            Toast.makeText(this, "Usuário cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
-                            // startActivity(new Intent(this, TelaPrincipalActivity.class));
-                            // finish();
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                user.sendEmailVerification()
+                                        .addOnCompleteListener(verifyTask -> {
+                                            if (verifyTask.isSuccessful()) {
+                                                Toast.makeText(this, "Cadastro realizado! Verifique seu e-mail para ativar a conta.", Toast.LENGTH_LONG).show();
+                                            } else {
+                                                Toast.makeText(this, "Erro ao enviar e-mail de verificação: " + verifyTask.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                            }
+                                        });
+                            }
                         } else {
                             Toast.makeText(this, "Erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }

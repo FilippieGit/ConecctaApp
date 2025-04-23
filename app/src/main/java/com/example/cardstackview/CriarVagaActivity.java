@@ -48,7 +48,7 @@ public class CriarVagaActivity extends AppCompatActivity {
                 listaVagas.add(novaVaga); // Adiciona a vaga à lista
 
                 // Criando o Intent para abrir a TelaPrincipalActivity
-                Intent intent = new Intent(CriarVagaActivity.this, ModeloTelaPrincipalActivity.class);
+                Intent intent = new Intent(CriarVagaActivity.this, ModeloTelaPrincipalFragment.class);
                 intent.putExtra("vagas", listaVagas); // Passa a lista de vagas para a tela principal
 
                 // Enviando os dados e abrindo a TelaPrincipalActivity

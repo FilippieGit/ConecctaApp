@@ -1,3 +1,4 @@
+
 package com.example.cardstackview;
 
 import android.content.Context;
@@ -73,4 +74,3 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
         }
     }
 }
-

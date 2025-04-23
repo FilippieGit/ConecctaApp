@@ -75,6 +75,7 @@
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
+            app:startIconDrawable="@drawable/baseline_lock"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText

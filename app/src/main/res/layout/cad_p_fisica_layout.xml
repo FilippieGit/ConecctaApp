@@ -6,162 +6,143 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/TEXT"
-
-    android:orientation="vertical">
-
-
-
-
+    android:orientation="vertical"
+    tools:context=".CadastroActivity">
 
     <ImageView
-        android:id="@+id/imgEsqSenhabtnVoltar"
+        android:id="@+id/imgVoltarCadastro"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/baseline_arrow_back" />
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="30dp"
-        android:layout_marginRight="30dp"
-        android:orientation="vertical"
-
-        >
-
+        android:layout_marginHorizontal="30dp"
+        android:orientation="vertical">
 
         <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="0dp"
-            android:foreground="#007DA8C5"
+            android:layout_marginTop="30dp"
             android:src="@drawable/logo" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:layout_marginBottom="10dp"
+            android:layout_marginTop="10dp"
             android:fontFamily="@font/font"
             android:text="ConecctaPersonal"
             android:textColor="@color/cinza"
-            android:textSize="20dp" />
+            android:textSize="20sp" />
 
+        <!-- Email -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
+            android:layout_marginTop="20dp"
+            android:hint="E-mail"
+            app:startIconDrawable="@drawable/baseline_email"
+            app:boxCornerRadiusTopStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/font"
-                android:hint="E-mail"
                 android:inputType="textEmailAddress"
                 android:maxLength="50"
-                android:paddingLeft="10sp"
-                android:paddingRight="10sp"
                 android:textColor="@color/cinza"
-                android:textSize="20sp" />
-
-
+                android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Nome -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Nome"
+            app:startIconDrawable="@drawable/baseline_person"
+            app:boxCornerRadiusTopStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtLoginSenha"
+                android:id="@+id/edtNome"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
-
                 android:fontFamily="@font/font"
-                android:hint="Nome"
-                android:inputType="textPassword"
-                android:maxLength="12"
-                android:paddingLeft="10sp"
-                android:paddingRight="10sp"
+                android:inputType="textPersonName"
+                android:maxLength="50"
                 android:textColor="@color/cinza"
-                android:textSize="20sp" />
-
+                android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Cidade -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Cidade"
+            app:startIconDrawable="@drawable/baseline_location_city"
+            app:boxCornerRadiusTopStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtCidade"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/font"
-                android:hint="Cidade"
-                android:inputType="textPassword"
-                android:maxLength="12"
-                android:paddingLeft="10sp"
-                android:paddingRight="10sp"
+                android:inputType="textCapWords"
+                android:maxLength="50"
                 android:textColor="@color/cinza"
-                android:textSize="20sp" />
-
+                android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
+        <!-- Senha -->
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
+            android:layout_marginTop="10dp"
+            android:hint="Senha"
+            app:startIconDrawable="@drawable/baseline_lock"
+            app:endIconMode="password_toggle"
+            app:boxCornerRadiusTopStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font"
-                android:hint="Insira sua senha"
                 android:inputType="textPassword"
-                android:maxLength="12"
-                android:paddingLeft="10sp"
-                android:paddingRight="10sp"
+                android:maxLength="20"
                 android:textColor="@color/cinza"
-                android:textSize="20sp" />
-
+                android:textSize="16sp" />
         </com.google.android.material.textfield.TextInputLayout>
 
-
+        <!-- Botão Cadastrar -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnCadastrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="20dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginEnd="20dp"
+            android:layout_marginTop="30dp"
             android:backgroundTint="@color/diferencial"
             android:fontFamily="@font/font"
-            android:padding="15sp"
             android:text="Cadastrar"
-            android:textColor="#FFFFFF"
-            android:textSize="20sp" />
-
-
+            android:textColor="@android:color/white"
+            android:textSize="18sp" />
     </LinearLayout>
-
 </LinearLayout>

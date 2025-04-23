@@ -25,7 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModeloCurrAleatActivity extends Fragment {
+public class ModeloCurrAleatFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private List<ListaVaga> listaVagaList;
@@ -33,7 +33,7 @@ public class ModeloCurrAleatActivity extends Fragment {
     DrawerLayout idDrawer;
     NavigationView idNavView;
 
-    public ModeloCurrAleatActivity() {
+    public ModeloCurrAleatFragment() {
         // Construtor público vazio obrigatório
     }
 
