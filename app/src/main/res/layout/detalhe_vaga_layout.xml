@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/TEXT"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center_horizontal">
+
+        <ImageView
+            android:id="@+id/imageLogoDetalhe"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp"
+            android:scaleType="centerCrop"
+            android:src="@drawable/logo"
+            android:contentDescription="Logo da empresa" />
+
+        <TextView
+            android:id="@+id/textTituloDetalhe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/font"
+            android:text="Título da Vaga"
+            android:textColor="@color/cinza"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textLocalizacaoDetalhe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:fontFamily="@font/font"
+            android:text="Localização: Cidade - UF"
+            android:textColor="@color/cinza"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textSalarioDetalhe"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/font"
+            android:text="Salário: R$ 3.000,00"
+            android:textColor="@color/cinza"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textDescricaoDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="@font/font"
+            android:text="Descrição da vaga aparecerá aqui."
+            android:textColor="@color/cinza"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/textRequisitosDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:fontFamily="@font/font"
+            android:text="Requisitos: experiência, graduação, etc."
+            android:textColor="@color/cinza"
+            android:textSize="16sp" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnCandidatar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:backgroundTint="@color/diferencial"
+            android:fontFamily="@font/font"
+            android:text="Candidatar-se"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            app:cornerRadius="16dp" />
+
+    </LinearLayout>
+</ScrollView>

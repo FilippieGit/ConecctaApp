@@ -6,19 +6,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/TEXT"
-    android:orientation="vertical"
-    >
 
+    android:orientation="vertical">
+
+
+
+
+
+    <ImageView
+        android:id="@+id/imgEsqSenhabtnVoltar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/baseline_arrow_back" />
 
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
         android:orientation="vertical"
 
         >
+
 
         <ImageView
             android:layout_width="200dp"
@@ -31,12 +43,12 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="ConecctaPersonal"
             android:layout_gravity="center"
-            android:fontFamily="@font/font"
             android:layout_marginBottom="10dp"
-            android:textSize="20dp"
-            />
+            android:fontFamily="@font/font"
+            android:text="ConecctaPersonal"
+            android:textColor="@color/cinza"
+            android:textSize="20dp" />
 
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
@@ -47,18 +59,17 @@
             app:boxCornerRadiusTopStart="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtLoginEmail"
-                android:layout_marginBottom="10dp"
+                android:id="@+id/edtEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/font"
                 android:hint="E-mail"
                 android:inputType="textEmailAddress"
                 android:maxLength="50"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
+                android:textColor="@color/cinza"
                 android:textSize="20sp" />
 
 
@@ -73,19 +84,18 @@
             app:boxCornerRadiusTopStart="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_marginBottom="10dp"
                 android:id="@+id/edtLoginSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20sp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
+
                 android:fontFamily="@font/font"
                 android:hint="Nome"
                 android:inputType="textPassword"
                 android:maxLength="12"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
+                android:textColor="@color/cinza"
                 android:textSize="20sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -99,21 +109,20 @@
             app:boxCornerRadiusTopStart="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginTop="20sp"
-                android:layout_marginEnd="20dp"
+                android:layout_marginBottom="10dp"
                 android:fontFamily="@font/font"
                 android:hint="Cidade"
                 android:inputType="textPassword"
                 android:maxLength="12"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
+                android:textColor="@color/cinza"
                 android:textSize="20sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.textfield.TextInputLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -123,24 +132,23 @@
             app:boxCornerRadiusTopStart="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-
+                android:id="@+id/edtSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="20dp"
-                android:layout_marginEnd="20dp"
                 android:fontFamily="@font/font"
                 android:hint="Insira sua senha"
                 android:inputType="textPassword"
                 android:maxLength="12"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
+                android:textColor="@color/cinza"
                 android:textSize="20sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
 
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnLoginEntrar"
+            android:id="@+id/btnCadastrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
@@ -150,13 +158,8 @@
             android:fontFamily="@font/font"
             android:padding="15sp"
             android:text="Cadastrar"
+            android:textColor="#FFFFFF"
             android:textSize="20sp" />
-
-
-
-
-
-
 
 
     </LinearLayout>

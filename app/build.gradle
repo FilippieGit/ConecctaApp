@@ -1,6 +1,13 @@
 plugins {
     alias(libs.plugins.android.application)
+
+    id 'com.google.gms.google-services' // Adiciona o plugin do Firebase aqui
 }
+
+
+
+
+
 
 android {
     namespace 'com.example.cardstackview'
@@ -31,8 +38,9 @@ android {
     }
 }
 
-dependencies {
 
+dependencies {
+    implementation 'com.google.firebase:firebase-analytics:22.4.0' // Exemplo: Firebase Analytics
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
@@ -42,6 +50,8 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation 'com.google.firebase:firebase-auth:23.2.0'
+
 
     //biblioteca do cardStack
 

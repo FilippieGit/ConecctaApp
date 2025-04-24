@@ -1,9 +1,12 @@
 package com.example.cardstackview;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -18,19 +21,23 @@ public class LoginPessoaFisica extends AppCompatActivity {
 
     Button btnPessoaLoginEntrar, btnPessoaLoginCriarConta, btnPessoaLoginEsqSenha;
     TextInputEditText txtPessoaLoginEmail, txtPessoaLoginSenha;
+    ImageView imgLoginPbtnVoltar;
+
+    FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.login_pessoa_fisica_layoyt);
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        //Apresentando as variáveis do java para o xml
+        mAuth = FirebaseAuth.getInstance();
 
         btnPessoaLoginEntrar = findViewById(R.id.btnPessoaLoginEntrar);
         btnPessoaLoginEsqSenha = findViewById(R.id.btnPessoaLoginEsqSenha);
@@ -39,53 +46,46 @@ public class LoginPessoaFisica extends AppCompatActivity {
         txtPessoaLoginEmail = findViewById(R.id.txtPessoaLoginEmail);
         txtPessoaLoginSenha = findViewById(R.id.txtPessoaLoginSenha);
 
-        //Verificar a senha e o e-mail
+        imgLoginPbtnVoltar = findViewById(R.id.imgLoginPbtnVoltar);
 
-
-        btnPessoaLoginEntrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email, password;
-
-                email = txtPessoaLoginEmail.getText().toString().trim();
-                password = txtPessoaLoginSenha.getText().toString().trim();
-
-                if (email.equals("etecia") && password.equals("etecia")) {
-                    startActivity(new Intent(getApplicationContext(),
-                            MainActivity.class));
-                    finish();
-                } else {
-                    Toast.makeText(getApplicationContext(),
-                            "Usuários ou senha inválidos",
-                            Toast.LENGTH_SHORT).show();
-                }
-            }
+        imgLoginPbtnVoltar.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
+            finish();
         });
 
-        //Leva do "Login" para o "Esqueci a senha"
+        btnPessoaLoginEntrar.setOnClickListener(view -> {
+            String email = txtPessoaLoginEmail.getText().toString().trim();
+            String password = txtPessoaLoginSenha.getText().toString().trim();
 
-
-        btnPessoaLoginEsqSenha.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(getApplicationContext(), RecSenhaActivity.class));
-
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null && user.isEmailVerified()) {
+                                Toast.makeText(getApplicationContext(), "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                                startActivity(new Intent(getApplicationContext(), MainActivity.class));
+                                finish();
+                            } else {
+                                Toast.makeText(getApplicationContext(), "Verifique seu e-mail antes de entrar.", Toast.LENGTH_LONG).show();
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
 
-        //Leva do "Login" para o "Cadastrar"
-
-        btnPessoaLoginCriarConta.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
-                finish();
-
-            }
+        btnPessoaLoginEsqSenha.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), RecSenhaActivity.class));
         });
 
-
+        btnPessoaLoginCriarConta.setOnClickListener(view -> {
+            startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
+            finish();
+        });
     }
 }

@@ -25,7 +25,7 @@ public class AdapterVaga extends RecyclerView.Adapter<AdapterVaga.ViewHolder> {
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.modelo_vaga, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.telaprincipal_modelo_vaga_layout, parent, false);
         return new ViewHolder(view);
     }
 

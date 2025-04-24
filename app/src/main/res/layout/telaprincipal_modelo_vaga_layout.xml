@@ -1,14 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:padding="16dp">
-
-    <Button
-        android:id="@+id/buttondaempresa"
-        android:layout_width="match_parent"
-        android:layout_height="120dp"
-        android:background="@drawable/button_shape" />
+    android:layout_height="120dp"
+    android:padding="16dp"
+    android:background="@drawable/button_shape">
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/idlogodaempresa"
@@ -26,7 +21,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="20dp"
         android:fontFamily="@font/font"
-        android:text="Nome da Vaga"
+        android:text="Pessoa Aleatória"
         android:textSize="20sp" />
 
     <TextView
@@ -40,13 +35,14 @@
         android:text="Descrição da vaga" />
 
     <TextView
+        android:id="@+id/idsalario"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/idinfoempresa"
         android:layout_toEndOf="@id/idlogodaempresa"
         android:layout_marginStart="16dp"
         android:fontFamily="@font/font"
-        android:text="Salario" />
+        android:text="Salário" />
 
     <ImageView
         android:id="@+id/arrow"

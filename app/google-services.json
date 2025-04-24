@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "43681756265",
+    "project_id": "conecctaapp",
+    "storage_bucket": "conecctaapp.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43681756265:android:d9f04672a5721abfb8def8",
+        "android_client_info": {
+          "package_name": "com.example.cardstackview"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6aEKgPFYk_SykWkjjEvvHKKDTgZfdKt4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

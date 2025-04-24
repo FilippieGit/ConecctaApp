@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -19,6 +20,8 @@ public class LoginPessoaJuridica extends AppCompatActivity {
     Button btnempresaentrar, btncadastrar, btnesquecisenha;
 
     TextInputEditText txtPessoaEmpresaEmail, txtPessoaEmpresaSenha;
+
+    ImageView imgLoginJbtnVoltar;
 
 
     @Override
@@ -39,10 +42,17 @@ public class LoginPessoaJuridica extends AppCompatActivity {
         txtPessoaEmpresaEmail = findViewById(R.id.txtPessoaEmpresaEmail);
         txtPessoaEmpresaSenha = findViewById(R.id.txtPessoaEmpresaSenha);
 
+        //Função de voltar
 
+        imgLoginJbtnVoltar = findViewById(R.id.imgLoginJbtnVoltar);
 
-
-
+        imgLoginJbtnVoltar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
+                finish(); // Apenas volta para a tela anterior
+            }
+        });
 
         btnempresaentrar.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +65,7 @@ public class LoginPessoaJuridica extends AppCompatActivity {
                 if (email.equals("empresa")&& senha.equals("empresa")){
 
                     startActivity(new Intent(getApplicationContext(),
-                            teste.class));
+                            TelaEmpresaActivity.class));
                     finish();
 
                 }else {
@@ -63,11 +73,6 @@ public class LoginPessoaJuridica extends AppCompatActivity {
                             "Usuários ou senha inválidos",
                             Toast.LENGTH_SHORT).show();
                 }
-
-
-
-
-
             }
         });
 

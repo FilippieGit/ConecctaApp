@@ -55,7 +55,7 @@ public class ConfigActivity extends AppCompatActivity {
                 } else if (id == R.id.idConfigItemMenu) {
                     Toast.makeText(ConfigActivity.this, "Você já está em Configurações", Toast.LENGTH_SHORT).show();
                 } else if (id == R.id.idAjudaItemMenu) {
-                    Intent intent = new Intent(ConfigActivity.this, TelaFeedBack.class);
+                    Intent intent = new Intent(ConfigActivity.this, FeedbackActivity.class);
                     startActivity(intent);
                 } else if (id == R.id.idSobreItemMenu) {
                     Intent intent = new Intent(ConfigActivity.this, SobreNosActivity.class);

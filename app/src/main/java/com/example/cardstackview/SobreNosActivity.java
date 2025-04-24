@@ -55,7 +55,7 @@ public class SobreNosActivity extends AppCompatActivity {
                     Intent intent = new Intent(SobreNosActivity.this, ConfigActivity.class);
                     startActivity(intent);
                 } else if (id == R.id.idAjudaItemMenu) {
-                    Intent intent = new Intent(SobreNosActivity.this, TelaFeedBack.class);
+                    Intent intent = new Intent(SobreNosActivity.this, FeedbackActivity.class);
                     startActivity(intent);
                 } else if (id == R.id.idSobreItemMenu) {
                     Toast.makeText(SobreNosActivity.this, "Você já está em Sobre Nós", Toast.LENGTH_SHORT).show();
