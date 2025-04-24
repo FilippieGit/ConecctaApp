@@ -2,7 +2,6 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -27,6 +26,7 @@ import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.StackFrom;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -49,77 +49,61 @@ public class MainActivity extends AppCompatActivity {
 
         // 1) Monta lista de cards
         List<CardActivity> cards = new ArrayList<>();
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null),
-                "texto 1"
-        ));
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null),
-                "texto 2"
-        ));
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null),
-                "texto 3"
-        ));
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null),
-                "texto 1"
-        ));
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null),
-                "texto 1"
-        ));
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null),
-                "texto 1"
-        ));
-        cards.add(new CardActivity(
-                ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null),
-                "texto 1"
-        ));
-        // … mais cards …
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+
         CardAdapter adapter = new CardAdapter(cards);
 
-        // 2) Define listener de swipe para registrar aceitos/negados
+        // 2) Listener de swipe
         CardStackListener cardStackListener = new CardStackListener() {
             @Override
             public void onCardSwiped(Direction direction) {
                 int pos = layoutManager.getTopPosition() - 1;
                 if (pos >= 0 && pos < cards.size()) {
                     String texto = cards.get(pos).getContent();
+
                     if (direction == Direction.Right) {
                         aceitos.add(texto);
                         Toast.makeText(MainActivity.this, "Aceito: " + texto, Toast.LENGTH_SHORT).show();
                     } else if (direction == Direction.Left) {
                         negados.add(texto);
                         Toast.makeText(MainActivity.this, "Negado: " + texto, Toast.LENGTH_SHORT).show();
+                    } else if (direction == Direction.Top) {
+                        // Não faz nada — apenas avança para o próximo card
                     }
                 }
             }
-            @Override public void onCardDragging(Direction dir, float ratio) {}
+
+            @Override public void onCardDragging(Direction direction, float ratio) {}
             @Override public void onCardRewound() {}
             @Override public void onCardCanceled() {}
             @Override public void onCardAppeared(View view, int position) {}
             @Override public void onCardDisappeared(View view, int position) {}
         };
 
-        // 3) Configura o CardStackLayoutManager
+        // 3) Configura o layoutManager
         layoutManager = new CardStackLayoutManager(this, cardStackListener);
         layoutManager.setStackFrom(StackFrom.None);
         layoutManager.setVisibleCount(3);
+        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right, Direction.Top));
 
-        // 4) Associa ao CardStackView
+        // 4) Aplica no CardStackView
         binding.cardStack.setLayoutManager(layoutManager);
         binding.cardStack.setAdapter(adapter);
 
-        // 5) Botões de swipe programático (ícone X e coração)
-        ImageButton btnReject = findViewById(R.id.btnReject); // X
-        ImageButton btnLike   = findViewById(R.id.btnLike);   // Coração
+        // 5) Botões programáticos
+        ImageButton btnReject = findViewById(R.id.btnReject);
+        ImageButton btnLike = findViewById(R.id.btnLike);
 
         btnLike.setOnClickListener(v -> {
             SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
                     .setDirection(Direction.Right)
-                    .setDuration(400) // duração em milissegundos
+                    .setDuration(400)
                     .build();
             layoutManager.setSwipeAnimationSetting(setting);
             binding.cardStack.swipe();
@@ -128,24 +112,23 @@ public class MainActivity extends AppCompatActivity {
         btnReject.setOnClickListener(v -> {
             SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
                     .setDirection(Direction.Left)
-                    .setDuration(400) // duração em milissegundos
+                    .setDuration(400)
                     .build();
             layoutManager.setSwipeAnimationSetting(setting);
             binding.cardStack.swipe();
         });
 
-
-        // 6) Edge-to-Edge padding
+        // 6) Padding Edge-to-Edge
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets sys = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(sys.left, sys.top, sys.right, sys.bottom);
             return insets;
         });
 
-        // 7) Drawer + NavigationView
+        // 7) Drawer
         idTopAppBar = findViewById(R.id.idMainTopAppBar);
-        idDrawer    = findViewById(R.id.idDrawer);
-        idNavView   = findViewById(R.id.idNavView);
+        idDrawer = findViewById(R.id.idDrawer);
+        idNavView = findViewById(R.id.idNavView);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, idDrawer, idTopAppBar,
@@ -156,11 +139,12 @@ public class MainActivity extends AppCompatActivity {
 
         idNavView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
-            if (id == R.id.idLoginItemMenu)      goToLoginCandidato();
-            else if (id == R.id.idVagasItemMenu) Toast.makeText(this, "Já está em Vagas", Toast.LENGTH_SHORT).show();
-            else if (id == R.id.idConfigItemMenu)   startActivity(new Intent(this, ConfigActivity.class));
-            else if (id == R.id.idAjudaItemMenu)    startActivity(new Intent(this, FeedbackActivity.class));
-            else if (id == R.id.idSobreItemMenu)    startActivity(new Intent(this, SobreNosActivity.class));
+            if (id == R.id.idLoginItemMenu) goToLoginCandidato();
+            else if (id == R.id.idVagasItemMenu)
+                Toast.makeText(this, "Já está em Vagas", Toast.LENGTH_SHORT).show();
+            else if (id == R.id.idConfigItemMenu) startActivity(new Intent(this, ConfigActivity.class));
+            else if (id == R.id.idAjudaItemMenu) startActivity(new Intent(this, FeedbackActivity.class));
+            else if (id == R.id.idSobreItemMenu) startActivity(new Intent(this, SobreNosActivity.class));
             idDrawer.closeDrawers();
             return true;
         });
@@ -189,4 +173,3 @@ public class MainActivity extends AppCompatActivity {
         finish();
     }
 }
-
