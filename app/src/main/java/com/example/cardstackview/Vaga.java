@@ -7,6 +7,11 @@ import java.io.Serializable;
 
 public class Vaga implements Serializable {
 
+    private String id; // ou int id
+
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
+
     private String titulo;
     private String descricao;
     private String localizacao;
