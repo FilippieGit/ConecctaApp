@@ -90,18 +90,20 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                 .setTitle("Confirmar Exclusão")
                 .setMessage("Tem certeza que deseja excluir esta vaga?")
                 .setPositiveButton("Excluir", (dialog, which) -> {
-                    enviarResultadoExclusao();
+                    enviarResultadoExclusao(); // Chama o método que envia o resultado
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
     }
 
+
     private void enviarResultadoExclusao() {
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(Constants.EXTRA_VAGA_EXCLUIDA, vaga);
-        setResult(Activity.RESULT_FIRST_USER, resultIntent);
+        resultIntent.putExtra("limparCampos", true); // Adicione esta linha
+        setResult(Activity.RESULT_OK, resultIntent); // Use RESULT_OK para indicar que a ação foi realizada
         finish();
     }
+
 
 
     @Override

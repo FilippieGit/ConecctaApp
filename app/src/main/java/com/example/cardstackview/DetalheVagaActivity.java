@@ -3,13 +3,13 @@ package com.example.cardstackview;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.example.cardstackview.R;
-import com.example.cardstackview.Vaga;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class DetalheVagaActivity extends AppCompatActivity {
 
@@ -18,6 +18,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
     private TextView textSalarioDetalhe, textRequisitosDetalhe;
     private TextView textNivelExperienciaDetalhe, textTipoContratoDetalhe, textAreaAtuacaoDetalhe;
     private Vaga vaga;
+    private ImageButton btnVoltarDetalhe; // Add this
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,6 +30,9 @@ public class DetalheVagaActivity extends AppCompatActivity {
 
         FloatingActionButton btnExcluir = findViewById(R.id.BtnDetalheExcluir);
         btnExcluir.setOnClickListener(v -> excluirVaga());
+
+        // Add listener for back button
+        btnVoltarDetalhe.setOnClickListener(v -> finish());
     }
 
     private void inicializarComponentes() {
@@ -41,6 +45,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
         textNivelExperienciaDetalhe = findViewById(R.id.textNivelExperienciaDetalhe);
         textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
         textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
+        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe); // Initialize it
     }
 
     private void exibirDetalhesVaga() {
