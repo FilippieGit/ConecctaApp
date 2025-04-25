@@ -28,8 +28,8 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.myViewHolder> 
     @Override
     public void onBindViewHolder(@NonNull CardAdapter.myViewHolder holder, int position) {
         CardActivity cardItem=cardList.get(position);
-        holder.binding.content.setText(cardItem.getContent());
-        holder.binding.image.setImageDrawable(cardItem.getImage());
+        //holder.binding.content.setText(cardItem.getContent());
+        //holder.binding.image.setImageDrawable(cardItem.getImage());
     }
 
     @Override
