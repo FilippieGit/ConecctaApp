@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="niveis_experiencia">
+        <item>Estagiário</item>
+        <item>Júnior</item>
+        <item>Pleno</item>
+        <item>Sênior</item>
+        <item>Especialista</item>
+    </string-array>
+
+    <string-array name="tipos_contrato">
+        <item>CLT</item>
+        <item>PJ</item>
+        <item>Freelancer</item>
+        <item>Estágio</item>
+        <item>Temporário</item>
+    </string-array>
+
+    <string-array name="areas_atuacao">
+        <item>Tecnologia da Informação</item>
+        <item>Engenharia</item>
+        <item>Marketing</item>
+        <item>Financeiro</item>
+        <item>Recursos Humanos</item>
+        <item>Vendas</item>
+        <item>Outras</item>
+    </string-array>
+</resources>

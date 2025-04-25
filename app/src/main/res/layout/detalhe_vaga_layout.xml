@@ -1,90 +1,202 @@
-<?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/TEXT"
-    android:padding="24dp">
+    android:background="@color/TEXT">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_horizontal">
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
 
         <ImageView
             android:id="@+id/imageLogoDetalhe"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="24dp"
+            android:layout_width="120dp"
+            android:layout_height="120dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="30dp"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="Logo da empresa"
             android:scaleType="centerCrop"
-            android:src="@drawable/logo"
-            android:contentDescription="Logo da empresa" />
+            android:src="@drawable/logo" />
 
         <TextView
             android:id="@+id/textTituloDetalhe"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_gravity="center"
+            android:layout_marginBottom="10dp"
             android:fontFamily="@font/font"
             android:text="Título da Vaga"
+            android:textAlignment="center"
             android:textColor="@color/cinza"
-            android:textSize="24sp"
-            android:textStyle="bold" />
+            android:textSize="22sp" />
+
+        <!-- Nível de Experiência -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/font"
+            android:text="Nível de Experiência:"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textNivelExperienciaDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/font"
+            android:text="Júnior"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <!-- Tipo de Contrato -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/font"
+            android:text="Tipo de Contrato:"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textTipoContratoDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/font"
+            android:text="CLT"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <!-- Área de Atuação -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/font"
+            android:text="Área de Atuação:"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textAreaAtuacaoDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/font"
+            android:text="Tecnologia da Informação"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textLocalizacaoDetalhe"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/font"
             android:text="Localização: Cidade - UF"
             android:textColor="@color/cinza"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textSalarioDetalhe"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/font"
             android:text="Salário: R$ 3.000,00"
             android:textColor="@color/cinza"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
+
+        <!-- Habilidades Desejáveis (Chips) -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/font"
+            android:text="Habilidades Desejáveis:"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <com.google.android.material.chip.ChipGroup
+            android:id="@+id/chipGroupHabilidadesDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            app:chipSpacing="8dp">
+            <!-- Adicione chips dinamicamente via código -->
+        </com.google.android.material.chip.ChipGroup>
 
         <TextView
             android:id="@+id/textDescricaoDetalhe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
             android:fontFamily="@font/font"
             android:text="Descrição da vaga aparecerá aqui."
             android:textColor="@color/cinza"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
         <TextView
             android:id="@+id/textRequisitosDetalhe"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="32dp"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp"
             android:fontFamily="@font/font"
             android:text="Requisitos: experiência, graduação, etc."
             android:textColor="@color/cinza"
-            android:textSize="16sp" />
+            android:textSize="14sp" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCandidatar"
+        <!-- Botões Publicar e Editar -->
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:backgroundTint="@color/diferencial"
-            android:fontFamily="@font/font"
-            android:text="Candidatar-se"
-            android:textColor="#FFFFFF"
-            android:textSize="18sp"
-            app:cornerRadius="16dp" />
+            android:gravity="center"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPublicar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="3dp"
+                android:backgroundTint="@color/diferencial"
+                android:fontFamily="@font/font"
+                android:text="Publicar"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:cornerRadius="8dp" /> <!-- Ajuste o valor para controlar o arredondamento -->
+
+            <ImageButton
+                android:id="@+id/btnEditar"
+                android:layout_width="48dp"
+                android:layout_height="42dp"
+                android:layout_margin="10dp"
+                android:background="@drawable/edit_button_background"
+                android:contentDescription="Editar"
+                android:src="@drawable/baseline_edit"
+                app:tint="@android:color/white" />
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
