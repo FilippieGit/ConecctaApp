@@ -127,10 +127,9 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     }
 
     private void abrirDetalhesVaga(Vaga vaga) {
-        Intent intent = new Intent(getContext(), DetalheVagaActivity.class);
+        Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
         intent.putExtra("vaga", vaga);
-        startActivityForResult(intent, 1);
-
+        startActivityForResult(intent, REQUEST_DETALHES_VAGA);
     }
 
     @Override
@@ -139,20 +138,21 @@ public class ModeloTelaPrincipalFragment extends Fragment {
 
         if (data == null) return;
 
-        if (requestCode == REQUEST_CRIAR_VAGA && resultCode == Activity.RESULT_OK) {
-            Vaga vaga = (Vaga) data.getSerializableExtra("vagaPublicada");
-            if (vaga != null) {
-                listaVagas.add(vaga);
-                adapter.notifyItemInserted(listaVagas.size() - 1);
-                Toast.makeText(getContext(), "Vaga publicada!", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_FIRST_USER) {
+        if (requestCode == REQUEST_DETALHES_VAGA && resultCode == Activity.RESULT_FIRST_USER) {
             Vaga vagaExcluida = (Vaga) data.getSerializableExtra("vagaExcluida");
             if (vagaExcluida != null) {
                 removerVaga(vagaExcluida);
             }
+            return;
+        }
+
+        if (resultCode != Activity.RESULT_OK) return;
+
+        Vaga vaga = (Vaga) data.getSerializableExtra("vagaPublicada");
+        if (requestCode == REQUEST_CRIAR_VAGA && vaga != null) {
+            listaVagas.add(vaga);
+            adapter.notifyItemInserted(listaVagas.size() - 1);
+            Toast.makeText(getContext(), "Vaga publicada!", Toast.LENGTH_SHORT).show();
         }
     }
 
