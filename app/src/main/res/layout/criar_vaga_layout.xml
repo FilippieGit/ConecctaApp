@@ -86,6 +86,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:minHeight="48dp"
             android:fontFamily="@font/font"
             android:textColor="@color/cinza"
             android:textSize="16sp" />
@@ -106,6 +107,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:minHeight="48dp"
             android:fontFamily="@font/font"
             android:textColor="@color/cinza"
             android:textSize="16sp" />
@@ -126,6 +128,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
+            android:minHeight="48dp"
             android:fontFamily="@font/font"
             android:textColor="@color/cinza"
             android:textSize="16sp" />
@@ -203,6 +206,7 @@
                 android:id="@+id/edtRequisitos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:minHeight="48dp"
                 android:fontFamily="@font/font"
                 android:textColor="@color/cinza"
                 android:textSize="18sp" />
@@ -216,7 +220,7 @@
             android:layout_margin="10dp"
             android:backgroundTint="@color/diferencial"
             android:fontFamily="@font/font"
-            android:text="@string/redefinir_senha"
+            android:text="Salvar"
             android:textColor="#FFFFFF"
             android:textSize="16sp" />
     </LinearLayout>

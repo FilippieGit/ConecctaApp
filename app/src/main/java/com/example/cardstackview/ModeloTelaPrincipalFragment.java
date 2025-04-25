@@ -28,6 +28,7 @@ import java.util.List;
 public class ModeloTelaPrincipalFragment extends Fragment {
 
     private static final int REQUEST_CRIAR_VAGA = 1001;
+    private static final int REQUEST_DETALHES_VAGA = 1002;
 
     private RecyclerView recyclerView;
     private List<Vaga> listaVagas;
@@ -38,7 +39,7 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     private NavigationView idNavView;
 
     public ModeloTelaPrincipalFragment() {
-// Construtor vazio obrigatório
+        // Construtor vazio obrigatório
     }
 
     @Override
@@ -47,20 +48,19 @@ public class ModeloTelaPrincipalFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.tela_principal_layout, container, false);
 
-
-// Evita sobreposição com a barra de status
+        // Evita sobreposição com a barra de status
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-// Inicializando os componentes
+        // Inicializando os componentes
         idTopAppBar = view.findViewById(R.id.idTelaPrincipalTopAppBar);
         idDrawer = view.findViewById(R.id.idDrawer);
         idNavView = view.findViewById(R.id.idNavView);
 
-// Configurando o Drawer com a Toolbar
+        // Configurando o Drawer com a Toolbar
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(),
                 idDrawer,
@@ -71,7 +71,7 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-// Itens do menu lateral
+        // Itens do menu lateral
         idNavView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -94,34 +94,29 @@ public class ModeloTelaPrincipalFragment extends Fragment {
             return true;
         });
 
-// Configurando o FAB para abrir a tela de criação de vaga
+        // Configurando o FAB para abrir a tela de criação de vaga
         View fab = view.findViewById(R.id.idAFAB);
         fab.setOnClickListener(v -> {
-// Abre a tela de criação de vaga
+            // Abre a tela de criação de vaga
             Intent intent = new Intent(getActivity(), CriarVagaActivity.class);
             startActivityForResult(intent, REQUEST_CRIAR_VAGA);
         });
 
-// RecyclerView e lista de vagas
+        // RecyclerView e lista de vagas
         recyclerView = view.findViewById(R.id.idRecLista);
         listaVagas = new ArrayList<>();
 
-// Exemplo inicial (opcional)
+        // Exemplo inicial (opcional)
         listaVagas.add(new Vaga("Desenvolvedor Android", "Desenvolver apps Android", "São Paulo", "5000", "Java, Kotlin"));
         listaVagas.add(new Vaga("Analista de Dados", "Análise de dados e BI", "Rio de Janeiro", "4500", "SQL, Power BI"));
 
         adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
 
-// Clique no item
+        // Clique no item
         adapter.setOnItemClickListener(vaga -> {
             Intent intent = new Intent(getActivity(), DetalheVagaActivity.class);
-            intent.putExtra("titulo", vaga.getTitulo());
-            intent.putExtra("descricao", vaga.getDescricao());
-            intent.putExtra("localizacao", vaga.getLocalizacao());
-            intent.putExtra("salario", vaga.getSalario());
-            intent.putExtra("requisitos", vaga.getRequisitos());
-// Se tiver imagem, pode passar também
-            startActivity(intent);
+            intent.putExtra("vaga", vaga);
+            startActivityForResult(intent, REQUEST_DETALHES_VAGA);
         });
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false));
@@ -131,21 +126,26 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         return view;
     }
 
-    // Recebe o resultado da CriarVagaActivity
+    // Recebe o resultado da CriarVagaActivity ou DetalheVagaActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == REQUEST_CRIAR_VAGA && resultCode == Activity.RESULT_OK) {
-            if (data != null && data.hasExtra("nova_vaga")) {
-                Vaga vagaRecebida = data.getParcelableExtra("nova_vaga");
-                if (vagaRecebida != null) {
-                    listaVagas.add(vagaRecebida);
+        if (requestCode == REQUEST_CRIAR_VAGA) {
+            if (resultCode == Activity.RESULT_OK) {
+                // Vaga foi criada/editada e está sendo publicada
+                Vaga vagaPublicada = (Vaga) data.getSerializableExtra("vagaPublicada");
+                if (vagaPublicada != null) {
+                    listaVagas.add(vagaPublicada);
                     adapter.notifyItemInserted(listaVagas.size() - 1);
-                    Toast.makeText(getContext(), "Vaga criada com sucesso!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
                 }
             }
+        } else if (requestCode == Activity.RESULT_FIRST_USER) {
+            // A tela de edição foi aberta, mas o usuário cancelou ou voltou
+            // Não é necessário fazer nada aqui
         }
     }
+
 
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);

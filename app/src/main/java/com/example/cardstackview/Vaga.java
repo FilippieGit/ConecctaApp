@@ -2,14 +2,25 @@ package com.example.cardstackview;
 
 import android.os.Parcel;
 import android.os.Parcelable;
+import java.io.Serializable;
 
-public class Vaga implements Parcelable {
+
+public class Vaga implements Serializable {
+
     private String titulo;
     private String descricao;
     private String localizacao;
     private String salario;
     private String requisitos;
+    private String nivelExperiencia;
+    private String tipoContrato;
+    private String areaAtuacao;
 
+    // Construtor padrão (sem argumentos)
+    public Vaga() {
+    }
+
+    // Construtor com 5 argumentos
     public Vaga(String titulo, String descricao, String localizacao, String salario, String requisitos) {
         this.titulo = titulo;
         this.descricao = descricao;
@@ -18,45 +29,80 @@ public class Vaga implements Parcelable {
         this.requisitos = requisitos;
     }
 
-    protected Vaga(Parcel in) {
-        titulo = in.readString();
-        descricao = in.readString();
-        localizacao = in.readString();
-        salario = in.readString();
-        requisitos = in.readString();
+    // Construtor com 8 argumentos
+    public Vaga(String titulo, String descricao, String localizacao, String salario, String requisitos, String nivelExperiencia, String tipoContrato, String areaAtuacao) {
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.localizacao = localizacao;
+        this.salario = salario;
+        this.requisitos = requisitos;
+        this.nivelExperiencia = nivelExperiencia;
+        this.tipoContrato = tipoContrato;
+        this.areaAtuacao = areaAtuacao;
     }
 
-    public static final Creator<Vaga> CREATOR = new Creator<Vaga>() {
-        @Override
-        public Vaga createFromParcel(Parcel in) {
-            return new Vaga(in);
-        }
-
-        @Override
-        public Vaga[] newArray(int size) {
-            return new Vaga[size];
-        }
-    };
-
-    @Override
-    public int describeContents() {
-        return 0;
+    // Getters e setters para os atributos
+    public String getTitulo() {
+        return titulo;
     }
 
-    @Override
-    public void writeToParcel(Parcel parcel, int i) {
-        parcel.writeString(titulo);
-        parcel.writeString(descricao);
-        parcel.writeString(localizacao);
-        parcel.writeString(salario);
-        parcel.writeString(requisitos);
+    public void setTitulo(String titulo) {
+        this.titulo = titulo;
     }
 
-    // Getters
-    public String getTitulo() { return titulo; }
-    public String getDescricao() { return descricao; }
-    public String getLocalizacao() { return localizacao; }
-    public String getSalario() { return salario; }
-    public String getRequisitos() { return requisitos; }
+    public String getDescricao() {
+        return descricao;
+    }
+
+    public void setDescricao(String descricao) {
+        this.descricao = descricao;
+    }
+
+    public String getLocalizacao() {
+        return localizacao;
+    }
+
+    public void setLocalizacao(String localizacao) {
+        this.localizacao = localizacao;
+    }
+
+    public String getSalario() {
+        return salario;
+    }
+
+    public void setSalario(String salario) {
+        this.salario = salario;
+    }
+
+    public String getRequisitos() {
+        return requisitos;
+    }
+
+    public void setRequisitos(String requisitos) {
+        this.requisitos = requisitos;
+    }
+
+    public String getNivelExperiencia() {
+        return nivelExperiencia;
+    }
+
+    public void setNivelExperiencia(String nivelExperiencia) {
+        this.nivelExperiencia = nivelExperiencia;
+    }
+
+    public String getTipoContrato() {
+        return tipoContrato;
+    }
+
+    public void setTipoContrato(String tipoContrato) {
+        this.tipoContrato = tipoContrato;
+    }
+
+    public String getAreaAtuacao() {
+        return areaAtuacao;
+    }
+
+    public void setAreaAtuacao(String areaAtuacao) {
+        this.areaAtuacao = areaAtuacao;
+    }
 }
-
