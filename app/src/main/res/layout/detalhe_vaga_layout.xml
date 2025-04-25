@@ -12,6 +12,19 @@
         android:layout_marginRight="20dp"
         android:orientation="vertical">
 
+        <!-- Botão de Voltar -->
+        <ImageButton
+            android:id="@+id/btnVoltarDetalhe"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginTop="25dp"
+            android:layout_marginBottom="8dp"
+            android:background="@null"
+            android:src="@drawable/baseline_arrow_back"
+            android:contentDescription="Voltar"
+            />
+
+
         <ImageView
             android:id="@+id/imageLogoDetalhe"
             android:layout_width="120dp"
@@ -167,36 +180,14 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
-        <!-- Botões Publicar e Editar -->
-        <LinearLayout
-            android:layout_width="match_parent"
+
+        <com.google.android.material.floatingactionbutton.FloatingActionButton
+            android:id="@+id/BtnDetalheExcluir"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_marginTop="20dp"
-            android:orientation="horizontal">
+            android:layout_gravity="end|bottom"
+            android:layout_margin="16dp"
+            android:src="@drawable/baseline_delete" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btnDetalheSalvar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_margin="3dp"
-                android:backgroundTint="@color/diferencial"
-                android:fontFamily="@font/font"
-                android:text="Salvar"
-                android:textColor="#FFFFFF"
-                android:textSize="16sp"
-                app:cornerRadius="8dp" /> <!-- Ajuste o valor para controlar o arredondamento -->
-
-            <ImageButton
-                android:id="@+id/BtnDetalheExcluir"
-                android:layout_width="48dp"
-                android:layout_height="42dp"
-                android:layout_margin="3dp"
-                android:background="@drawable/delete_button_background"
-                android:contentDescription="Editar"
-                android:src="@drawable/baseline_delete"
-                app:tint="@android:color/white" />
-        </LinearLayout>
     </LinearLayout>
 </ScrollView>
