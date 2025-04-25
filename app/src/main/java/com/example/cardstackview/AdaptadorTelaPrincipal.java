@@ -1,4 +1,3 @@
-
 package com.example.cardstackview;
 
 import android.content.Context;
@@ -16,29 +15,36 @@ import java.util.List;
 public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPrincipal.ViewHolder> {
 
     private final Context context;
-    private final List<MatchVaga> listaMatchVagaList;
+    private final List<Vaga> listaVagas;
     private OnItemClickListener onItemClickListener;
 
-    public AdaptadorTelaPrincipal(Context context, List<MatchVaga> listaMatchVagaList) {
+    public AdaptadorTelaPrincipal(Context context, List<Vaga> listaVagas) {
         this.context = context;
-        this.listaMatchVagaList = listaMatchVagaList;
+        this.listaVagas = listaVagas;
     }
 
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Verifique se o nome do layout está correto
         View view = LayoutInflater.from(context).inflate(R.layout.item_vaga_layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        MatchVaga vaga = listaMatchVagaList.get(position);
+        Vaga vaga = listaVagas.get(position);
 
-        // Exemplo de como configurar os dados no item da lista
         holder.titulo.setText(vaga.getTitulo());
-        holder.imagem.setImageResource(vaga.getImage());
+
+        // Usando localização como subtítulo, pode ajustar para descrição curta se preferir
+        String subtitulo = vaga.getLocalizacao();
+        if (subtitulo == null || subtitulo.isEmpty()) {
+            subtitulo = vaga.getDescricao();
+        }
+        holder.subtitulo.setText(subtitulo);
+
+        // Imagem fixa (logo padrão), ajuste se tiver imagem dinâmica
+        holder.imagem.setImageResource(R.drawable.logo);
 
         holder.itemView.setOnClickListener(v -> {
             if (onItemClickListener != null) {
@@ -49,27 +55,25 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
 
     @Override
     public int getItemCount() {
-        return listaMatchVagaList.size();
+        return listaVagas.size();
     }
 
-    // Define o listener de clique
     public void setOnItemClickListener(OnItemClickListener listener) {
         this.onItemClickListener = listener;
     }
 
-    // Interface para o listener de clique
     public interface OnItemClickListener {
-        void onItemClick(MatchVaga vaga);
+        void onItemClick(Vaga vaga);
     }
 
-    // ViewHolder para o item
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo;
+        TextView titulo, subtitulo;
         ImageView imagem;
 
         public ViewHolder(View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.textTituloItem);
+            subtitulo = itemView.findViewById(R.id.textSubtituloItem);
             imagem = itemView.findViewById(R.id.imageItemVaga);
         }
     }

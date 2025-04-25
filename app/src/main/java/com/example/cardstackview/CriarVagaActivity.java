@@ -1,29 +1,32 @@
 package com.example.cardstackview;  // Substitua com o nome do seu pacote
 
+// CriarVagaActivity.java
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
-import android.widget.EditText;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import java.util.ArrayList;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputEditText;
 
 public class CriarVagaActivity extends AppCompatActivity {
 
-    private EditText edtTituloVaga, edtDescricaoVaga, edtLocalizacao, edtSalario, edtRequisitos;
-    private Button btnCriarVaga;
-
-    // Lista para armazenar as vagas temporariamente
-    private ArrayList<VagaActivity> listaVagas = new ArrayList<>();
+    private TextInputEditText edtTituloVaga, edtDescricaoVaga, edtLocalizacao, edtSalario, edtRequisitos;
+    private MaterialButton btnCriarVaga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.criar_vaga_layout);  // Verifique se o nome está correto
+        setContentView(R.layout.criar_vaga_layout);
 
-        // Inicializando os componentes
+        inicializarComponentes();
+        configurarListeners();
+    }
+
+    private void inicializarComponentes() {
         edtTituloVaga = findViewById(R.id.edtTituloVaga);
         edtDescricaoVaga = findViewById(R.id.edtDescricaoVaga);
         edtLocalizacao = findViewById(R.id.edtLocalizacao);
@@ -31,32 +34,55 @@ public class CriarVagaActivity extends AppCompatActivity {
         edtRequisitos = findViewById(R.id.edtRequisitos);
         btnCriarVaga = findViewById(R.id.btnCriarVaga);
 
-        // Ação do botão
-        btnCriarVaga.setOnClickListener(v -> {
-            String titulo = edtTituloVaga.getText().toString().trim();
-            String descricao = edtDescricaoVaga.getText().toString().trim();
-            String localizacao = edtLocalizacao.getText().toString().trim();
-            String salario = edtSalario.getText().toString().trim();
-            String requisitos = edtRequisitos.getText().toString().trim();
+        // Botão de voltar
+        findViewById(R.id.imgVoltar).setOnClickListener(v -> finish());
+    }
 
-            // Validação simples
-            if (titulo.isEmpty() || descricao.isEmpty() || localizacao.isEmpty() || requisitos.isEmpty()) {
-                Toast.makeText(CriarVagaActivity.this, "Preencha todos os campos obrigatórios!", Toast.LENGTH_SHORT).show();
-            } else {
-                // Criando a vaga e adicionando à lista
-                VagaActivity novaVaga = new VagaActivity(titulo, descricao, localizacao, salario, requisitos);
-                listaVagas.add(novaVaga); // Adiciona a vaga à lista
+    private void configurarListeners() {
+        btnCriarVaga.setOnClickListener(v -> validarECriarVaga());
+    }
 
-                // Criando o Intent para abrir a TelaPrincipalActivity
-                Intent intent = new Intent(CriarVagaActivity.this, ModeloTelaPrincipalFragment.class);
-                intent.putExtra("vagas", listaVagas); // Passa a lista de vagas para a tela principal
+    private void validarECriarVaga() {
+        String titulo = edtTituloVaga.getText().toString().trim();
+        String descricao = edtDescricaoVaga.getText().toString().trim();
+        String localizacao = edtLocalizacao.getText().toString().trim();
+        String salario = edtSalario.getText().toString().trim();
+        String requisitos = edtRequisitos.getText().toString().trim();
 
-                // Enviando os dados e abrindo a TelaPrincipalActivity
-                startActivity(intent);
+        if (validarCampos(titulo, descricao, localizacao, requisitos)) {
+            Vaga novaVaga = new Vaga(titulo, descricao, localizacao, salario, requisitos);
+            retornarVagaParaFragment(novaVaga);
+        }
+    }
 
-                // Finaliza a atividade atual (não mantendo-a na pilha de atividades)
-                finish();
-            }
-        });
+    private boolean validarCampos(String titulo, String descricao, String localizacao, String requisitos) {
+        if (titulo.isEmpty()) {
+            mostrarErro("Título é obrigatório!");
+            return false;
+        }
+        if (descricao.isEmpty()) {
+            mostrarErro("Descrição é obrigatória!");
+            return false;
+        }
+        if (localizacao.isEmpty()) {
+            mostrarErro("Localização é obrigatória!");
+            return false;
+        }
+        if (requisitos.isEmpty()) {
+            mostrarErro("Requisitos são obrigatórios!");
+            return false;
+        }
+        return true;
+    }
+
+    private void mostrarErro(String mensagem) {
+        Toast.makeText(this, mensagem, Toast.LENGTH_SHORT).show();
+    }
+
+    private void retornarVagaParaFragment(Vaga vaga) {
+        Intent resultIntent = new Intent();
+        resultIntent.putExtra("nova_vaga", vaga);
+        setResult(Activity.RESULT_OK, resultIntent);
+        finish();
     }
 }

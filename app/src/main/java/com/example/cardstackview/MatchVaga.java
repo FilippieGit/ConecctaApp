@@ -2,10 +2,12 @@
 package com.example.cardstackview;
 public class MatchVaga {
     private String titulo;
+    private String descricao; // novo campo
     private int image;
 
-    public MatchVaga(String titulo, int image) {
+    public MatchVaga(String titulo, String descricao, int image) {
         this.titulo = titulo;
+        this.descricao = descricao;
         this.image = image;
     }
 
@@ -13,15 +15,11 @@ public class MatchVaga {
         return titulo;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
+    public String getDescricao() {
+        return descricao;
     }
 
     public int getImage() {
         return image;
-    }
-
-    public void setImage(int image) {
-        this.image = image;
     }
 }

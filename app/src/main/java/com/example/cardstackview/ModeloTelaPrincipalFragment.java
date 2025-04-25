@@ -27,12 +27,15 @@ import java.util.List;
 
 public class ModeloTelaPrincipalFragment extends Fragment {
 
+    private static final int REQUEST_CRIAR_VAGA = 1001;
+
     private RecyclerView recyclerView;
-    private List<MatchVaga> listaMatchVagaList;
-    MaterialToolbar idTopAppBar;
-    DrawerLayout idDrawer;
-    NavigationView idNavView;
+    private List<Vaga> listaVagas;
     private AdaptadorTelaPrincipal adapter;
+
+    private MaterialToolbar idTopAppBar;
+    private DrawerLayout idDrawer;
+    private NavigationView idNavView;
 
     public ModeloTelaPrincipalFragment() {
         // Construtor vazio obrigatório
@@ -94,28 +97,29 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         View fab = view.findViewById(R.id.idAFAB);
         fab.setOnClickListener(v -> {
             // Abre a tela de criação de vaga
-            Intent intent = new Intent(getActivity(), CriarVagaActivity.class);  // Corrigido para CriarVagaActivity
-            startActivityForResult(intent, 1);  // Inicia a atividade e aguarda o resultado
+            Intent intent = new Intent(getActivity(), CriarVagaActivity.class);
+            startActivityForResult(intent, REQUEST_CRIAR_VAGA);
         });
 
-        // RecyclerView
+        // RecyclerView e lista de vagas
         recyclerView = view.findViewById(R.id.idRecLista);
-        listaMatchVagaList = new ArrayList<>();
+        listaVagas = new ArrayList<>();
 
-        // Exemplo de vagas
-        listaMatchVagaList.add(new MatchVaga("Match1", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match2", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match3", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match4", R.drawable.logo));
-        listaMatchVagaList.add(new MatchVaga("Match5", R.drawable.logo));
+        // Exemplo inicial (opcional)
+        listaVagas.add(new Vaga("Desenvolvedor Android", "Desenvolver apps Android", "São Paulo", "5000", "Java, Kotlin"));
+        listaVagas.add(new Vaga("Analista de Dados", "Análise de dados e BI", "Rio de Janeiro", "4500", "SQL, Power BI"));
 
-        adapter = new AdaptadorTelaPrincipal(requireContext(), listaMatchVagaList);
+        adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
 
         // Clique no item
         adapter.setOnItemClickListener(vaga -> {
             Intent intent = new Intent(getActivity(), DetalheVagaActivity.class);
             intent.putExtra("titulo", vaga.getTitulo());
-            intent.putExtra("imagem", vaga.getImage());
+            intent.putExtra("descricao", vaga.getDescricao());
+            intent.putExtra("localizacao", vaga.getLocalizacao());
+            intent.putExtra("salario", vaga.getSalario());
+            intent.putExtra("requisitos", vaga.getRequisitos());
+            // Se tiver imagem, pode passar também
             startActivity(intent);
         });
 
@@ -126,19 +130,19 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         return view;
     }
 
-    // Método que será chamado após a CriarVagaActivity retornar
+    // Recebe o resultado da CriarVagaActivity
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {  // Use Activity.RESULT_OK
-            String titulo = data.getStringExtra("titulo");
-            String descricao = data.getStringExtra("descricao");
-
-            // Adiciona a nova vaga na lista e notifica o adapter
-            MatchVaga novaVaga = new MatchVaga(titulo, R.drawable.logo);  // Use uma imagem padrão ou forneça uma
-            listaMatchVagaList.add(novaVaga);
-            adapter.notifyDataSetChanged();  // Atualiza a RecyclerView
+        if (requestCode == REQUEST_CRIAR_VAGA && resultCode == Activity.RESULT_OK) {
+            if (data != null && data.hasExtra("nova_vaga")) {
+                Vaga vagaRecebida = data.getParcelableExtra("nova_vaga");
+                if (vagaRecebida != null) {
+                    listaVagas.add(vagaRecebida);
+                    adapter.notifyItemInserted(listaVagas.size() - 1);
+                    Toast.makeText(getContext(), "Vaga criada com sucesso!", Toast.LENGTH_SHORT).show();
+                }
+            }
         }
     }
 
