@@ -1,227 +1,233 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/TEXT"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/TEXT">
 
+    <!-- Botão de Voltar -->
     <ImageView
         android:id="@+id/imgVoltar"
         android:layout_width="30dp"
         android:layout_height="30dp"
-        android:layout_marginLeft="20dp"
+        android:layout_marginStart="20dp"
         android:layout_marginTop="30dp"
         android:src="@drawable/baseline_arrow_back" />
 
-    <LinearLayout
+    <!-- Conteúdo Rolável -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="10dp"
-            android:fontFamily="@font/font"
-            android:text="Nova Vaga"
-            android:textAlignment="center"
-            android:textColor="@color/cinza"
-            android:textSize="22sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Título da Vaga"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+            android:orientation="vertical"
+            android:paddingHorizontal="20dp">
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtTituloVaga"
+            <!-- Título -->
+            <TextView
+                android:id="@+id/edttext"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/font"
+                android:text="Nova Vaga"
+                android:textColor="@color/cinza"
+                android:textSize="22sp" />
+
+            <!-- Título da Vaga -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/font"
-                android:textColor="@color/cinza"
-                android:textSize="18sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginVertical="5dp"
+                android:hint="Título da Vaga"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Descrição da Vaga"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtTituloVaga"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font"
+                    android:textColor="@color/cinza"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtDescricaoVaga"
+            <!-- Descrição da Vaga -->
+            <com.google.android.material.textfield.TextInputLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/font"
-                android:textColor="@color/cinza"
-                android:textSize="18sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginVertical="5dp"
+                android:hint="Descrição da Vaga"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp">
 
-        <!-- Nível de Experiência -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/font"
-            android:text="Nível de Experiência"
-            android:textColor="@color/cinza"
-            android:textSize="14sp" />
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtDescricaoVaga"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font"
+                    android:textColor="@color/cinza"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
 
-        <Spinner
-            android:id="@+id/spinnerNivelExperiencia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:minHeight="48dp"
-            android:fontFamily="@font/font"
-            android:textColor="@color/cinza"
-            android:textSize="16sp" />
-
-        <!-- Tipo de Contrato -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/font"
-            android:text="Tipo de Contrato"
-            android:textColor="@color/cinza"
-            android:textSize="14sp" />
-
-        <Spinner
-            android:id="@+id/spinnerTipoContrato"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:minHeight="48dp"
-            android:fontFamily="@font/font"
-            android:textColor="@color/cinza"
-            android:textSize="16sp" />
-
-        <!-- Área de Atuação -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/font"
-            android:text="Área de Atuação"
-            android:textColor="@color/cinza"
-            android:textSize="14sp" />
-
-        <Spinner
-            android:id="@+id/spinnerAreaAtuacao"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:minHeight="48dp"
-            android:fontFamily="@font/font"
-            android:textColor="@color/cinza"
-            android:textSize="16sp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Localização"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtLocalizacao"
-                android:layout_width="match_parent"
+            <!-- Nível de Experiência -->
+            <TextView
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
                 android:fontFamily="@font/font"
+                android:text="Nível de Experiência"
                 android:textColor="@color/cinza"
-                android:textSize="18sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:textSize="14sp" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Salário (opcional)"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtSalario"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="@font/font"
-                android:inputType="numberDecimal"
-                android:textColor="@color/cinza"
-                android:textSize="18sp" />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <!-- Habilidades Desejáveis (Chips) -->
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginTop="8dp"
-            android:fontFamily="@font/font"
-            android:text="Habilidades Desejáveis"
-            android:textColor="@color/cinza"
-            android:textSize="14sp" />
-
-        <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupHabilidades"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            app:chipSpacing="8dp">
-            <!-- Adicione chips dinamicamente via código -->
-        </com.google.android.material.chip.ChipGroup>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="10dp"
-            android:hint="Requisitos"
-            app:boxCornerRadiusBottomEnd="10dp"
-            app:boxCornerRadiusBottomStart="10dp"
-            app:boxCornerRadiusTopEnd="10dp"
-            app:boxCornerRadiusTopStart="10dp">
-
-            <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtRequisitos"
+            <Spinner
+                android:id="@+id/spinnerNivelExperiencia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:minHeight="48dp"
-                android:fontFamily="@font/font"
-                android:textColor="@color/cinza"
-                android:textSize="18sp" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_marginVertical="5dp"
+                android:spinnerMode="dropdown" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/btnCriarVaga"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_margin="10dp"
-            android:backgroundTint="@color/diferencial"
-            android:fontFamily="@font/font"
-            android:text="Salvar"
-            android:textColor="#FFFFFF"
-            android:textSize="16sp" />
-    </LinearLayout>
+            <!-- Tipo de Contrato -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/font"
+                android:text="Tipo de Contrato"
+                android:textColor="@color/cinza"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/spinnerTipoContrato"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginVertical="5dp"
+                android:spinnerMode="dropdown" />
+
+            <!-- Área de Atuação -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/font"
+                android:text="Área de Atuação"
+                android:textColor="@color/cinza"
+                android:textSize="14sp" />
+
+            <Spinner
+                android:id="@+id/spinnerAreaAtuacao"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="48dp"
+                android:layout_marginVertical="5dp"
+                android:spinnerMode="dropdown" />
+
+            <!-- Localização -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:hint="Localização"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtLocalizacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font"
+                    android:textColor="@color/cinza"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Salário -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:hint="Salário (opcional)"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtSalario"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font"
+                    android:inputType="numberDecimal"
+                    android:textColor="@color/cinza"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Habilidades Desejáveis -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:fontFamily="@font/font"
+                android:text="Habilidades Desejáveis"
+                android:textColor="@color/cinza"
+                android:textSize="14sp" />
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chipGroupHabilidades"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                app:chipSpacing="8dp" />
+
+            <!-- Requisitos -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="5dp"
+                android:hint="Requisitos"
+                app:boxCornerRadiusTopStart="10dp"
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomStart="10dp"
+                app:boxCornerRadiusBottomEnd="10dp">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/edtRequisitos"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="@font/font"
+                    android:minHeight="48dp"
+                    android:textColor="@color/cinza"
+                    android:textSize="18sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Botão Salvar -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnCriarVaga"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginVertical="10dp"
+                android:backgroundTint="@color/diferencial"
+                android:fontFamily="@font/font"
+                android:text="Salvar"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

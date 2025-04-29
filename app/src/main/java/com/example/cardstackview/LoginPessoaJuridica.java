@@ -14,6 +14,9 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginPessoaJuridica extends AppCompatActivity {
 
@@ -21,6 +24,8 @@ public class LoginPessoaJuridica extends AppCompatActivity {
 
     TextInputEditText txtPessoaEmpresaEmail, txtPessoaEmpresaSenha;
 
+
+    FirebaseAuth mAuth;
     ImageView imgLoginJbtnVoltar;
 
 
@@ -35,6 +40,8 @@ public class LoginPessoaJuridica extends AppCompatActivity {
             return insets;
         });
 
+        mAuth = FirebaseAuth.getInstance();
+
         btnempresaentrar = findViewById(R.id.btnPessoaEmpresaEntrar);
         btncadastrar = findViewById(R.id.btnPessoaEmpresaCriarConta);
         btnesquecisenha = findViewById(R.id.btnPessoaEmpresaEsqSenha);
@@ -46,37 +53,62 @@ public class LoginPessoaJuridica extends AppCompatActivity {
 
         imgLoginJbtnVoltar = findViewById(R.id.imgLoginJbtnVoltar);
 
-        imgLoginJbtnVoltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
-                finish(); // Apenas volta para a tela anterior
+        btnempresaentrar.setOnClickListener(view -> {
+            String email = txtPessoaEmpresaEmail.getText().toString().trim();
+            String password = txtPessoaEmpresaSenha.getText().toString().trim();
+
+            if (email.isEmpty() || password.isEmpty()) {
+                Toast.makeText(getApplicationContext(), "Preencha todos os campos", Toast.LENGTH_SHORT).show();
+                return;
             }
+
+            mAuth.signInWithEmailAndPassword(email, password)
+                    .addOnCompleteListener(task -> {
+                        if (task.isSuccessful()) {
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null) {
+                                if (user.isEmailVerified()) {
+                                    FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                    db.collection("users").document(user.getUid())
+                                            .get()
+                                            .addOnSuccessListener(documentSnapshot -> {
+                                                if (documentSnapshot.exists()) {
+                                                    String tipo = documentSnapshot.getString("tipo");
+                                                    if (tipo != null && tipo.equals("Jurídica")) {
+                                                        Toast.makeText(getApplicationContext(), "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
+                                                        startActivity(new Intent(getApplicationContext(), TelaEmpresaActivity.class));
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(getApplicationContext(), "Este login não é de Empresa.", Toast.LENGTH_SHORT).show();
+                                                        mAuth.signOut(); // Faz logout para evitar acesso indevido
+                                                    }
+                                                } else {
+                                                    Toast.makeText(getApplicationContext(), "Dados do usuário não encontrados.", Toast.LENGTH_LONG).show();
+                                                    mAuth.signOut();
+                                                }
+                                            })
+                                            .addOnFailureListener(e -> {
+                                                Toast.makeText(getApplicationContext(), "Erro ao buscar dados do usuário: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                                mAuth.signOut();
+                                            });
+                                } else {
+                                    Toast.makeText(getApplicationContext(), "Verifique seu e-mail antes de entrar.", Toast.LENGTH_LONG).show();
+                                    mAuth.signOut();
+                                }
+                            }
+                        } else {
+                            Toast.makeText(getApplicationContext(), "Erro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        }
+                    });
         });
 
-        btnempresaentrar.setOnClickListener(new View.OnClickListener() {
+
+        btncadastrar.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String email, senha;
-
-                email = txtPessoaEmpresaEmail.getText().toString().trim();
-                senha = txtPessoaEmpresaSenha.getText().toString().trim();
-
-                if (email.equals("empresa")&& senha.equals("empresa")){
-
-                    startActivity(new Intent(getApplicationContext(),
-                            TelaEmpresaActivity.class));
-                    finish();
-
-                }else {
-                    Toast.makeText(getApplicationContext(),
-                            "Usuários ou senha inválidos",
-                            Toast.LENGTH_SHORT).show();
-                }
+                startActivity(new Intent(LoginPessoaJuridica.this,CadPJuridicaActivity.class));
+                finish();
             }
         });
-
-
-
     }
 }
