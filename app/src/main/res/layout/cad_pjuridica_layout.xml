@@ -75,7 +75,7 @@
             app:boxCornerRadiusBottomEnd="10dp">
 
             <com.google.android.material.textfield.TextInputEditText
-                android:id="@+id/edtLoginEmpresa"
+                android:id="@+id/edtNomeEmpresa"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font"
@@ -99,6 +99,27 @@
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/edtWebsite"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/font"
+                android:inputType="textUri"
+                android:maxLength="100"
+                android:textColor="@color/cinza"
+                android:textSize="16sp" />
+        </com.google.android.material.textfield.TextInputLayout>
+        <com.google.android.material.textfield.TextInputLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:hint="CNPJ"
+            app:startIconDrawable="@drawable/cpf"
+            app:boxCornerRadiusTopStart="10dp"
+            app:boxCornerRadiusTopEnd="10dp"
+            app:boxCornerRadiusBottomStart="10dp"
+            app:boxCornerRadiusBottomEnd="10dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edtcnpj"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font"

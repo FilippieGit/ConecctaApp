@@ -4,12 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class CriarVagaActivity extends AppCompatActivity {
 
@@ -28,7 +36,6 @@ public class CriarVagaActivity extends AppCompatActivity {
         configurarSpinners();
         configurarListeners();
 
-        // Adicione esta verificação para o caso de edição via onNewIntent
         if (getIntent() != null) {
             if (getIntent().hasExtra(Constants.EXTRA_VAGA_EDITAR)) {
                 vagaParaEditar = (Vaga) getIntent().getSerializableExtra(Constants.EXTRA_VAGA_EDITAR);
@@ -37,7 +44,6 @@ public class CriarVagaActivity extends AppCompatActivity {
         }
     }
 
-    // Adicione este método para lidar com novas instâncias via singleTop
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
@@ -78,36 +84,49 @@ public class CriarVagaActivity extends AppCompatActivity {
     }
 
     private void configurarListeners() {
-        btnCriarVaga.setOnClickListener(v -> validarECriarVaga());
-    }
+        btnCriarVaga.setOnClickListener(v -> {
 
-    private void validarECriarVaga() {
-        // Adicione validação básica dos campos
-        if (edtTituloVaga.getText().toString().isEmpty()) {
-            edtTituloVaga.setError("Título é obrigatório");
-            return;
-        }
+            // Pegando os valores dos campos
+            String titulo = edtTituloVaga.getText().toString().trim();
+            String descricao = edtDescricaoVaga.getText().toString().trim();
+            String localizacao = edtLocalizacao.getText().toString().trim();
+            String salario = edtSalario.getText().toString().trim();
+            String requisitos = edtRequisitos.getText().toString().trim();
+            String nivel = spinnerNivelExperiencia.getSelectedItem().toString();
+            String contrato = spinnerTipoContrato.getSelectedItem().toString();
+            String area = spinnerAreaAtuacao.getSelectedItem().toString();
 
-        Vaga vaga = new Vaga(
-                edtTituloVaga.getText().toString(),
-                edtDescricaoVaga.getText().toString(),
-                edtLocalizacao.getText().toString(),
-                edtSalario.getText().toString(),
-                edtRequisitos.getText().toString(),
-                spinnerNivelExperiencia.getSelectedItem().toString(),
-                spinnerTipoContrato.getSelectedItem().toString(),
-                spinnerAreaAtuacao.getSelectedItem().toString()
-        );
+            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+            if (user == null) {
+                Toast.makeText(this, "Usuário não autenticado!", Toast.LENGTH_SHORT).show();
+                return;
+            }
 
-        // Adicione flag de edição se necessário
-//        //if (vagaParaEditar != null) {
-//            //vaga.setId(vagaParaEditar.getId()); // Mantenha o mesmo ID para edição
-//        //}
+            String uid = user.getUid();
 
-        Intent intent = new Intent(this, VagaPreVisualizacaoActivity.class);
-        intent.putExtra(Constants.EXTRA_VAGA, vaga);
-        intent.putExtra("modoEdicao", vagaParaEditar != null);
-        startActivityForResult(intent, REQUEST_PREVIEW);
+            // Criando o mapa de dados
+            Map<String, Object> vaga = new HashMap<>();
+            vaga.put("titulo", titulo);
+            vaga.put("descricao", descricao);
+            vaga.put("localizacao", localizacao);
+            vaga.put("salario", salario);
+            vaga.put("requisitos", requisitos);
+            vaga.put("nivelExperiencia", nivel);
+            vaga.put("tipoContrato", contrato);
+            vaga.put("areaAtuacao", area);
+            vaga.put("uidEmpresa", uid);
+
+            // Salvando no Firestore
+            FirebaseFirestore.getInstance().collection("vagas")
+                    .add(vaga)
+                    .addOnSuccessListener(documentReference -> {
+                        Toast.makeText(this, "Vaga salva com sucesso!", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(this, "Erro ao salvar vaga: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    });
+        });
     }
 
     private void preencherCamposParaEdicao(Vaga vaga) {
@@ -135,7 +154,6 @@ public class CriarVagaActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_PREVIEW && resultCode == RESULT_OK) {
-            // Adicione verificação de nulos
             if (data != null && data.hasExtra(Constants.EXTRA_VAGA_PUBLICADA)) {
                 Intent resultIntent = new Intent();
                 resultIntent.putExtra(Constants.EXTRA_VAGA_PUBLICADA,
@@ -146,7 +164,6 @@ public class CriarVagaActivity extends AppCompatActivity {
         }
     }
 
-    // Adicione este método para evitar duplicações no backstack
     @Override
     public void finish() {
         super.finish();
