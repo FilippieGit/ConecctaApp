@@ -1,0 +1,14 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <EditText android:id="@+id/editTextCurso" android:hint="Curso" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/editTextInstituicao" android:hint="Instituição" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/editTextAnoInicio" android:hint="Ano de início" android:inputType="number" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/editTextAnoConclusao" android:hint="Ano de conclusão" android:inputType="number" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:id="@+id/editTextDescricao" android:hint="Descrição da formação" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+
+    <Button android:id="@+id/buttonSalvarFormacao" android:text="Salvar" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
+</LinearLayout>

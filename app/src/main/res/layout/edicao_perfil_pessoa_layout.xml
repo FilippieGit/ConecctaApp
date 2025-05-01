@@ -5,7 +5,6 @@
     android:id="@+id/perfil"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -173,18 +172,20 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/perfilExpProfissional"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
                 </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerExpProfissional"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    tools:listitem="@layout/item_experiencia" />
+
+                <Button
+                    android:id="@+id/btnAdicionarExperiencia"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Adicionar Experiência" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -203,18 +204,20 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/perfilFormAcademica"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
                 </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerFormacao"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    tools:listitem="@layout/item_formacao" />
+
+                <Button
+                    android:id="@+id/btnAdicionarFormacao"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Adicionar Formação" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -233,26 +236,20 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/perfilCertificados"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
                 </RelativeLayout>
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recyclerCertificados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    tools:listitem="@layout/item_certificado" />
 
                 <Button
                     android:id="@+id/btnAdicionarCertificado"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/chillax_medium"
-                    android:text="Adicionar Certificado"
-                    android:layout_marginTop="10dp"/>
+                    android:text="Adicionar Certificado" />
 
             </LinearLayout>
 

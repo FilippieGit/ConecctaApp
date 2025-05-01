@@ -31,7 +31,8 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-        // ✅ Agora sim, depois do setContentView:
+
+        // Botão de adicionar certificado
         Button btnAdicionar = findViewById(R.id.btnAdicionarCertificado);
 
         btnAdicionar.setOnClickListener(new View.OnClickListener() {
@@ -65,15 +66,16 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
                         alertDialog.dismiss();
                     }
                 });
-        //Função de voltar
+            }
+        });
 
+        // ✅ Correto: função de voltar fora do listener anterior
         imgVoltarPerfilPessoa = findViewById(R.id.imgVoltarPerfilPessoa);
-
         imgVoltarPerfilPessoa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
-                finish(); // Apenas volta para a tela anterior
+                finish();
             }
         });
     }
