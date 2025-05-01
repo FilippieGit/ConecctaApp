@@ -1,3 +1,4 @@
+
 package com.example.cardstackview;
 
 import android.content.Intent;
@@ -24,7 +25,7 @@ import com.google.android.material.navigation.NavigationView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ModeloBancoTalentosActivity extends Fragment {
+public class ModeloBancoTalentosFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private List<Lista> listaList;
@@ -32,7 +33,7 @@ public class ModeloBancoTalentosActivity extends Fragment {
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
 
-    public ModeloBancoTalentosActivity() {
+    public ModeloBancoTalentosFragment() {
         // Construtor público vazio obrigatório
     }
 

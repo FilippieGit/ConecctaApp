@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/TEXT"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:weightSum="1">
 
     <ImageView
         android:id="@+id/imgLoginJbtnVoltar"
@@ -17,20 +18,17 @@
         android:src="@drawable/baseline_arrow_back" />
 
     <LinearLayout
-
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
-        android:orientation="vertical"
-
-        >
+        android:orientation="vertical">
 
         <ImageView
             android:layout_width="200dp"
             android:layout_height="200dp"
             android:layout_gravity="center_horizontal"
-            android:layout_marginTop="50dp"
             android:foreground="#007DA8C5"
             android:src="@drawable/logo" />
 
@@ -62,14 +60,11 @@
                 android:layout_height="wrap_content"
                 android:fontFamily="@font/font"
                 android:inputType="textEmailAddress"
-
                 android:maxLength="50"
                 android:paddingLeft="10sp"
                 android:paddingRight="10sp"
                 android:textColor="@color/cinza"
                 android:textSize="20sp" />
-
-
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -80,10 +75,10 @@
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
+            app:startIconDrawable="@drawable/baseline_lock"
             app:passwordToggleEnabled="true">
 
             <com.google.android.material.textfield.TextInputEditText
-
                 android:id="@+id/txtPessoaEmpresaSenha"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -95,16 +90,14 @@
                 android:paddingRight="10sp"
                 android:textColor="@color/cinza"
                 android:textSize="20sp" />
-
         </com.google.android.material.textfield.TextInputLayout>
-
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPessoaEmpresaEntrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:layout_marginTop="50dp"
+            android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
             android:backgroundTint="@color/diferencial"
             android:fontFamily="@font/font"
@@ -113,13 +106,11 @@
             android:textColor="@color/TEXT"
             android:textSize="20sp" />
 
-
         <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp">
-
 
             <Button
                 android:id="@+id/btnPessoaEmpresaCriarConta"
@@ -137,9 +128,7 @@
                 android:layout_alignParentEnd="true"
                 android:text="Esqueci a senha" />
 
-
         </RelativeLayout>
-
 
     </LinearLayout>
 

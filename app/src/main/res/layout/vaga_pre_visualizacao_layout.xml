@@ -1,6 +1,6 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/main"
+    android:id="@+id/preVisualizacaoMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/TEXT">
@@ -12,21 +12,8 @@
         android:layout_marginRight="20dp"
         android:orientation="vertical">
 
-        <!-- Botão de Voltar -->
-        <ImageButton
-            android:id="@+id/btnVoltarDetalhe"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="8dp"
-            android:background="@null"
-            android:src="@drawable/baseline_arrow_back"
-            android:contentDescription="Voltar"
-            />
-
-
         <ImageView
-            android:id="@+id/imageLogoDetalhe"
+            android:id="@+id/preVisualizacaoImageLogo"
             android:layout_width="120dp"
             android:layout_height="120dp"
             android:layout_gravity="center"
@@ -37,7 +24,7 @@
             android:src="@drawable/logo" />
 
         <TextView
-            android:id="@+id/textTituloDetalhe"
+            android:id="@+id/preVisualizacaoTextTitulo"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
@@ -60,7 +47,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textNivelExperienciaDetalhe"
+            android:id="@+id/preVisualizacaoTextNivelExperiencia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -82,7 +69,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textTipoContratoDetalhe"
+            android:id="@+id/preVisualizacaoTextTipoContrato"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -104,7 +91,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textAreaAtuacaoDetalhe"
+            android:id="@+id/preVisualizacaoTextAreaAtuacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -115,7 +102,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textLocalizacaoDetalhe"
+            android:id="@+id/preVisualizacaoTextLocalizacao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -126,7 +113,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textSalarioDetalhe"
+            android:id="@+id/preVisualizacaoTextSalario"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -148,7 +135,7 @@
             android:textSize="14sp" />
 
         <com.google.android.material.chip.ChipGroup
-            android:id="@+id/chipGroupHabilidadesDetalhe"
+            android:id="@+id/preVisualizacaoChipGroupHabilidades"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
@@ -158,7 +145,7 @@
         </com.google.android.material.chip.ChipGroup>
 
         <TextView
-            android:id="@+id/textDescricaoDetalhe"
+            android:id="@+id/preVisualizacaoTextDescricao"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -169,7 +156,7 @@
             android:textSize="14sp" />
 
         <TextView
-            android:id="@+id/textRequisitosDetalhe"
+            android:id="@+id/preVisualizacaoTextRequisitos"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"
@@ -180,14 +167,47 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/BtnDetalheExcluir"
-            android:layout_width="wrap_content"
+        <!-- Botões Publicar e Editar -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="end|bottom"
-            android:layout_margin="16dp"
-            android:src="@drawable/baseline_delete" />
+            android:gravity="center"
+            android:layout_marginTop="20dp"
+            android:orientation="horizontal">
 
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPreVisualizacaoPublicar"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_margin="3dp"
+                android:backgroundTint="@color/diferencial"
+                android:fontFamily="@font/font"
+                android:text="Publicar"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                app:cornerRadius="8dp" /> <!-- Ajuste o valor para controlar o arredondamento -->
+
+            <ImageButton
+                android:id="@+id/btnPreVisualizacaoBEditar"
+                android:layout_width="48dp"
+                android:layout_height="42dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/edit_button_background"
+                android:contentDescription="Editar"
+                android:src="@drawable/baseline_edit"
+                app:tint="@android:color/white" />
+
+            <ImageButton
+                android:id="@+id/btnPreVisualizacaoExcluir"
+                android:layout_width="48dp"
+                android:layout_height="42dp"
+                android:layout_margin="3dp"
+                android:background="@drawable/delete_button_background"
+                android:contentDescription="Editar"
+                android:src="@drawable/baseline_delete"
+                app:tint="@android:color/white" />
+
+        </LinearLayout>
     </LinearLayout>
 </ScrollView>
