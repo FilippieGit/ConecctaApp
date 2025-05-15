@@ -1,9 +1,11 @@
 package com.example.cardstackview;
 
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -25,8 +27,15 @@ import com.yuyakaido.android.cardstackview.Direction;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.StackFrom;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
@@ -34,47 +43,48 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
     private ActivityMainBinding binding;
-
-    private List<String> aceitos = new ArrayList<>();
-    private List<String> negados = new ArrayList<>();
-
     private CardStackLayoutManager layoutManager;
+    private CardAdapter adapter;
+    private List<Vagas> vagasList = new ArrayList<>();
+    private ProgressBar progressBar;
+
+    private static final int CODE_GET_REQUEST = 1024;
+    private static final int CODE_POST_REQUEST = 1025;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-        EdgeToEdge.enable(this);
         setContentView(binding.getRoot());
 
-        // 1) Monta lista de cards
-        List<CardActivity> cards = new ArrayList<>();
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiii, null), "texto 2"));
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.imgiiii, null), "texto 3"));
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
-        cards.add(new CardActivity(ResourcesCompat.getDrawable(getResources(), R.drawable.card1, null), "texto 1"));
+        progressBar = findViewById(R.id.progressBar);
 
-        CardAdapter adapter = new CardAdapter(cards);
+        // Inicializa o adapter
+        adapter = new CardAdapter(this, vagasList);
 
-        // 2) Listener de swipe
+        // Configura o CardStackView
+        setupCardStackView();
+
+        // Configura a navegação
+        setupNavigation();
+
+        // Busca vagas da API
+        buscarVagas();
+    }
+
+    private void setupCardStackView() {
+        // Configura o CardStackListener
         CardStackListener cardStackListener = new CardStackListener() {
             @Override
             public void onCardSwiped(Direction direction) {
                 int pos = layoutManager.getTopPosition() - 1;
-                if (pos >= 0 && pos < cards.size()) {
-                    String texto = cards.get(pos).getContent();
-
+                if (pos >= 0 && pos < vagasList.size()) {
+                    Vagas vaga = vagasList.get(pos);
                     if (direction == Direction.Right) {
-                        aceitos.add(texto);
-                        Toast.makeText(MainActivity.this, "Aceito: " + texto, Toast.LENGTH_SHORT).show();
+                        Toast.makeText(MainActivity.this, "Curtiu: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
+                        registrarInteresse(vaga);
                     } else if (direction == Direction.Left) {
-                        negados.add(texto);
-                        Toast.makeText(MainActivity.this, "Negado: " + texto, Toast.LENGTH_SHORT).show();
-                    } else if (direction == Direction.Top) {
-                        // Não faz nada — apenas avança para o próximo card
+                        Toast.makeText(MainActivity.this, "Descartou: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -86,17 +96,17 @@ public class MainActivity extends AppCompatActivity {
             @Override public void onCardDisappeared(View view, int position) {}
         };
 
-        // 3) Configura o layoutManager
+        // Configura o LayoutManager
         layoutManager = new CardStackLayoutManager(this, cardStackListener);
         layoutManager.setStackFrom(StackFrom.None);
         layoutManager.setVisibleCount(3);
-        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right, Direction.Top));
+        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right));
 
-        // 4) Aplica no CardStackView
+        // Aplica configurações ao CardStackView
         binding.cardStack.setLayoutManager(layoutManager);
         binding.cardStack.setAdapter(adapter);
 
-        // 5) Botões programáticos
+        // Configura botões de ação
         ImageButton btnReject = findViewById(R.id.btnReject);
         ImageButton btnLike = findViewById(R.id.btnLike);
 
@@ -117,15 +127,9 @@ public class MainActivity extends AppCompatActivity {
             layoutManager.setSwipeAnimationSetting(setting);
             binding.cardStack.swipe();
         });
+    }
 
-        // 6) Padding Edge-to-Edge
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets sys = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(sys.left, sys.top, sys.right, sys.bottom);
-            return insets;
-        });
-
-        // 7) Drawer
+    private void setupNavigation() {
         idTopAppBar = findViewById(R.id.idMainTopAppBar);
         idDrawer = findViewById(R.id.idDrawer);
         idNavView = findViewById(R.id.idNavView);
@@ -149,7 +153,6 @@ public class MainActivity extends AppCompatActivity {
             return true;
         });
 
-        // 8) Bottom Navigation
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
             if (item.getItemId() == R.id.nav_profile) {
                 startActivity(new Intent(this, PerfilActivity.class));
@@ -157,6 +160,100 @@ public class MainActivity extends AppCompatActivity {
             }
             return false;
         });
+    }
+
+    private void buscarVagas() {
+        new PerformNetworkRequest(Api.URL_GET_VAGAS, null, CODE_GET_REQUEST).execute();
+    }
+
+    private void registrarInteresse(Vagas vaga) {
+        HashMap<String, String> params = new HashMap<>();
+        params.put("vaga_id", String.valueOf(vaga.getVaga_id()));
+        params.put("usuario_id", "1"); // Substitua pelo ID do usuário logado
+
+        new PerformNetworkRequest(Api.URL_REGISTRAR_INTERESSE, params, CODE_POST_REQUEST).execute();
+    }
+
+    private class PerformNetworkRequest extends AsyncTask<Void, Void, String> {
+        String url;
+        HashMap<String, String> params;
+        int requestCode;
+
+        PerformNetworkRequest(String url, HashMap<String, String> params, int requestCode) {
+            this.url = url;
+            this.params = params;
+            this.requestCode = requestCode;
+        }
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressBar.setVisibility(View.VISIBLE);
+            binding.cardStack.setVisibility(View.GONE);
+        }
+
+        @Override
+        protected void onPostExecute(String s) {
+            super.onPostExecute(s);
+            progressBar.setVisibility(View.GONE);
+            binding.cardStack.setVisibility(View.VISIBLE);
+
+            if (s == null || s.isEmpty()) {
+                Toast.makeText(MainActivity.this, "Resposta vazia do servidor", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            try {
+                JSONObject response = new JSONObject(s);
+                if (!response.getBoolean("error")) {
+                    if (response.has("vagas")) {
+                        JSONArray vagasArray = response.getJSONArray("vagas");
+                        vagasList.clear();
+
+                        for (int i = 0; i < vagasArray.length(); i++) {
+                            JSONObject vagaJson = vagasArray.getJSONObject(i);
+                            Vagas vaga = new Vagas(
+                                    vagaJson.getInt("vaga_id"),
+                                    vagaJson.getString("titulo"),
+                                    vagaJson.getString("descricao"),
+                                    vagaJson.getString("localizacao"),
+                                    vagaJson.getString("salario"),
+                                    vagaJson.getString("requisitos"),
+                                    vagaJson.getString("nivel_experiencia"),
+                                    vagaJson.getString("tipo_contrato"),
+                                    vagaJson.getString("area_atuacao"),
+                                    vagaJson.getInt("empresa_id")
+                            );
+                            vagasList.add(vaga);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(MainActivity.this, "Dados de vagas não encontrados", Toast.LENGTH_SHORT).show();
+                    }
+                } else {
+                    Toast.makeText(MainActivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+                Toast.makeText(MainActivity.this, "Erro ao processar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            }
+        }
+
+        @Override
+        protected String doInBackground(Void... voids) {
+            RequestHandler requestHandler = new RequestHandler();
+
+            try {
+                if (requestCode == CODE_POST_REQUEST) {
+                    return requestHandler.sendPostRequest(url, params);
+                } else if (requestCode == CODE_GET_REQUEST) {
+                    return requestHandler.sendGetRequest(url);
+                }
+            } catch (Exception e) {
+                return "{\"error\":true,\"message\":\"" + e.getMessage() + "\"}";
+            }
+            return null;
+        }
     }
 
     @Override
