@@ -213,16 +213,16 @@ public class MainActivity extends AppCompatActivity {
                         for (int i = 0; i < vagasArray.length(); i++) {
                             JSONObject vagaJson = vagasArray.getJSONObject(i);
                             Vagas vaga = new Vagas(
-                                    vagaJson.getInt("vaga_id"),
-                                    vagaJson.getString("titulo"),
-                                    vagaJson.getString("descricao"),
-                                    vagaJson.getString("localizacao"),
-                                    vagaJson.getString("salario"),
-                                    vagaJson.getString("requisitos"),
-                                    vagaJson.getString("nivel_experiencia"),
-                                    vagaJson.getString("tipo_contrato"),
-                                    vagaJson.getString("area_atuacao"),
-                                    vagaJson.getInt("empresa_id")
+                                    vagaJson.getInt("id_vagas"),
+                                    vagaJson.getString("local_vagas"), // titulo
+                                    vagaJson.getString("requisitos_vagas"), // descricao
+                                    vagaJson.getString("local_vagas"), // localizacao
+                                    vagaJson.getString("salario_vagas"), // salario
+                                    vagaJson.getString("requisitos_vagas"), // requisitos
+                                    vagaJson.getString("vinculo_vagas"), // nivel_experiencia
+                                    vagaJson.getString("vinculo_vagas"), // tipo_contrato
+                                    vagaJson.getString("ramo_vagas"), // area_atuacao
+                                    1 // empresa_id (fixo pois não está no JSON)
                             );
                             vagasList.add(vaga);
                         }
