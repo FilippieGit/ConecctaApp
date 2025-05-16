@@ -41,7 +41,7 @@ public class SelecaoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("SelecaoActivity", "Botão Empresa clicado");
-                Intent intent = new Intent(SelecaoActivity.this, TelaEmpresaActivity.class);//Trocar para LoginPessoaJuridica
+                Intent intent = new Intent(SelecaoActivity.this, LoginPessoaJuridica.class);//Trocar para LoginPessoaJuridica para ir rapido TelaEmpresaActivity
                 startActivity(intent);
             }
         });

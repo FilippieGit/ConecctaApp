@@ -38,6 +38,7 @@ public class LoginPessoaJuridica extends AppCompatActivity {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
+
         });
 
         mAuth = FirebaseAuth.getInstance();
@@ -48,10 +49,19 @@ public class LoginPessoaJuridica extends AppCompatActivity {
 
         txtPessoaEmpresaEmail = findViewById(R.id.txtPessoaEmpresaEmail);
         txtPessoaEmpresaSenha = findViewById(R.id.txtPessoaEmpresaSenha);
+        ImageView imgLoginJbtnVoltar = findViewById(R.id.imgLoginJbtnVoltar);
+
 
         //Função de voltar
 
         imgLoginJbtnVoltar = findViewById(R.id.imgLoginJbtnVoltar);
+
+        imgLoginJbtnVoltar.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginPessoaJuridica.this, SelecaoActivity.class);
+            startActivity(intent);
+            finish(); // para não voltar para o login ao pressionar o botão físico voltar
+        });
+
 
         btnempresaentrar.setOnClickListener(view -> {
             String email = txtPessoaEmpresaEmail.getText().toString().trim();
@@ -107,6 +117,13 @@ public class LoginPessoaJuridica extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(LoginPessoaJuridica.this,CadPJuridicaActivity.class));
+                finish();
+            }
+        });
+        btnesquecisenha.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginPessoaJuridica.this,RecSenhaActivity.class));
                 finish();
             }
         });

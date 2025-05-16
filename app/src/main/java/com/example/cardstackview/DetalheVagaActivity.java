@@ -3,6 +3,7 @@ package com.example.cardstackview;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -26,14 +27,25 @@ public class DetalheVagaActivity extends AppCompatActivity {
         setContentView(R.layout.detalhe_vaga_layout);
 
         inicializarComponentes();
-        exibirDetalhesVaga();
+
+        // Suponha que você tenha essa informação em SharedPreferences ou recebeu via Intent
+        boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
 
         FloatingActionButton btnExcluir = findViewById(R.id.BtnDetalheExcluir);
+
+        if (isPessoaJuridica) {
+            btnExcluir.setVisibility(View.VISIBLE);
+        } else {
+            btnExcluir.setVisibility(View.GONE);
+        }
+
+        exibirDetalhesVaga();
+
         btnExcluir.setOnClickListener(v -> excluirVaga());
 
-        // Add listener for back button
         btnVoltarDetalhe.setOnClickListener(v -> finish());
     }
+
 
     private void inicializarComponentes() {
         imageLogoDetalhe = findViewById(R.id.imageLogoDetalhe);

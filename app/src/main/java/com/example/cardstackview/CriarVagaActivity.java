@@ -1,57 +1,41 @@
 package com.example.cardstackview;
 
-import android.content.Intent;
+import android.app.ProgressDialog;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.EditText;
-import android.widget.Spinner;
 import android.widget.Toast;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
-
+import org.json.JSONException;
+import org.json.JSONObject;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import android.widget.Spinner;
 
 public class CriarVagaActivity extends AppCompatActivity {
 
-    private static final int REQUEST_PREVIEW = 1001;
     private TextInputEditText edtTituloVaga, edtDescricaoVaga, edtLocalizacao, edtSalario, edtRequisitos;
     private Spinner spinnerNivelExperiencia, spinnerTipoContrato, spinnerAreaAtuacao;
-    private MaterialButton btnCriarVaga;
-    private Vaga vagaParaEditar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.criar_vaga_layout);
-
         inicializarComponentes();
-        configurarSpinners();
-        configurarListeners();
-
-        if (getIntent() != null) {
-            if (getIntent().hasExtra(Constants.EXTRA_VAGA_EDITAR)) {
-                vagaParaEditar = (Vaga) getIntent().getSerializableExtra(Constants.EXTRA_VAGA_EDITAR);
-                preencherCamposParaEdicao(vagaParaEditar);
-            }
-        }
-    }
-
-    @Override
-    protected void onNewIntent(Intent intent) {
-        super.onNewIntent(intent);
-        setIntent(intent);
-        if (intent.hasExtra(Constants.EXTRA_VAGA_EDITAR)) {
-            vagaParaEditar = (Vaga) intent.getSerializableExtra(Constants.EXTRA_VAGA_EDITAR);
-            preencherCamposParaEdicao(vagaParaEditar);
-        }
     }
 
     private void inicializarComponentes() {
@@ -61,106 +45,196 @@ public class CriarVagaActivity extends AppCompatActivity {
         edtSalario = findViewById(R.id.edtSalario);
         edtRequisitos = findViewById(R.id.edtRequisitos);
 
+        // Configurar Spinners
         spinnerNivelExperiencia = findViewById(R.id.spinnerNivelExperiencia);
         spinnerTipoContrato = findViewById(R.id.spinnerTipoContrato);
         spinnerAreaAtuacao = findViewById(R.id.spinnerAreaAtuacao);
 
-        btnCriarVaga = findViewById(R.id.btnCriarVaga);
+        // Configurar adaptadores
+        ArrayAdapter<CharSequence> nivelAdapter = ArrayAdapter.createFromResource(this,
+                R.array.niveis_experiencia, android.R.layout.simple_spinner_item);
+        nivelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerNivelExperiencia.setAdapter(nivelAdapter);
+
+        ArrayAdapter<CharSequence> contratoAdapter = ArrayAdapter.createFromResource(this,
+                R.array.tipos_contrato, android.R.layout.simple_spinner_item);
+        contratoAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerTipoContrato.setAdapter(contratoAdapter);
+
+        ArrayAdapter<CharSequence> areaAdapter = ArrayAdapter.createFromResource(this,
+                R.array.areas_atuacao, android.R.layout.simple_spinner_item);
+        areaAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        spinnerAreaAtuacao.setAdapter(areaAdapter);
+
+        MaterialButton btnCriarVaga = findViewById(R.id.btnCriarVaga);
+        btnCriarVaga.setOnClickListener(v -> cadastrarVaga());
+
         findViewById(R.id.imgVoltar).setOnClickListener(v -> finish());
     }
 
-    private void configurarSpinners() {
-        ArrayAdapter<CharSequence> adapterNivel = ArrayAdapter.createFromResource(this,
-                R.array.niveis_experiencia, android.R.layout.simple_spinner_item);
-        spinnerNivelExperiencia.setAdapter(adapterNivel);
-
-        ArrayAdapter<CharSequence> adapterContrato = ArrayAdapter.createFromResource(this,
-                R.array.tipos_contrato, android.R.layout.simple_spinner_item);
-        spinnerTipoContrato.setAdapter(adapterContrato);
-
-        ArrayAdapter<CharSequence> adapterArea = ArrayAdapter.createFromResource(this,
-                R.array.areas_atuacao, android.R.layout.simple_spinner_item);
-        spinnerAreaAtuacao.setAdapter(adapterArea);
-    }
-
-    private void configurarListeners() {
-        btnCriarVaga.setOnClickListener(v -> {
-
-            // Pegando os valores dos campos
-            String titulo = edtTituloVaga.getText().toString().trim();
-            String descricao = edtDescricaoVaga.getText().toString().trim();
-            String localizacao = edtLocalizacao.getText().toString().trim();
-            String salario = edtSalario.getText().toString().trim();
-            String requisitos = edtRequisitos.getText().toString().trim();
-            String nivel = spinnerNivelExperiencia.getSelectedItem().toString();
-            String contrato = spinnerTipoContrato.getSelectedItem().toString();
-            String area = spinnerAreaAtuacao.getSelectedItem().toString();
-
-            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-            if (user == null) {
-                Toast.makeText(this, "Usuário não autenticado!", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
-            String uid = user.getUid();
-
-            // Criando o mapa de dados
-            Map<String, Object> vaga = new HashMap<>();
-            vaga.put("titulo", titulo);
-            vaga.put("descricao", descricao);
-            vaga.put("localizacao", localizacao);
-            vaga.put("salario", salario);
-            vaga.put("requisitos", requisitos);
-            vaga.put("nivelExperiencia", nivel);
-            vaga.put("tipoContrato", contrato);
-            vaga.put("areaAtuacao", area);
-            vaga.put("uidEmpresa", uid);
-
-            // Salvando no Firestore
-            FirebaseFirestore.getInstance().collection("vagas")
-                    .add(vaga)
-                    .addOnSuccessListener(documentReference -> {
-                        Toast.makeText(this, "Vaga salva com sucesso!", Toast.LENGTH_SHORT).show();
-                        finish();
-                    })
-                    .addOnFailureListener(e -> {
-                        Toast.makeText(this, "Erro ao salvar vaga: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    });
-        });
-    }
-
-    private void preencherCamposParaEdicao(Vaga vaga) {
-        edtTituloVaga.setText(vaga.getTitulo());
-        edtDescricaoVaga.setText(vaga.getDescricao());
-        edtLocalizacao.setText(vaga.getLocalizacao());
-        edtSalario.setText(vaga.getSalario());
-        edtRequisitos.setText(vaga.getRequisitos());
-
-        setarSpinner(spinnerNivelExperiencia, vaga.getNivelExperiencia());
-        setarSpinner(spinnerTipoContrato, vaga.getTipoContrato());
-        setarSpinner(spinnerAreaAtuacao, vaga.getAreaAtuacao());
-    }
-
-    private void setarSpinner(Spinner spinner, String valor) {
-        ArrayAdapter adapter = (ArrayAdapter) spinner.getAdapter();
-        if (adapter != null) {
-            int posicao = adapter.getPosition(valor);
-            if (posicao >= 0) spinner.setSelection(posicao);
+    private void cadastrarVaga() {
+        if (!isNetworkAvailable()) {
+            Toast.makeText(this, "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+            return;
         }
+
+        // Pegando os valores dos campos
+        String titulo = edtTituloVaga.getText().toString().trim();
+        String descricao = edtDescricaoVaga.getText().toString().trim();
+        String localizacao = edtLocalizacao.getText().toString().trim();
+        String salario = edtSalario.getText().toString().trim();
+        String requisitos = edtRequisitos.getText().toString().trim();
+        String nivel = spinnerNivelExperiencia.getSelectedItem().toString();
+        String contrato = spinnerTipoContrato.getSelectedItem().toString();
+        String area = spinnerAreaAtuacao.getSelectedItem().toString();
+
+        // Validações dos campos
+        if (titulo.isEmpty()) {
+            edtTituloVaga.setError("Título da vaga é obrigatório");
+            edtTituloVaga.requestFocus();
+            return;
+        }
+
+        if (descricao.isEmpty()) {
+            edtDescricaoVaga.setError("Descrição da vaga é obrigatória");
+            edtDescricaoVaga.requestFocus();
+            return;
+        }
+
+        if (localizacao.isEmpty()) {
+            edtLocalizacao.setError("Localização é obrigatória");
+            edtLocalizacao.requestFocus();
+            return;
+        }
+
+        if (requisitos.isEmpty()) {
+            edtRequisitos.setError("Requisitos são obrigatórios");
+            edtRequisitos.requestFocus();
+            return;
+        }
+
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Usuário não autenticado! Faça login novamente.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Mostrar progresso (loading)
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Cadastrando vaga...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        // Criar os parâmetros
+        Map<String, String> params = new HashMap<>();
+        params.put("titulo", titulo);
+        params.put("descricao", descricao);
+        params.put("localizacao", localizacao);
+        params.put("salario", salario.isEmpty() ? "0" : salario);
+        params.put("requisitos", requisitos);
+        params.put("nivel_experiencia", nivel);
+        params.put("tipo_contrato", contrato);
+        params.put("area_atuacao", area);
+        params.put("id_empresa", user.getUid());
+
+        // Executar a tarefa assíncrona
+        new CadastrarVagaTask(progressDialog).execute(params);
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
 
-        if (requestCode == REQUEST_PREVIEW && resultCode == RESULT_OK) {
-            if (data != null && data.hasExtra(Constants.EXTRA_VAGA_PUBLICADA)) {
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constants.EXTRA_VAGA_PUBLICADA,
-                        data.getSerializableExtra(Constants.EXTRA_VAGA_PUBLICADA));
-                setResult(RESULT_OK, resultIntent);
+    private class CadastrarVagaTask extends AsyncTask<Map<String, String>, Void, String> {
+        private final ProgressDialog progressDialog;
+
+        public CadastrarVagaTask(ProgressDialog progressDialog) {
+            this.progressDialog = progressDialog;
+        }
+
+        @Override
+        protected String doInBackground(Map<String, String>... params) {
+            HttpURLConnection urlConnection = null;
+            BufferedReader reader = null;
+            try {
+                URL url = new URL(Api.URL_CADASTRAR_VAGA);
+                urlConnection = (HttpURLConnection) url.openConnection();
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                urlConnection.setConnectTimeout(10000);
+                urlConnection.setReadTimeout(10000);
+                urlConnection.setDoOutput(true);
+
+                // Construir os parâmetros
+                StringBuilder postData = new StringBuilder();
+                for (Map.Entry<String, String> param : params[0].entrySet()) {
+                    if (postData.length() != 0) postData.append('&');
+                    postData.append(param.getKey());
+                    postData.append('=');
+                    postData.append(param.getValue());
+                }
+                byte[] postDataBytes = postData.toString().getBytes(StandardCharsets.UTF_8);
+
+                // Enviar os dados
+                OutputStream outputStream = new BufferedOutputStream(urlConnection.getOutputStream());
+                outputStream.write(postDataBytes);
+                outputStream.flush();
+                outputStream.close();
+
+                // Verificar status code
+                int responseCode = urlConnection.getResponseCode();
+                if (responseCode != HttpURLConnection.HTTP_OK) {
+                    return "{\"error\":true,\"message\":\"HTTP error code: " + responseCode + "\"}";
+                }
+
+                // Ler a resposta
+                StringBuilder response = new StringBuilder();
+                reader = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    response.append(line);
+                }
+                return response.toString();
+
+            } catch (Exception e) {
+                return "{\"error\":true,\"message\":\"" + e.getMessage() + "\"}";
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
             }
-            finish();
+        }
+
+        @Override
+        protected void onPostExecute(String result) {
+            progressDialog.dismiss();
+            try {
+                JSONObject jsonResponse = new JSONObject(result);
+                if (!jsonResponse.getBoolean("error")) {
+                    Toast.makeText(CriarVagaActivity.this,
+                            "Vaga cadastrada com sucesso!",
+                            Toast.LENGTH_SHORT).show();
+                    finish();
+                } else {
+                    Toast.makeText(CriarVagaActivity.this,
+                            "Erro: " + jsonResponse.getString("message"),
+                            Toast.LENGTH_LONG).show();
+                }
+            } catch (JSONException e) {
+                Toast.makeText(CriarVagaActivity.this,
+                        "Erro ao processar resposta: " + e.getMessage(),
+                        Toast.LENGTH_LONG).show();
+            }
         }
     }
 

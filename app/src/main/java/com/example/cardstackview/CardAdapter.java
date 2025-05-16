@@ -2,6 +2,7 @@ package com.example.cardstackview;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,10 +54,15 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
         // Botão para detalhes
         // Botão para detalhes
         holder.btnViewDetails.setOnClickListener(v -> {
+            SharedPreferences prefs = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+            boolean isPessoaJuridica = prefs.getBoolean("isPessoaJuridica", false);
+
             Intent intent = new Intent(context, DetalheVagaActivity.class);
-            intent.putExtra("vaga", vaga);  // vaga é do tipo Vagas
+            intent.putExtra("vaga", vaga);
+            intent.putExtra("isPessoaJuridica", isPessoaJuridica); // passa essa informação para a activity de detalhes
             context.startActivity(intent);
         });
+
 
     }
 
