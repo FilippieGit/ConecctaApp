@@ -38,25 +38,28 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
     public void onBindViewHolder(@NonNull VagasViewHolder holder, int position) {
         Vagas vaga = vagasList.get(position);
 
-        // Preenche os dados da vaga conforme seu pedido
-        holder.tvJobTitle.setText(vaga.getTitulo());
-        holder.tvLocation.setText(vaga.getLocalizacao());
-        holder.tvRequisitos.setText(formatarSalario(vaga.getSalario()));
-        holder.tvBranch.setText(vaga.getDescricao());
-        holder.tvCompanyName.setText(vaga.getArea_atuacao());
+        // Preenche os dados da vaga conforme os campos do layout
+        holder.tvJobTitle.setText(vaga.getTitulo());               // título da vaga
+        holder.tvBranch.setText(vaga.getArea_atuacao());           // ramo da vaga
+        holder.tvLocation.setText(vaga.getLocalizacao());          // local da vaga
+        holder.tvBenefits.setText(vaga.getBeneficios() != null ? vaga.getBeneficios() : "Não informado"); // benefícios
+        holder.tvrequisitos.setText(vaga.getRequisitos());         // requisitos da vaga
+        holder.tvCompanyName.setText(vaga.getNome_empresa());
 
-        // Configura a imagem (substitua por sua lógica de carregamento)
+
+        // Configura a imagem (substitua pela sua lógica de carregamento)
         holder.imgCompanyLogo.setImageResource(R.drawable.logo);
 
-        // Configura o clique no botão
+        // Botão para detalhes
+        // Botão para detalhes
         holder.btnViewDetails.setOnClickListener(v -> {
-
-
             Intent intent = new Intent(context, DetalheVagaActivity.class);
-            intent.putExtra("vaga_id", vaga.getVaga_id());
+            intent.putExtra("vaga", vaga);  // vaga é do tipo Vagas
             context.startActivity(intent);
         });
+
     }
+
 
     private String formatarSalario(String salario) {
         try {
@@ -74,7 +77,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
 
     public static class VagasViewHolder extends RecyclerView.ViewHolder {
         ImageView imgCompanyLogo;
-        TextView tvJobTitle, tvCompanyName, tvBranch, tvLocation, tvBenefits, tvRequisitos;
+        TextView tvJobTitle, tvCompanyName, tvBranch, tvLocation, tvBenefits, tvrequisitos;
         Button btnViewDetails;
 
         public VagasViewHolder(View view) {
@@ -85,7 +88,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
             tvBranch = view.findViewById(R.id.tvBranch);
             tvLocation = view.findViewById(R.id.tvLocation);
             tvBenefits = view.findViewById(R.id.tvBenefits);
-            tvRequisitos = view.findViewById(R.id.tvrequisitos);
+            tvrequisitos = view.findViewById(R.id.tvrequisitos);
             btnViewDetails = view.findViewById(R.id.btnViewDetails);
         }
     }

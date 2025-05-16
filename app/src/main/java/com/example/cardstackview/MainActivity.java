@@ -214,18 +214,21 @@ public class MainActivity extends AppCompatActivity {
                             JSONObject vagaJson = vagasArray.getJSONObject(i);
                             Vagas vaga = new Vagas(
                                     vagaJson.getInt("id_vagas"),
-                                    vagaJson.getString("local_vagas"), // titulo
-                                    vagaJson.getString("requisitos_vagas"), // descricao
-                                    vagaJson.getString("local_vagas"), // localizacao
-                                    vagaJson.getString("salario_vagas"), // salario
-                                    vagaJson.getString("requisitos_vagas"), // requisitos
-                                    vagaJson.getString("vinculo_vagas"), // nivel_experiencia
-                                    vagaJson.getString("vinculo_vagas"), // tipo_contrato
-                                    vagaJson.getString("ramo_vagas"), // area_atuacao
-                                    1 // empresa_id (fixo pois não está no JSON)
+                                    vagaJson.getString("titulo_vagas"),
+                                    vagaJson.getString("descricao_vagas"),
+                                    vagaJson.getString("local_vagas"),
+                                    vagaJson.getString("salario_vagas"),
+                                    vagaJson.getString("requisitos_vagas"),
+                                    "", // nivel_experiencia (se não existir, pode deixar vazio)
+                                    vagaJson.getString("vinculo_vagas"),
+                                    vagaJson.getString("ramo_vagas"),
+                                    vagaJson.optString("beneficios_vagas", "Não informado"),
+                                    vagaJson.getInt("id_empresa"),
+                                    vagaJson.optString("nome_empresa", "Empresa não informada")
                             );
                             vagasList.add(vaga);
                         }
+
                         adapter.notifyDataSetChanged();
                     } else {
                         Toast.makeText(MainActivity.this, "Dados de vagas não encontrados", Toast.LENGTH_SHORT).show();

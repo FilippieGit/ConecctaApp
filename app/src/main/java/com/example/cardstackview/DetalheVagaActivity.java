@@ -51,20 +51,22 @@ public class DetalheVagaActivity extends AppCompatActivity {
     private void exibirDetalhesVaga() {
         Intent intent = getIntent();
         if (intent != null && intent.hasExtra("vaga")) {
-            vaga = (Vaga) intent.getSerializableExtra("vaga");
+            Vagas vaga = (Vagas) intent.getSerializableExtra("vaga");
             textTituloDetalhe.setText(vaga.getTitulo());
             textDescricaoDetalhe.setText(vaga.getDescricao());
             textLocalizacaoDetalhe.setText("Localização: " + vaga.getLocalizacao());
             textSalarioDetalhe.setText("Salário: " + vaga.getSalario());
             textRequisitosDetalhe.setText("Requisitos: " + vaga.getRequisitos());
-            textNivelExperienciaDetalhe.setText("Nível: " + vaga.getNivelExperiencia());
-            textTipoContratoDetalhe.setText("Contrato: " + vaga.getTipoContrato());
-            textAreaAtuacaoDetalhe.setText("Área: " + vaga.getAreaAtuacao());
+            textNivelExperienciaDetalhe.setText("Nível: " + vaga.getNivel_experiencia());
+            textTipoContratoDetalhe.setText("Contrato: " + vaga.getTipo_contrato());
+            textAreaAtuacaoDetalhe.setText("Área: " + vaga.getArea_atuacao());
         } else {
             textTituloDetalhe.setText("Erro ao carregar os dados");
             textDescricaoDetalhe.setText("Tente novamente mais tarde.");
         }
     }
+
+
 
     private void excluirVaga() {
         Intent resultIntent = new Intent();
