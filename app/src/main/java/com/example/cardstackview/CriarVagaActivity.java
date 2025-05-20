@@ -2,19 +2,25 @@ package com.example.cardstackview;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+
 import org.json.JSONException;
 import org.json.JSONObject;
+
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -24,12 +30,14 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import android.widget.Spinner;
 
 public class CriarVagaActivity extends AppCompatActivity {
 
     private TextInputEditText edtTituloVaga, edtDescricaoVaga, edtLocalizacao, edtSalario, edtRequisitos;
     private Spinner spinnerNivelExperiencia, spinnerTipoContrato, spinnerAreaAtuacao;
+
+    // Variáveis de instância para os dados do formulário
+    private String titulo, descricao, localizacao, salario, requisitos, nivel, contrato, area, idEmpresa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +53,10 @@ public class CriarVagaActivity extends AppCompatActivity {
         edtSalario = findViewById(R.id.edtSalario);
         edtRequisitos = findViewById(R.id.edtRequisitos);
 
-        // Configurar Spinners
         spinnerNivelExperiencia = findViewById(R.id.spinnerNivelExperiencia);
         spinnerTipoContrato = findViewById(R.id.spinnerTipoContrato);
         spinnerAreaAtuacao = findViewById(R.id.spinnerAreaAtuacao);
 
-        // Configurar adaptadores
         ArrayAdapter<CharSequence> nivelAdapter = ArrayAdapter.createFromResource(this,
                 R.array.niveis_experiencia, android.R.layout.simple_spinner_item);
         nivelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -79,14 +85,14 @@ public class CriarVagaActivity extends AppCompatActivity {
         }
 
         // Pegando os valores dos campos
-        String titulo = edtTituloVaga.getText().toString().trim();
-        String descricao = edtDescricaoVaga.getText().toString().trim();
-        String localizacao = edtLocalizacao.getText().toString().trim();
-        String salario = edtSalario.getText().toString().trim();
-        String requisitos = edtRequisitos.getText().toString().trim();
-        String nivel = spinnerNivelExperiencia.getSelectedItem().toString();
-        String contrato = spinnerTipoContrato.getSelectedItem().toString();
-        String area = spinnerAreaAtuacao.getSelectedItem().toString();
+        titulo = edtTituloVaga.getText().toString().trim();
+        descricao = edtDescricaoVaga.getText().toString().trim();
+        localizacao = edtLocalizacao.getText().toString().trim();
+        salario = edtSalario.getText().toString().trim();
+        requisitos = edtRequisitos.getText().toString().trim();
+        nivel = spinnerNivelExperiencia.getSelectedItem().toString();
+        contrato = spinnerTipoContrato.getSelectedItem().toString();
+        area = spinnerAreaAtuacao.getSelectedItem().toString();
 
         // Validações dos campos
         if (titulo.isEmpty()) {
@@ -118,6 +124,7 @@ public class CriarVagaActivity extends AppCompatActivity {
             Toast.makeText(this, "Usuário não autenticado! Faça login novamente.", Toast.LENGTH_SHORT).show();
             return;
         }
+        idEmpresa = user.getUid();
 
         // Mostrar progresso (loading)
         ProgressDialog progressDialog = new ProgressDialog(this);
@@ -135,11 +142,12 @@ public class CriarVagaActivity extends AppCompatActivity {
         params.put("nivel_experiencia", nivel);
         params.put("tipo_contrato", contrato);
         params.put("area_atuacao", area);
-        params.put("id_empresa", user.getUid());
+        params.put("id_empresa", "1"); // <-- ALTERADO: valor inteiro existente no banco
 
         // Executar a tarefa assíncrona
         new CadastrarVagaTask(progressDialog).execute(params);
     }
+
 
     private boolean isNetworkAvailable() {
         ConnectivityManager connectivityManager =
@@ -221,9 +229,28 @@ public class CriarVagaActivity extends AppCompatActivity {
             try {
                 JSONObject jsonResponse = new JSONObject(result);
                 if (!jsonResponse.getBoolean("error")) {
-                    Toast.makeText(CriarVagaActivity.this,
-                            "Vaga cadastrada com sucesso!",
-                            Toast.LENGTH_SHORT).show();
+                    int idVaga = jsonResponse.optInt("id_vaga", 0);
+
+                    // Crie o objeto Vagas usando as variáveis de instância
+                    Vagas vaga = new Vagas(
+                            idVaga,
+                            titulo,
+                            descricao,
+                            localizacao,
+                            salario,
+                            requisitos,
+                            nivel,
+                            contrato,
+                            area,
+                            "", // benefícios
+                            0,  // empresa_id (ajuste se for String na sua classe)
+                            ""  // nome_empresa
+                    );
+
+                    Intent intent = new Intent(CriarVagaActivity.this, DetalheVagaActivity.class);
+                    intent.putExtra("vaga", vaga);
+                    intent.putExtra("isPessoaJuridica", true);
+                    startActivity(intent);
                     finish();
                 } else {
                     Toast.makeText(CriarVagaActivity.this,

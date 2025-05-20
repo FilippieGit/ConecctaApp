@@ -1,7 +1,5 @@
 package com.example.cardstackview;
 
-import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
@@ -18,8 +16,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
     private TextView textTituloDetalhe, textDescricaoDetalhe, textLocalizacaoDetalhe;
     private TextView textSalarioDetalhe, textRequisitosDetalhe;
     private TextView textNivelExperienciaDetalhe, textTipoContratoDetalhe, textAreaAtuacaoDetalhe;
-    private Vaga vaga;
-    private ImageButton btnVoltarDetalhe; // Add this
+    private ImageButton btnVoltarDetalhe;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,24 +25,16 @@ public class DetalheVagaActivity extends AppCompatActivity {
 
         inicializarComponentes();
 
-        // Suponha que você tenha essa informação em SharedPreferences ou recebeu via Intent
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
 
         FloatingActionButton btnExcluir = findViewById(R.id.BtnDetalheExcluir);
-
-        if (isPessoaJuridica) {
-            btnExcluir.setVisibility(View.VISIBLE);
-        } else {
-            btnExcluir.setVisibility(View.GONE);
-        }
+        btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
 
         exibirDetalhesVaga();
 
-        btnExcluir.setOnClickListener(v -> excluirVaga());
-
         btnVoltarDetalhe.setOnClickListener(v -> finish());
+        // Excluir não implementado agora
     }
-
 
     private void inicializarComponentes() {
         imageLogoDetalhe = findViewById(R.id.imageLogoDetalhe);
@@ -57,33 +46,23 @@ public class DetalheVagaActivity extends AppCompatActivity {
         textNivelExperienciaDetalhe = findViewById(R.id.textNivelExperienciaDetalhe);
         textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
         textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
-        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe); // Initialize it
+        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
     }
 
     private void exibirDetalhesVaga() {
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("vaga")) {
-            Vagas vaga = (Vagas) intent.getSerializableExtra("vaga");
+        Vagas vaga = (Vagas) getIntent().getSerializableExtra("vaga");
+        if (vaga != null) {
             textTituloDetalhe.setText(vaga.getTitulo());
             textDescricaoDetalhe.setText(vaga.getDescricao());
             textLocalizacaoDetalhe.setText("Localização: " + vaga.getLocalizacao());
             textSalarioDetalhe.setText("Salário: " + vaga.getSalario());
             textRequisitosDetalhe.setText("Requisitos: " + vaga.getRequisitos());
-            textNivelExperienciaDetalhe.setText("Nível: " + vaga.getNivel_experiencia());
-            textTipoContratoDetalhe.setText("Contrato: " + vaga.getTipo_contrato());
-            textAreaAtuacaoDetalhe.setText("Área: " + vaga.getArea_atuacao());
+            textNivelExperienciaDetalhe.setText(vaga.getNivel_experiencia());
+            textTipoContratoDetalhe.setText(vaga.getTipo_contrato());
+            textAreaAtuacaoDetalhe.setText(vaga.getArea_atuacao());
         } else {
             textTituloDetalhe.setText("Erro ao carregar os dados");
             textDescricaoDetalhe.setText("Tente novamente mais tarde.");
         }
-    }
-
-
-
-    private void excluirVaga() {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("vagaExcluida", vaga);
-        setResult(Activity.RESULT_FIRST_USER, resultIntent);
-        finish();
     }
 }
