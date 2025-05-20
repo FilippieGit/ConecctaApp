@@ -4,11 +4,11 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content">
 
-    <EditText android:id="@+id/editTextCargo" android:hint="Cargo" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <EditText android:id="@+id/editTextEmpresa" android:hint="Empresa" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <EditText android:id="@+id/editTextPeriodo" android:hint="Período (ex: 2020–2022)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <EditText android:id="@+id/editTextLocal" android:hint="Local" android:layout_width="match_parent" android:layout_height="wrap_content"/>
-    <EditText android:id="@+id/editTextDescricao" android:hint="Descrição das atividades" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:textSize="20dp" android:id="@+id/editTextCargo" android:hint="Cargo" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:textSize="20dp" android:id="@+id/editTextEmpresa" android:hint="Empresa" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:textSize="20dp" android:id="@+id/editTextPeriodo" android:hint="Período (ex: 2020–2022)" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:textSize="20dp" android:id="@+id/editTextLocal" android:hint="Local" android:layout_width="match_parent" android:layout_height="wrap_content"/>
+    <EditText android:textSize="20dp" android:id="@+id/editTextDescricao" android:hint="Descrição das atividades" android:layout_width="match_parent" android:layout_height="wrap_content"/>
 
     <Button android:id="@+id/buttonSalvarExperiencia" android:text="Salvar" android:layout_width="wrap_content" android:layout_height="wrap_content"/>
 </LinearLayout>
