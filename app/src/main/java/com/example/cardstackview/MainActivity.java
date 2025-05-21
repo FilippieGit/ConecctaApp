@@ -3,6 +3,7 @@ package com.example.cardstackview;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
@@ -198,6 +199,11 @@ public class MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             binding.cardStack.setVisibility(View.VISIBLE);
 
+            if (!s.trim().startsWith("{")) {
+                Toast.makeText(MainActivity.this, "Resposta não é JSON:\n" + s.substring(0, Math.min(200, s.length())), Toast.LENGTH_LONG).show();
+                Log.e("API_RESPONSE", "Resposta não JSON: " + s);
+                return;
+            }
             if (s == null || s.isEmpty()) {
                 Toast.makeText(MainActivity.this, "Resposta vazia do servidor", Toast.LENGTH_SHORT).show();
                 return;
@@ -212,24 +218,30 @@ public class MainActivity extends AppCompatActivity {
 
                         for (int i = 0; i < vagasArray.length(); i++) {
                             JSONObject vagaJson = vagasArray.getJSONObject(i);
+
+                            String beneficios = vagaJson.optString("beneficios_vagas", "Não informado");
+                            if (beneficios == null || beneficios.equals("null") || beneficios.trim().isEmpty()) {
+                                beneficios = "Não informado";
+                            }
+
                             Vagas vaga = new Vagas(
-                                    vagaJson.getInt("id_vagas"),
-                                    vagaJson.getString("titulo_vagas"),
-                                    vagaJson.getString("descricao_vagas"),
-                                    vagaJson.getString("local_vagas"),
-                                    vagaJson.getString("salario_vagas"),
-                                    vagaJson.getString("requisitos_vagas"),
-                                    "", // nivel_experiencia (se não existir, pode deixar vazio)
-                                    vagaJson.getString("vinculo_vagas"),
-                                    vagaJson.getString("ramo_vagas"),
-                                    vagaJson.optString("beneficios_vagas", "Não informado"),
-                                    vagaJson.getInt("id_empresa"),
+                                    vagaJson.optInt("id_vagas"),
+                                    vagaJson.optString("titulo_vagas", "Não informado"),
+                                    vagaJson.optString("descricao_vagas", "Não informado"),
+                                    vagaJson.optString("local_vagas", "Não informado"),
+                                    vagaJson.optString("salario_vagas", "Não informado"),
+                                    vagaJson.optString("requisitos_vagas", "Não informado"),
+                                    "", // nivel_experiencia
+                                    vagaJson.optString("vinculo_vagas", "Não informado"),
+                                    vagaJson.optString("ramo_vagas", "Não informado"),
+                                    beneficios,
+                                    vagaJson.optInt("id_empresa"),
                                     vagaJson.optString("nome_empresa", "Empresa não informada"),
-                                    null // habilidadesDesejaveis
+                                    null
                             );
+
                             vagasList.add(vaga);
                         }
-
 
                         adapter.notifyDataSetChanged();
                     } else {
@@ -243,6 +255,9 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, "Erro ao processar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
             }
         }
+
+
+
 
         @Override
         protected String doInBackground(Void... voids) {

@@ -128,7 +128,19 @@
                 android:layout_alignParentEnd="true"
                 android:text="Esqueci a senha" />
 
+
         </RelativeLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnIrParaTelaEmpresa"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:text="Ir para Tela Empresa"
+            android:backgroundTint="@color/diferencial"
+            android:textColor="@color/TEXT"
+            android:fontFamily="@font/font" />
+
 
     </LinearLayout>
 

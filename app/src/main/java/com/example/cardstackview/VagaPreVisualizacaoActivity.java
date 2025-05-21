@@ -1,6 +1,7 @@
 package com.example.cardstackview;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -30,8 +31,9 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
     private TextView preVisualizacaoTextLocalizacao, preVisualizacaoTextSalario;
     private TextView preVisualizacaoTextRequisitos, preVisualizacaoTextNivelExperiencia;
     private TextView preVisualizacaoTextTipoContrato, preVisualizacaoTextAreaAtuacao;
+    private TextView preVisualizacaoTextBeneficios;
     private MaterialButton preVisualizacaoBtnPublicar;
-    private ImageButton preVisualizacaoBtnEditar, preVisualizacaoBtnExcluir;
+    private ImageButton preVisualizacaoBtnEditar;
     private Vagas vaga;
 
     @Override
@@ -53,16 +55,15 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         preVisualizacaoTextNivelExperiencia = findViewById(R.id.preVisualizacaoTextNivelExperiencia);
         preVisualizacaoTextTipoContrato = findViewById(R.id.preVisualizacaoTextTipoContrato);
         preVisualizacaoTextAreaAtuacao = findViewById(R.id.preVisualizacaoTextAreaAtuacao);
+        preVisualizacaoTextBeneficios = findViewById(R.id.preVisualizacaoTextBeneficios);
 
         preVisualizacaoBtnPublicar = findViewById(R.id.btnPreVisualizacaoPublicar);
         preVisualizacaoBtnEditar = findViewById(R.id.btnPreVisualizacaoBEditar);
-        preVisualizacaoBtnExcluir = findViewById(R.id.btnPreVisualizacaoExcluir);
     }
 
     private void configurarListeners() {
         preVisualizacaoBtnPublicar.setOnClickListener(v -> publicarVaga());
-        preVisualizacaoBtnEditar.setOnClickListener(v -> finish()); // Voltar para edição
-        preVisualizacaoBtnExcluir.setOnClickListener(v -> finish()); // Pode implementar exclusão
+        preVisualizacaoBtnEditar.setOnClickListener(v -> finish());
     }
 
     private void exibirDadosVaga() {
@@ -77,6 +78,7 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
             preVisualizacaoTextNivelExperiencia.setText("Nível: " + vaga.getNivel_experiencia());
             preVisualizacaoTextTipoContrato.setText("Contrato: " + vaga.getTipo_contrato());
             preVisualizacaoTextAreaAtuacao.setText("Área: " + vaga.getArea_atuacao());
+            preVisualizacaoTextBeneficios.setText("Benefícios: " + vaga.getBeneficios());
         }
     }
 
@@ -95,8 +97,8 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         params.put("nivel_experiencia", vaga.getNivel_experiencia());
         params.put("tipo_contrato", vaga.getTipo_contrato());
         params.put("area_atuacao", vaga.getArea_atuacao());
+        params.put("beneficios", vaga.getBeneficios());
         params.put("id_empresa", String.valueOf(vaga.getEmpresa_id()));
-        // Adicione outros campos se necessário
 
         new CadastrarVagaTask(progressDialog).execute(params);
     }
@@ -120,7 +122,6 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
 
-                // Monta os parâmetros no formato URL encoded
                 Uri.Builder builder = new Uri.Builder();
                 for (Map.Entry<String, String> entry : postData.entrySet()) {
                     builder.appendQueryParameter(entry.getKey(), entry.getValue());
@@ -144,7 +145,6 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                     }
                     in.close();
 
-                    // Aqui você pode analisar a resposta JSON para confirmar sucesso
                     String response = sb.toString();
                     JSONObject jsonResponse = new JSONObject(response);
                     return !jsonResponse.getBoolean("error");
@@ -157,12 +157,13 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
             }
         }
 
-
         @Override
         protected void onPostExecute(Boolean success) {
             progressDialog.dismiss();
             if (success) {
                 Toast.makeText(VagaPreVisualizacaoActivity.this, "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(VagaPreVisualizacaoActivity.this, TelaEmpresaActivity.class);
+                startActivity(intent);
                 finish();
             } else {
                 Toast.makeText(VagaPreVisualizacaoActivity.this, "Erro ao publicar vaga!", Toast.LENGTH_SHORT).show();

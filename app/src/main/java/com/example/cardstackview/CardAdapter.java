@@ -39,32 +39,34 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
     public void onBindViewHolder(@NonNull VagasViewHolder holder, int position) {
         Vagas vaga = vagasList.get(position);
 
-        // Preenche os dados da vaga conforme os campos do layout
-        holder.tvJobTitle.setText(vaga.getTitulo());               // título da vaga
-        holder.tvBranch.setText(vaga.getArea_atuacao());           // ramo da vaga
-        holder.tvLocation.setText(vaga.getLocalizacao());          // local da vaga
-        holder.tvBenefits.setText(vaga.getBeneficios() != null ? vaga.getBeneficios() : "Não informado"); // benefícios
-        holder.tvrequisitos.setText(vaga.getRequisitos());         // requisitos da vaga
+        holder.tvJobTitle.setText(vaga.getTitulo());
+        holder.tvBranch.setText(vaga.getArea_atuacao());
+        holder.tvLocation.setText(vaga.getLocalizacao());
+
+        // Tratamento robusto para benefícios no Adapter
+        String beneficios = vaga.getBeneficios();
+        if (beneficios == null || beneficios.trim().isEmpty()) {
+            beneficios = "Não informado";
+        }
+        holder.tvBenefits.setText(beneficios);
+
+
+        holder.tvrequisitos.setText(vaga.getRequisitos());
         holder.tvCompanyName.setText(vaga.getNome_empresa());
 
-
-        // Configura a imagem (substitua pela sua lógica de carregamento)
         holder.imgCompanyLogo.setImageResource(R.drawable.logo);
 
-        // Botão para detalhes
-        // Botão para detalhes
         holder.btnViewDetails.setOnClickListener(v -> {
             SharedPreferences prefs = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
             boolean isPessoaJuridica = prefs.getBoolean("isPessoaJuridica", false);
 
             Intent intent = new Intent(context, DetalheVagaActivity.class);
             intent.putExtra("vaga", vaga);
-            intent.putExtra("isPessoaJuridica", isPessoaJuridica); // passa essa informação para a activity de detalhes
+            intent.putExtra("isPessoaJuridica", isPessoaJuridica);
             context.startActivity(intent);
         });
-
-
     }
+
 
 
     private String formatarSalario(String salario) {
