@@ -12,25 +12,28 @@ import java.util.List;
 
 public class FormacaoAdapter extends RecyclerView.Adapter<FormacaoAdapter.ViewHolder> {
     private List<Formacao> lista;
-    public FormacaoAdapter(List<Formacao> lista) { this.lista = lista; }
+
+    public FormacaoAdapter(List<Formacao> lista) {
+        this.lista = lista;
+    }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView txtCurso, txtInstituicao, txtAnoInicio, txtAnoConclusao, txtDescricao;
+        TextView txtCurso, txtInstituicao, txtPeriodo, txtDescricao;
         ImageButton btnRemover;
+
         public ViewHolder(View itemView) {
             super(itemView);
-            txtCurso = itemView.findViewById(R.id.editTextCurso);
-            txtInstituicao = itemView.findViewById(R.id.editTextInstituicao);
-            txtAnoInicio = itemView.findViewById(R.id.editTextAnoInicio);
-            txtAnoConclusao = itemView.findViewById(R.id.editTextAnoConclusao);
-            txtDescricao = itemView.findViewById(R.id.editTextDescricao);
-            btnRemover = itemView.findViewById(R.id.buttonSalvarFormacao);
+            txtCurso = itemView.findViewById(R.id.textCurso);
+            txtInstituicao = itemView.findViewById(R.id.textInstituicao);
+            txtPeriodo = itemView.findViewById(R.id.textPeriodo);
+            txtDescricao = itemView.findViewById(R.id.textDescricao);
+            btnRemover = itemView.findViewById(R.id.buttonRemoverFormacao);
         }
     }
 
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.dialog_adicionar_formacao_layout, parent, false);
+        View v = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_formacao, parent, false);
         return new ViewHolder(v);
     }
 
@@ -39,8 +42,7 @@ public class FormacaoAdapter extends RecyclerView.Adapter<FormacaoAdapter.ViewHo
         Formacao f = lista.get(position);
         holder.txtCurso.setText(f.curso);
         holder.txtInstituicao.setText(f.instituicao);
-        holder.txtAnoInicio.setText(f.anoInicio);
-        holder.txtAnoConclusao.setText(f.anoConclusao);
+        holder.txtPeriodo.setText(f.anoInicio + " - " + f.anoConclusao);
         holder.txtDescricao.setText(f.descricao);
 
         holder.btnRemover.setOnClickListener(v -> {
