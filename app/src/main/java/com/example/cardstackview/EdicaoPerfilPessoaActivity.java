@@ -6,6 +6,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.view.View;
 import android.widget.ImageView;
@@ -23,148 +24,121 @@ import java.util.List;
 
 public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
-    ImageView imgVoltarPerfilPessoa;
-
-    RecyclerView recyclerCertificados, recyclerFormacoes, recyclerExperiencias;
-    List<Certificado> listaCertificados = new ArrayList<>();
-    List<Formacao> listaFormacoes = new ArrayList<>();
-    List<Experiencia> listaExperiencias = new ArrayList<>();
-    CertificadoAdapter certificadoAdapter;
-    FormacaoAdapter formacaoAdapter;
-    ExperienciaAdapter experienciaAdapter;
-
+    LinearLayout layoutCertificados, layoutExperiencias, layoutFormacoes;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.edicao_perfil_pessoa_layout);
 
-        recyclerCertificados = findViewById(R.id.recyclerCertificados);
-        recyclerFormacoes = findViewById(R.id.recyclerFormacoes);
-        recyclerExperiencias = findViewById(R.id.recyclerExperiencias);
+        layoutCertificados = findViewById(R.id.layoutCertificados);
+        layoutExperiencias = findViewById(R.id.layoutExperiencias);
+        layoutFormacoes = findViewById(R.id.layoutFormacoes);
 
-        recyclerCertificados.setLayoutManager(new LinearLayoutManager(this));
-        recyclerFormacoes.setLayoutManager(new LinearLayoutManager(this));
-        recyclerExperiencias.setLayoutManager(new LinearLayoutManager(this));
+        Button btnAddCertificado = findViewById(R.id.btnAddCertificado);
+        Button btnAddExperiencia = findViewById(R.id.btnAddExperiencia);
+        Button btnAddFormacao = findViewById(R.id.btnAddFormacao);
 
-        certificadoAdapter = new CertificadoAdapter(listaCertificados);
-        formacaoAdapter = new FormacaoAdapter(listaFormacoes);
-        experienciaAdapter = new ExperienciaAdapter(listaExperiencias);
+        btnAddCertificado.setOnClickListener(v -> mostrarDialogCertificado());
+        btnAddExperiencia.setOnClickListener(v -> mostrarDialogExperiencia());
+        btnAddFormacao.setOnClickListener(v -> mostrarDialogFormacao());
 
-        recyclerCertificados.setAdapter(certificadoAdapter);
-        recyclerFormacoes.setAdapter(formacaoAdapter);
-        recyclerExperiencias.setAdapter(experienciaAdapter);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.perfil), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
-
-        // Botão de adicionar certificado
-        Button btnAdicionar = findViewById(R.id.btnAdicionarCertificado);
-
-        btnAdicionar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                LayoutInflater inflater = LayoutInflater.from(EdicaoPerfilPessoaActivity.this);
-                View dialogView = inflater.inflate(R.layout.dialog_adicionar_certificado_layout, null);
-
-                AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(EdicaoPerfilPessoaActivity.this);
-                dialogBuilder.setView(dialogView);
-                dialogBuilder.setCancelable(true);
-
-                AlertDialog alertDialog = dialogBuilder.create();
-                alertDialog.show();
-
-                Button btnSalvar = dialogView.findViewById(R.id.buttonSalvarCertificado);
-                EditText editNome = dialogView.findViewById(R.id.editTextNomeCertificado);
-                EditText editInstituicao = dialogView.findViewById(R.id.editTextInstituicao);
-                EditText editAno = dialogView.findViewById(R.id.editTextAno);
-                EditText editDuracao = dialogView.findViewById(R.id.editTextDuracao);
-                EditText editDescricao = dialogView.findViewById(R.id.editTextDescricao);
-
-                btnSalvar.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        String nomeCertificado = editNome.getText().toString();
-                        String instituicao = editInstituicao.getText().toString();
-                        String ano = editAno.getText().toString();
-                        String duracao = editDuracao.getText().toString();
-                        String descricao = editDescricao.getText().toString();
-
-                        listaCertificados.add(new Certificado(nomeCertificado, instituicao, ano, duracao, descricao));
-                        certificadoAdapter.notifyItemInserted(listaCertificados.size() - 1);
-
-                        alertDialog.dismiss();
-                    }
-                });
-            }
-        });
-
-        Button btnFormacao = findViewById(R.id.btnAdicionarFormacao);
-        btnFormacao.setOnClickListener(v -> {
-            View dialogView = getLayoutInflater().inflate(R.layout.dialog_adicionar_formacao_layout, null);
-            AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
-            dialog.show();
-
-            EditText curso = dialogView.findViewById(R.id.editTextCurso);
-            EditText inst = dialogView.findViewById(R.id.editTextInstituicao);
-            EditText anoInicio = dialogView.findViewById(R.id.editTextAnoInicio);
-            EditText anoConclusao = dialogView.findViewById(R.id.editTextAnoConclusao);
-            EditText desc = dialogView.findViewById(R.id.editTextDescricao);
-            Button salvar = dialogView.findViewById(R.id.buttonSalvarFormacao);
-
-            salvar.setOnClickListener(v2 -> {
-                listaFormacoes.add(new Formacao(
-                        curso.getText().toString(),
-                        inst.getText().toString(),
-                        anoInicio.getText().toString(),
-                        anoConclusao.getText().toString(),
-                        desc.getText().toString()
-                ));
-                formacaoAdapter.notifyItemInserted(listaFormacoes.size() - 1);
-                dialog.dismiss();
-            });
-        });
-
-        Button btnExperiencia = findViewById(R.id.btnAdicionarExperiencia);
-        btnExperiencia.setOnClickListener(v -> {
-            View dialogView = getLayoutInflater().inflate(R.layout.dialog_adicionar_experiencia_layout, null);
-            AlertDialog dialog = new AlertDialog.Builder(this).setView(dialogView).create();
-            dialog.show();
-
-            EditText cargo = dialogView.findViewById(R.id.editTextCargo);
-            EditText empresa = dialogView.findViewById(R.id.editTextEmpresa);
-            EditText periodo = dialogView.findViewById(R.id.editTextPeriodo);
-            EditText local = dialogView.findViewById(R.id.editTextLocal);
-            EditText desc = dialogView.findViewById(R.id.editTextDescricao);
-            Button salvar = dialogView.findViewById(R.id.buttonSalvarExperiencia);
-
-            salvar.setOnClickListener(v2 -> {
-                listaExperiencias.add(new Experiencia(
-                        cargo.getText().toString(),
-                        empresa.getText().toString(),
-                        periodo.getText().toString(),
-                        local.getText().toString(),
-                        desc.getText().toString()
-                ));
-                experienciaAdapter.notifyItemInserted(listaExperiencias.size() - 1);
-                dialog.dismiss();
-            });
-        });
-
-
-
-        // ✅ Correto: função de voltar fora do listener anterior
-        imgVoltarPerfilPessoa = findViewById(R.id.imgVoltarPerfilPessoa);
+        ImageView imgVoltarPerfilPessoa = findViewById(R.id.imgVoltarPerfilPessoa);
         imgVoltarPerfilPessoa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
-                finish();
+                finish(); // Encerra a tela atual para não empilhar
             }
         });
+
     }
+
+    private void mostrarDialogCertificado() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_certificado, null);
+        EditText nome = view.findViewById(R.id.editTextNomeCertificado);
+        EditText instituicao = view.findViewById(R.id.editTextInstituicao);
+        EditText ano = view.findViewById(R.id.editTextAno);
+        Button btnSalvar = view.findViewById(R.id.buttonSalvarCertificado);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(view)
+                .create();
+
+        btnSalvar.setOnClickListener(v -> {
+            String texto = nome.getText().toString() + " - " + instituicao.getText().toString() + " (" + ano.getText().toString() + ")";
+            adicionarItem(layoutCertificados, texto);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void mostrarDialogExperiencia() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_experiencia, null);
+        EditText cargo = view.findViewById(R.id.editTextCargo);
+        EditText empresa = view.findViewById(R.id.editTextEmpresa);
+        EditText periodo = view.findViewById(R.id.editTextPeriodo);
+        EditText local = view.findViewById(R.id.editTextLocal);
+        EditText descricao = view.findViewById(R.id.editTextDescricao);
+        Button btnSalvar = view.findViewById(R.id.buttonSalvarExperiencia);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(view)
+                .create();
+
+        btnSalvar.setOnClickListener(v -> {
+            String texto = cargo.getText().toString() + " na " + empresa.getText().toString() + " (" + periodo.getText().toString() + ", " + local.getText().toString() + ")\n" + descricao.getText().toString();
+            adicionarItem(layoutExperiencias, texto);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void mostrarDialogFormacao() {
+        View view = getLayoutInflater().inflate(R.layout.dialog_formacao, null);
+        EditText curso = view.findViewById(R.id.editTextCurso);
+        EditText instituicao = view.findViewById(R.id.editTextInstituicao);
+        EditText anoInicio = view.findViewById(R.id.editTextAnoInicio);
+        EditText anoConclusao = view.findViewById(R.id.editTextAnoConclusao);
+        EditText descricao = view.findViewById(R.id.editTextDescricao);
+        Button btnSalvar = view.findViewById(R.id.buttonSalvarFormacao);
+
+        AlertDialog dialog = new AlertDialog.Builder(this)
+                .setView(view)
+                .create();
+
+        btnSalvar.setOnClickListener(v -> {
+            String texto = curso.getText().toString() + " - " + instituicao.getText().toString() +
+                    " (" + anoInicio.getText().toString() + "–" + anoConclusao.getText().toString() + ")\n" +
+                    descricao.getText().toString();
+            adicionarItem(layoutFormacoes, texto);
+            dialog.dismiss();
+        });
+
+        dialog.show();
+    }
+
+    private void adicionarItem(LinearLayout layout, String texto) {
+        LinearLayout itemLayout = new LinearLayout(this);
+        itemLayout.setOrientation(LinearLayout.HORIZONTAL);
+        itemLayout.setPadding(0, 10, 0, 10);
+
+        TextView tv = new TextView(this);
+        tv.setText(texto);
+        tv.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1));
+        tv.setTextSize(16);
+
+        Button btnRemover = new Button(this);
+        btnRemover.setText("Remover");
+        btnRemover.setOnClickListener(v -> layout.removeView(itemLayout));
+
+        itemLayout.addView(tv);
+        itemLayout.addView(btnRemover);
+
+        layout.addView(itemLayout);
+    }
+
 }

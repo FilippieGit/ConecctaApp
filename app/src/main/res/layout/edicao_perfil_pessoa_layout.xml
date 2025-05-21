@@ -174,13 +174,19 @@
 
                 </RelativeLayout>
 
-                <Button android:id="@+id/btnAdicionarExperiencia"
+                <Button
+                    android:id="@+id/btnAddExperiencia"
                     android:text="Adicionar Experiência"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerExperiencias"
-                    android:layout_width="match_parent" android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/layoutExperiencias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -203,13 +209,19 @@
 
 
                 <!-- Formações -->
-                <Button android:id="@+id/btnAdicionarFormacao"
+                <Button
+                    android:id="@+id/btnAddFormacao"
                     android:text="Adicionar Formação"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerFormacoes"
-                    android:layout_width="match_parent" android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/layoutFormacoes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -230,14 +242,18 @@
 
                 </RelativeLayout>
 
-                <!-- Certificados -->
-                <Button android:id="@+id/btnAdicionarCertificado"
+                <Button
+                    android:id="@+id/btnAddCertificado"
                     android:text="Adicionar Certificado"
-                    android:layout_width="wrap_content" android:layout_height="wrap_content" />
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
 
-                <androidx.recyclerview.widget.RecyclerView
-                    android:id="@+id/recyclerCertificados"
-                    android:layout_width="match_parent" android:layout_height="wrap_content" />
+                <LinearLayout
+                    android:id="@+id/layoutCertificados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp" />
 
             </LinearLayout>
 
