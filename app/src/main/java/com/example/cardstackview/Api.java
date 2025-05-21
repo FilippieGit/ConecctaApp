@@ -11,6 +11,8 @@ public class Api {
     public static final String URL_GET_VAGAS = ROOT_URL + "getVagas";
     public static final String URL_REGISTRAR_INTERESSE = ROOT_URL + "registrarinteresse";
 
+    public static final String URL_EXCLUIR_VAGA = ROOT_URL + "excluirVaga";
+
     // Adicione este método para verificar a conexão
     public static boolean isURLReachable(Context context) {
         try {

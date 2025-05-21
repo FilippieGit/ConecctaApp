@@ -202,6 +202,7 @@
             adapter.setOnItemClickListener(vaga -> {
                 Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
                 intent.putExtra("vaga", vaga);
+                intent.putExtra("isPessoaJuridica", true); // Ou false, dependendo do tipo de usuário
                 startActivityForResult(intent, REQUEST_DETALHES_VAGA);
             });
 
@@ -242,25 +243,57 @@
         public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == REQUEST_DETALHES_VAGA && resultCode == RESULT_EXCLUIR_VAGA && data != null) {
-                Vagas vagaExcluida = (Vagas) data.getSerializableExtra("vagaExcluida");
-                if (vagaExcluida != null) {
-                    int position = listaVagas.indexOf(vagaExcluida);
-                    if (position != -1) {
-                        listaVagas.remove(position);
-                        adapter.notifyItemRemoved(position);
-                        Toast.makeText(getContext(), "Vaga excluída com sucesso!", Toast.LENGTH_SHORT).show();
+            // Verifica se há dados e se a requisição é a esperada
+            if (data == null) {
+                return;
+            }
+
+            try {
+                // Tratamento para exclusão de vaga
+                if (requestCode == REQUEST_DETALHES_VAGA && resultCode == RESULT_EXCLUIR_VAGA) {
+                    Vagas vagaExcluida = (Vagas) data.getSerializableExtra("vagaExcluida");
+                    if (vagaExcluida != null) {
+                        // Encontra a posição da vaga na lista
+                        int position = -1;
+                        for (int i = 0; i < listaVagas.size(); i++) {
+                            if (listaVagas.get(i).getVaga_id() == vagaExcluida.getVaga_id()) {
+                                position = i;
+                                break;
+                            }
+                        }
+
+                        if (position != -1) {
+                            // Remove a vaga e atualiza a RecyclerView
+                            listaVagas.remove(position);
+                            adapter.notifyItemRemoved(position);
+
+                            // Mostra mensagem de sucesso
+                            Toast.makeText(getContext(), "Vaga excluída com sucesso!", Toast.LENGTH_SHORT).show();
+
+                            // Opcional: recarrega os dados para garantir consistência
+                            carregarVagas();
+                        } else {
+                            Toast.makeText(getContext(), "Vaga não encontrada na lista", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
-            }
-            else if (resultCode == Activity.RESULT_OK && data != null) {
-                Vagas vaga = (Vagas) data.getSerializableExtra("vagaPublicada");
-                if (vaga != null) {
-                    listaVagas.add(0, vaga);
-                    adapter.notifyItemInserted(0);
-                    recyclerView.smoothScrollToPosition(0);
-                    Toast.makeText(getContext(), "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
+                // Tratamento para nova vaga publicada
+                else if (requestCode == REQUEST_CRIAR_VAGA && resultCode == Activity.RESULT_OK) {
+                    Vagas vaga = (Vagas) data.getSerializableExtra("vagaPublicada");
+                    if (vaga != null) {
+                        // Adiciona no início da lista
+                        listaVagas.add(0, vaga);
+                        adapter.notifyItemInserted(0);
+                        recyclerView.smoothScrollToPosition(0);
+
+                        // Mostra mensagem de sucesso
+                        Toast.makeText(getContext(), "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
+                    }
                 }
+            } catch (Exception e) {
+                // Tratamento de erros genéricos
+                Toast.makeText(getContext(), "Erro ao processar resultado: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                e.printStackTrace();
             }
         }
 
