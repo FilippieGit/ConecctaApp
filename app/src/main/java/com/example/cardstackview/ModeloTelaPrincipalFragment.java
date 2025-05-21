@@ -61,13 +61,7 @@
             configurarDrawerLayout(view);
             configurarRecyclerView(view);
             configurarListeners(view);
-
-            // Verifica a conexão antes de carregar
-            if (Api.isURLReachable(requireContext())) {
-                carregarVagas();
-            } else {
-                Toast.makeText(requireContext(), "Servidor indisponível. Verifique sua conexão.", Toast.LENGTH_LONG).show();
-            }
+            carregarVagas();
 
             return view;
         }
@@ -87,10 +81,15 @@
                         URL url = new URL(Api.URL_GET_VAGAS);
                         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                         connection.setRequestMethod("GET");
-                        connection.setConnectTimeout(15000); // Aumentei o timeout
-                        connection.setReadTimeout(15000);
+                        connection.setConnectTimeout(8000);
+                        connection.setReadTimeout(8000);
+
+                        // Adicione logs para debug
+                        System.out.println("Tentando conectar em: " + Api.URL_GET_VAGAS);
 
                         int responseCode = connection.getResponseCode();
+                        System.out.println("Código de resposta: " + responseCode);
+
                         if (responseCode == HttpURLConnection.HTTP_OK) {
                             BufferedReader reader = new BufferedReader(
                                     new InputStreamReader(connection.getInputStream()));
@@ -100,24 +99,29 @@
                                 response.append(line);
                             }
                             reader.close();
+
+                            System.out.println("Resposta do servidor: " + response.toString());
                             return response.toString();
                         } else {
-                            return "error:" + responseCode; // Retorna o código de erro
+                            System.out.println("Erro HTTP: " + responseCode);
+                            return "error:" + responseCode;
                         }
                     } catch (Exception e) {
+                        System.out.println("Exceção: " + e.getMessage());
                         e.printStackTrace();
-                        return "exception:" + e.getMessage(); // Retorna a mensagem de exceção
+                        return "exception:" + e.getMessage();
                     }
                 }
 
                 @Override
                 protected void onPostExecute(String s) {
+                    System.out.println("Resultado recebido: " + s);
+
                     if (s == null) {
                         Toast.makeText(requireContext(), "Erro: resposta nula da API", Toast.LENGTH_LONG).show();
                         return;
                     }
 
-                    // Verifica se é uma mensagem de erro
                     if (s.startsWith("error:")) {
                         Toast.makeText(requireContext(), "Erro HTTP: " + s.substring(6), Toast.LENGTH_LONG).show();
                         return;
@@ -130,6 +134,7 @@
 
                     try {
                         JSONObject response = new JSONObject(s);
+                        System.out.println("JSON recebido: " + response.toString());
 
                         if (response.has("error")) {
                             if (response.getBoolean("error")) {
@@ -141,10 +146,13 @@
 
                         if (response.has("vagas")) {
                             JSONArray vagasArray = response.getJSONArray("vagas");
+                            System.out.println("Número de vagas: " + vagasArray.length());
+
                             listaVagas.clear();
 
                             for (int i = 0; i < vagasArray.length(); i++) {
                                 JSONObject vagaJson = vagasArray.getJSONObject(i);
+                                System.out.println("Vaga " + i + ": " + vagaJson.toString());
 
                                 Vagas vaga = new Vagas(
                                         vagaJson.optInt("id_vagas", 0),
@@ -163,7 +171,15 @@
 
                                 listaVagas.add(vaga);
                             }
+
+                            // Verifica se o adapter foi inicializado
+                            if (adapter == null) {
+                                adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
+                                recyclerView.setAdapter(adapter);
+                            }
+
                             adapter.notifyDataSetChanged();
+                            System.out.println("Total de vagas carregadas: " + listaVagas.size());
                         } else {
                             Toast.makeText(requireContext(), "Formato de resposta inválido", Toast.LENGTH_LONG).show();
                         }
@@ -198,17 +214,21 @@
         }
 
         private void configurarRecyclerView(View view) {
+            recyclerView = view.findViewById(R.id.idRecLista);
+            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+            recyclerView.setHasFixedSize(true);
+
+            // Inicializa o adapter com lista vazia
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
+            recyclerView.setAdapter(adapter);
+
+            // Configura o listener de clique
             adapter.setOnItemClickListener(vaga -> {
                 Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
                 intent.putExtra("vaga", vaga);
-                intent.putExtra("isPessoaJuridica", true); // Ou false, dependendo do tipo de usuário
+                intent.putExtra("isPessoaJuridica", true); // Ou false conforme necessário
                 startActivityForResult(intent, REQUEST_DETALHES_VAGA);
             });
-
-            recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            recyclerView.setHasFixedSize(true);
-            recyclerView.setAdapter(adapter);
         }
 
         private void configurarListeners(View view) {
