@@ -1,7 +1,6 @@
 package com.example.cardstackview;
 
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -28,12 +27,12 @@ public class DetalheVagaActivity extends AppCompatActivity {
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
 
         FloatingActionButton btnExcluir = findViewById(R.id.BtnDetalheExcluir);
-        btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
+        btnExcluir.setVisibility(isPessoaJuridica ? android.view.View.VISIBLE : android.view.View.GONE);
 
         exibirDetalhesVaga();
 
         btnVoltarDetalhe.setOnClickListener(v -> finish());
-        // Excluir não implementado agora
+        // Exclusão pode ser implementada aqui
     }
 
     private void inicializarComponentes() {

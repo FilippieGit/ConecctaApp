@@ -86,8 +86,6 @@
 
         private void configurarRecyclerView(View view) {
             // Dados de exemplo
-            listaVagas.add(new Vaga("Desenvolvedor Android", "Desenvolver apps Android", "São Paulo", "5000", "Java, Kotlin"));
-            listaVagas.add(new Vaga("Analista de Dados", "Análise de dados e BI", "Rio de Janeiro", "4500", "SQL, Power BI"));
 
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
             adapter.setOnItemClickListener(this::abrirDetalhesVaga);

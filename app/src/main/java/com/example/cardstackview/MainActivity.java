@@ -224,10 +224,12 @@ public class MainActivity extends AppCompatActivity {
                                     vagaJson.getString("ramo_vagas"),
                                     vagaJson.optString("beneficios_vagas", "Não informado"),
                                     vagaJson.getInt("id_empresa"),
-                                    vagaJson.optString("nome_empresa", "Empresa não informada")
+                                    vagaJson.optString("nome_empresa", "Empresa não informada"),
+                                    null // habilidadesDesejaveis
                             );
                             vagasList.add(vaga);
                         }
+
 
                         adapter.notifyDataSetChanged();
                     } else {
