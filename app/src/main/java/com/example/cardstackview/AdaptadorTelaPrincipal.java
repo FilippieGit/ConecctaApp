@@ -15,10 +15,10 @@ import java.util.List;
 public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPrincipal.ViewHolder> {
 
     private final Context context;
-    private final List<Vaga> listaVagas;
+    private final List<Vagas> listaVagas;
     private OnItemClickListener onItemClickListener;
 
-    public AdaptadorTelaPrincipal(Context context, List<Vaga> listaVagas) {
+    public AdaptadorTelaPrincipal(Context context, List<Vagas> listaVagas) {
         this.context = context;
         this.listaVagas = listaVagas;
     }
@@ -32,18 +32,19 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        Vaga vaga = listaVagas.get(position);
+        Vagas vaga = listaVagas.get(position);
 
         holder.titulo.setText(vaga.getTitulo());
 
-        // Usando localização como subtítulo, pode ajustar para descrição curta se preferir
         String subtitulo = vaga.getLocalizacao();
         if (subtitulo == null || subtitulo.isEmpty()) {
             subtitulo = vaga.getDescricao();
+            if (subtitulo != null && subtitulo.length() > 50) {
+                subtitulo = subtitulo.substring(0, 50) + "...";
+            }
         }
-        holder.subtitulo.setText(subtitulo);
+        holder.subtitulo.setText(subtitulo != null ? subtitulo : "Sem informações");
 
-        // Imagem fixa (logo padrão), ajuste se tiver imagem dinâmica
         holder.imagem.setImageResource(R.drawable.logo);
 
         holder.itemView.setOnClickListener(v -> {
@@ -63,7 +64,7 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
     }
 
     public interface OnItemClickListener {
-        void onItemClick(Vaga vaga);
+        void onItemClick(Vagas vaga);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

@@ -3,8 +3,10 @@
     import android.app.Activity;
     import android.app.AlertDialog;
     import android.content.Intent;
+    import android.os.AsyncTask;
     import android.os.Bundle;
     import android.view.LayoutInflater;
+    import android.view.MenuItem;
     import android.view.View;
     import android.view.ViewGroup;
     import android.widget.Toast;
@@ -26,19 +28,26 @@
     import com.google.android.material.floatingactionbutton.FloatingActionButton;
     import com.google.android.material.navigation.NavigationView;
 
+    import org.json.JSONArray;
+    import org.json.JSONException;
+    import org.json.JSONObject;
+
+    import java.io.BufferedReader;
+    import java.io.InputStreamReader;
+    import java.net.HttpURLConnection;
+    import java.net.URL;
     import java.util.ArrayList;
     import java.util.List;
 
     public class ModeloTelaPrincipalFragment extends Fragment {
 
+        private List<Vagas> listaVagas = new ArrayList<>();
         private static final int REQUEST_CRIAR_VAGA = 1001;
         private static final int REQUEST_DETALHES_VAGA = 1002;
         private static final int RESULT_EXCLUIR_VAGA = Activity.RESULT_FIRST_USER;
 
         private RecyclerView recyclerView;
-        private List<Vaga> listaVagas;
         private AdaptadorTelaPrincipal adapter;
-
         private MaterialToolbar topAppBar;
         private DrawerLayout drawerLayout;
         private NavigationView navigationView;
@@ -52,6 +61,7 @@
             configurarDrawerLayout(view);
             configurarRecyclerView(view);
             configurarListeners(view);
+            carregarVagas();
 
             return view;
         }
@@ -61,7 +71,104 @@
             drawerLayout = view.findViewById(R.id.idDrawer);
             navigationView = view.findViewById(R.id.idNavView);
             recyclerView = view.findViewById(R.id.idRecLista);
-            listaVagas = new ArrayList<>();
+        }
+
+        private void carregarVagas() {
+            new AsyncTask<Void, Void, String>() {
+                @Override
+                protected String doInBackground(Void... voids) {
+                    try {
+                        URL url = new URL(Api.URL_GET_VAGAS);
+                        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                        connection.setRequestMethod("GET");
+                        connection.setConnectTimeout(15000); // Aumentei o timeout
+                        connection.setReadTimeout(15000);
+
+                        int responseCode = connection.getResponseCode();
+                        if (responseCode == HttpURLConnection.HTTP_OK) {
+                            BufferedReader reader = new BufferedReader(
+                                    new InputStreamReader(connection.getInputStream()));
+                            StringBuilder response = new StringBuilder();
+                            String line;
+                            while ((line = reader.readLine()) != null) {
+                                response.append(line);
+                            }
+                            reader.close();
+                            return response.toString();
+                        } else {
+                            return "error:" + responseCode; // Retorna o código de erro
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        return "exception:" + e.getMessage(); // Retorna a mensagem de exceção
+                    }
+                }
+
+                @Override
+                protected void onPostExecute(String s) {
+                    if (s == null) {
+                        Toast.makeText(requireContext(), "Erro: resposta nula da API", Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    // Verifica se é uma mensagem de erro
+                    if (s.startsWith("error:")) {
+                        Toast.makeText(requireContext(), "Erro HTTP: " + s.substring(6), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    if (s.startsWith("exception:")) {
+                        Toast.makeText(requireContext(), "Exceção: " + s.substring(10), Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
+                    try {
+                        JSONObject response = new JSONObject(s);
+
+                        if (response.has("error")) {
+                            if (response.getBoolean("error")) {
+                                String message = response.optString("message", "Erro desconhecido");
+                                Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
+                                return;
+                            }
+                        }
+
+                        if (response.has("vagas")) {
+                            JSONArray vagasArray = response.getJSONArray("vagas");
+                            listaVagas.clear();
+
+                            for (int i = 0; i < vagasArray.length(); i++) {
+                                JSONObject vagaJson = vagasArray.getJSONObject(i);
+
+                                Vagas vaga = new Vagas(
+                                        vagaJson.optInt("id_vagas", 0),
+                                        vagaJson.optString("titulo_vagas", "Sem título"),
+                                        vagaJson.optString("descricao_vagas", "Sem descrição"),
+                                        vagaJson.optString("local_vagas", "Local não informado"),
+                                        vagaJson.optString("salario_vagas", "Salário não informado"),
+                                        vagaJson.optString("requisitos_vagas", "Requisitos não informados"),
+                                        vagaJson.optString("nivel_experiencia", "Nível não informado"),
+                                        vagaJson.optString("tipo_contrato", "Tipo não informado"),
+                                        vagaJson.optString("area_atuacao", "Área não informada"),
+                                        vagaJson.optString("beneficios", "Sem benefícios"),
+                                        vagaJson.optInt("id_empresa", 0),
+                                        vagaJson.optString("nome_empresa", "Empresa não informada")
+                                );
+
+                                listaVagas.add(vaga);
+                            }
+                            adapter.notifyDataSetChanged();
+                        } else {
+                            Toast.makeText(requireContext(), "Formato de resposta inválido", Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                        Toast.makeText(requireContext(),
+                                "Erro ao analisar JSON: " + e.getMessage() + "\nResposta: " + s,
+                                Toast.LENGTH_LONG).show();
+                    }
+                }
+            }.execute();
         }
 
         private void configurarWindowInsets(View view) {
@@ -85,10 +192,12 @@
         }
 
         private void configurarRecyclerView(View view) {
-            // Dados de exemplo
-
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
-            adapter.setOnItemClickListener(this::abrirDetalhesVaga);
+            adapter.setOnItemClickListener(vaga -> {
+                Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
+                intent.putExtra("vaga", vaga);
+                startActivityForResult(intent, REQUEST_DETALHES_VAGA);
+            });
 
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerView.setHasFixedSize(true);
@@ -100,7 +209,7 @@
             view.findViewById(R.id.idAFAB).setOnClickListener(v -> abrirCriarVaga());
         }
 
-        private boolean handleNavigationItemSelected(android.view.MenuItem item) {
+        private boolean handleNavigationItemSelected(MenuItem item) {
             int id = item.getItemId();
 
             if (id == R.id.idLoginItemMenu) {
@@ -123,40 +232,28 @@
             startActivityForResult(new Intent(requireActivity(), CriarVagaActivity.class), REQUEST_CRIAR_VAGA);
         }
 
-        private void abrirDetalhesVaga(Vaga vaga) {
-            Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
-            intent.putExtra("vaga", vaga);
-            startActivityForResult(intent, REQUEST_DETALHES_VAGA);
-        }
-
         @Override
         public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
 
-            if (requestCode == REQUEST_DETALHES_VAGA) {
-                if (resultCode == Activity.RESULT_FIRST_USER && data != null) {
-                    new AlertDialog.Builder(requireContext())
-                            .setTitle("Confirmar Exclusão")
-                            .setMessage("Tem certeza que deseja excluir esta vaga?")
-                            .setPositiveButton("Excluir", (dialog, which) -> {
-                                Vaga vagaExcluida = (Vaga) data.getSerializableExtra("vagaExcluida");
-                                if (vagaExcluida != null) {
-                                    removerVaga(vagaExcluida);
-                                    Toast.makeText(getContext(), "Vaga excluída com sucesso!", Toast.LENGTH_SHORT).show();
-                                }
-                            })
-                            .setNegativeButton("Cancelar", null)
-                            .show();
-                    return;
+            if (requestCode == REQUEST_DETALHES_VAGA && resultCode == RESULT_EXCLUIR_VAGA && data != null) {
+                Vagas vagaExcluida = (Vagas) data.getSerializableExtra("vagaExcluida");
+                if (vagaExcluida != null) {
+                    int position = listaVagas.indexOf(vagaExcluida);
+                    if (position != -1) {
+                        listaVagas.remove(position);
+                        adapter.notifyItemRemoved(position);
+                        Toast.makeText(getContext(), "Vaga excluída com sucesso!", Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
-
-            if (resultCode == Activity.RESULT_OK && data != null) {
-                Vaga vaga = (Vaga) data.getSerializableExtra("vagaPublicada");
-                if (requestCode == REQUEST_CRIAR_VAGA && vaga != null) {
-                    listaVagas.add(vaga);
-                    adapter.notifyItemInserted(listaVagas.size() - 1);
-                    Toast.makeText(getContext(), "Vaga publicada!", Toast.LENGTH_SHORT).show();
+            else if (resultCode == Activity.RESULT_OK && data != null) {
+                Vagas vaga = (Vagas) data.getSerializableExtra("vagaPublicada");
+                if (vaga != null) {
+                    listaVagas.add(0, vaga);
+                    adapter.notifyItemInserted(0);
+                    recyclerView.smoothScrollToPosition(0);
+                    Toast.makeText(getContext(), "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
                 }
             }
         }
@@ -166,13 +263,13 @@
             return requestCode == RESULT_EXCLUIR_VAGA ? "vagaExcluida" : "vagaPublicada";
         }
 
-        private void adicionarVaga(Vaga vaga) {
+        private void adicionarVaga(Vagas vaga) {
             listaVagas.add(vaga);
             adapter.notifyItemInserted(listaVagas.size() - 1);
             exibirMensagem("Vaga publicada com sucesso!");
         }
 
-        private void atualizarVaga(Vaga vagaAtualizada) {
+        private void atualizarVaga(Vagas vagaAtualizada) {
             for (int i = 0; i < listaVagas.size(); i++) {
                 if (listaVagas.get(i).getTitulo().equals(vagaAtualizada.getTitulo())) {
                     listaVagas.set(i, vagaAtualizada);
@@ -183,7 +280,7 @@
             }
         }
 
-        private void removerVaga(Vaga vagaExcluida) {
+        private void removerVaga(Vagas vagaExcluida) {
             for (int i = 0; i < listaVagas.size(); i++) {
                 if (listaVagas.get(i).getTitulo().equals(vagaExcluida.getTitulo())) {
                     listaVagas.remove(i);

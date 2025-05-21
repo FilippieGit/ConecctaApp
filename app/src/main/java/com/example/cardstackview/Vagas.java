@@ -54,6 +54,15 @@ public class Vagas implements Serializable {
         this.empresa_id = empresa_id;
     }
 
+    public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
+                 String salario, String requisitos, String nivel_experiencia,
+                 String tipo_contrato, String area_atuacao, String beneficios,
+                 int empresa_id, String nome_empresa) {
+        this(vaga_id, titulo, descricao, localizacao, salario, requisitos, nivel_experiencia,
+                tipo_contrato, area_atuacao, beneficios, empresa_id, nome_empresa, null);
+    }
+
+
     // Construtor para pré-visualização (sem benefícios)
     public Vagas(String titulo, String descricao, String localizacao, String salario,
                  String requisitos, String nivel_experiencia, String tipo_contrato,
