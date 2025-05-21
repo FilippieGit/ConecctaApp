@@ -61,7 +61,13 @@
             configurarDrawerLayout(view);
             configurarRecyclerView(view);
             configurarListeners(view);
-            carregarVagas();
+
+            // Verifica a conexão antes de carregar
+            if (Api.isURLReachable(requireContext())) {
+                carregarVagas();
+            } else {
+                Toast.makeText(requireContext(), "Servidor indisponível. Verifique sua conexão.", Toast.LENGTH_LONG).show();
+            }
 
             return view;
         }
