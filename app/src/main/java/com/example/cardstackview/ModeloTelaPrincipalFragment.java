@@ -218,15 +218,14 @@
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerView.setHasFixedSize(true);
 
-            // Inicializa o adapter com lista vazia
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
             recyclerView.setAdapter(adapter);
 
-            // Configura o listener de clique
+            // Set click listener for each item
             adapter.setOnItemClickListener(vaga -> {
                 Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
                 intent.putExtra("vaga", vaga);
-                intent.putExtra("isPessoaJuridica", true); // Ou false conforme necessário
+                intent.putExtra("isPessoaJuridica", true); // Set this based on user type
                 startActivityForResult(intent, REQUEST_DETALHES_VAGA);
             });
         }

@@ -54,6 +54,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
         btnVoltarDetalhe.setOnClickListener(v -> finish());
     }
 
+
     private void mostrarDialogoConfirmacao() {
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar Exclusão")
