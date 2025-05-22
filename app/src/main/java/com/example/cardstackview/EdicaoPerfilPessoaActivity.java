@@ -56,7 +56,7 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogCertificado() {
-        View view = getLayoutInflater().inflate(R.layout.dialog_certificado, null);
+        View view = getLayoutInflater().inflate(R.layout.dialog_adicionar_certificado_layout, null);
         EditText nome = view.findViewById(R.id.editTextNomeCertificado);
         EditText instituicao = view.findViewById(R.id.editTextInstituicao);
         EditText ano = view.findViewById(R.id.editTextAno);
@@ -76,7 +76,7 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogExperiencia() {
-        View view = getLayoutInflater().inflate(R.layout.dialog_experiencia, null);
+        View view = getLayoutInflater().inflate(R.layout.dialog_adicionar_experiencia_layout, null);
         EditText cargo = view.findViewById(R.id.editTextCargo);
         EditText empresa = view.findViewById(R.id.editTextEmpresa);
         EditText periodo = view.findViewById(R.id.editTextPeriodo);
@@ -98,7 +98,7 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
     }
 
     private void mostrarDialogFormacao() {
-        View view = getLayoutInflater().inflate(R.layout.dialog_formacao, null);
+        View view = getLayoutInflater().inflate(R.layout.dialog_adicionar_formacao_layout, null);
         EditText curso = view.findViewById(R.id.editTextCurso);
         EditText instituicao = view.findViewById(R.id.editTextInstituicao);
         EditText anoInicio = view.findViewById(R.id.editTextAnoInicio);
