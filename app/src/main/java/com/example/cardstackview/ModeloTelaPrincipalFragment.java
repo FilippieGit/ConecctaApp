@@ -5,6 +5,7 @@
     import android.content.Intent;
     import android.os.AsyncTask;
     import android.os.Bundle;
+    import android.util.Log;
     import android.view.LayoutInflater;
     import android.view.MenuItem;
     import android.view.View;
@@ -216,26 +217,23 @@
         private void configurarRecyclerView(View view) {
             recyclerView = view.findViewById(R.id.idRecLista);
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            recyclerView.setHasFixedSize(true);
 
-            // Inicializa o adapter com a lista de vagas
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
             recyclerView.setAdapter(adapter);
 
-            // Configura o listener de clique para os itens
             adapter.setOnItemClickListener(vaga -> {
-                // Cria a intent para abrir a DetalheVagaActivity
+                Log.d("VagaClick", "Vaga clicada: " + vaga.getTitulo());
+
                 Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
-
-                // Passa o objeto vaga completo como extra
                 intent.putExtra("vaga", vaga);
+                intent.putExtra("isPessoaJuridica", true); // ou false conforme necessário
 
-                // Define se é pessoa jurídica (empresa) ou não
-                // Você pode obter essa informação do seu sistema de login
-                intent.putExtra("isPessoaJuridica", true); // ou false para candidatos
-
-                // Inicia a activity esperando um possível resultado
-                startActivityForResult(intent, REQUEST_DETALHES_VAGA);
+                try {
+                    startActivityForResult(intent, REQUEST_DETALHES_VAGA);
+                } catch (Exception e) {
+                    Log.e("VagaClick", "Erro ao abrir detalhes", e);
+                    Toast.makeText(requireContext(), "Erro ao abrir detalhes", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 

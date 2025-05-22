@@ -13,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPrincipal.ViewHolder> {
+public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     private final Context context;
     private final List<Vagas> listaVagas;
@@ -22,7 +22,6 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
     private static final int VIEW_TYPE_NORMAL = 1;
     private static final int VIEW_TYPE_EMPTY = 0;
 
-
     public AdaptadorTelaPrincipal(Context context, List<Vagas> listaVagas) {
         this.context = context;
         this.listaVagas = listaVagas != null ? listaVagas : new ArrayList<>();
@@ -30,14 +29,32 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(context).inflate(R.layout.item_vaga_layout, parent, false);
+    public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+
+        if (viewType == VIEW_TYPE_EMPTY) {
+            View emptyView = inflater.inflate(R.layout.item_lista_vazia, parent, false);
+            return new EmptyViewHolder(emptyView);
+        }
+
+        View view = inflater.inflate(R.layout.item_vaga_layout, parent, false);
         return new ViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        if (listaVagas == null || listaVagas.isEmpty() || position < 0 || position >= listaVagas.size()) {
+    public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
+        if (getItemViewType(position) == VIEW_TYPE_EMPTY) {
+            return; // Não faz nada para o view holder vazio
+        }
+
+        // Cast seguro para ViewHolder
+        if (!(holder instanceof ViewHolder)) {
+            return;
+        }
+
+        ViewHolder viewHolder = (ViewHolder) holder;
+
+        if (listaVagas == null || position < 0 || position >= listaVagas.size()) {
             return;
         }
 
@@ -47,27 +64,27 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
         }
 
         // Configura título
-        holder.titulo.setText(vaga.getTitulo() != null ? vaga.getTitulo() : "Vaga sem título");
+        viewHolder.titulo.setText(vaga.getTitulo() != null ? vaga.getTitulo() : "Vaga sem título");
 
         // Configura subtítulo
         String localizacao = vaga.getLocalizacao();
         String descricao = vaga.getDescricao();
 
         if (localizacao != null && !localizacao.isEmpty()) {
-            holder.subtitulo.setText(localizacao);
+            viewHolder.subtitulo.setText(localizacao);
         } else if (descricao != null && !descricao.isEmpty()) {
-            holder.subtitulo.setText(descricao.length() > 50 ?
+            viewHolder.subtitulo.setText(descricao.length() > 50 ?
                     descricao.substring(0, 47) + "..." : descricao);
         } else {
-            holder.subtitulo.setText("Sem informações adicionais");
+            viewHolder.subtitulo.setText("Sem informações adicionais");
         }
 
-        // Configura imagem (pode ser personalizada posteriormente)
-        holder.imagem.setImageResource(R.drawable.logo);
+        // Configura imagem
+        viewHolder.imagem.setImageResource(R.drawable.logo);
 
         // Configura clique
-        holder.itemView.setOnClickListener(v -> {
-            if (onItemClickListener != null) {
+        viewHolder.itemView.setOnClickListener(v -> {
+            if (onItemClickListener != null && position != RecyclerView.NO_POSITION) {
                 onItemClickListener.onItemClick(vaga);
             }
         });
@@ -75,18 +92,12 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
 
     @Override
     public int getItemCount() {
-        if (listaVagas == null || listaVagas.isEmpty()) {
-            return 1; // Retorna 1 para mostrar um item de "lista vazia"
-        }
-        return listaVagas.size();
+        return listaVagas.isEmpty() ? 1 : listaVagas.size();
     }
 
     @Override
     public int getItemViewType(int position) {
-        if (listaVagas == null || listaVagas.isEmpty()) {
-            return VIEW_TYPE_EMPTY;
-        }
-        return VIEW_TYPE_NORMAL;
+        return listaVagas.isEmpty() ? VIEW_TYPE_EMPTY : VIEW_TYPE_NORMAL;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {
@@ -107,11 +118,16 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<AdaptadorTelaPr
             subtitulo = itemView.findViewById(R.id.textSubtituloItem);
             imagem = itemView.findViewById(R.id.imageItemVaga);
 
-            // Verificação adicional para evitar null pointer
             if (titulo == null || subtitulo == null || imagem == null) {
                 throw new IllegalStateException("Views não encontradas no layout do item");
             }
         }
     }
-}
 
+    public static class EmptyViewHolder extends RecyclerView.ViewHolder {
+        public EmptyViewHolder(View itemView) {
+            super(itemView);
+            // Configurações para a view vazia, se necessário
+        }
+    }
+}
