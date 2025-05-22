@@ -1,8 +1,12 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.CardStackView" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-       <item name="colorPrimary">@color/primary</item>
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema base do app, sem modo dark -->
+    <style name="Base.Theme.CardStackView" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <item name="colorPrimary">@color/azulprimary</item>
+        <item name="colorPrimaryVariant">@color/azulescuro</item>
+        <item name="colorOnPrimary">@color/brancosecondary</item>
+        <item name="colorSecondary">@color/verde</item>
+        <item name="android:windowBackground">@color/brancosecondary</item>
     </style>
 
     <style name="Theme.CardStackView" parent="Base.Theme.CardStackView" />
