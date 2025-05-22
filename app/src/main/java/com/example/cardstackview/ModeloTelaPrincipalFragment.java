@@ -218,14 +218,23 @@
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
             recyclerView.setHasFixedSize(true);
 
+            // Inicializa o adapter com a lista de vagas
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
             recyclerView.setAdapter(adapter);
 
-            // Set click listener for each item
+            // Configura o listener de clique para os itens
             adapter.setOnItemClickListener(vaga -> {
+                // Cria a intent para abrir a DetalheVagaActivity
                 Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
+
+                // Passa o objeto vaga completo como extra
                 intent.putExtra("vaga", vaga);
-                intent.putExtra("isPessoaJuridica", true); // Set this based on user type
+
+                // Define se é pessoa jurídica (empresa) ou não
+                // Você pode obter essa informação do seu sistema de login
+                intent.putExtra("isPessoaJuridica", true); // ou false para candidatos
+
+                // Inicia a activity esperando um possível resultado
                 startActivityForResult(intent, REQUEST_DETALHES_VAGA);
             });
         }
