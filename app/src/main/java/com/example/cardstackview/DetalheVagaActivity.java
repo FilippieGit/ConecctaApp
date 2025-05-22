@@ -1,15 +1,29 @@
 package com.example.cardstackview;
 
-import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class DetalheVagaActivity extends AppCompatActivity {
 
@@ -17,8 +31,9 @@ public class DetalheVagaActivity extends AppCompatActivity {
     private TextView textTituloDetalhe, textDescricaoDetalhe, textLocalizacaoDetalhe;
     private TextView textSalarioDetalhe, textRequisitosDetalhe;
     private TextView textNivelExperienciaDetalhe, textTipoContratoDetalhe, textAreaAtuacaoDetalhe;
-    private Vaga vaga;
-    private ImageButton btnVoltarDetalhe; // Add this
+    private ImageButton btnVoltarDetalhe;
+    private FloatingActionButton btnExcluir;
+    private Vagas vaga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -26,13 +41,90 @@ public class DetalheVagaActivity extends AppCompatActivity {
         setContentView(R.layout.detalhe_vaga_layout);
 
         inicializarComponentes();
+
+        // Verifique se é uma empresa (pessoa jurídica)
+        boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
+        vaga = (Vagas) getIntent().getSerializableExtra("vaga");
+
+        // Mostrar botão apenas para empresas
+        btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
+        btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
+
         exibirDetalhesVaga();
-
-        FloatingActionButton btnExcluir = findViewById(R.id.BtnDetalheExcluir);
-        btnExcluir.setOnClickListener(v -> excluirVaga());
-
-        // Add listener for back button
         btnVoltarDetalhe.setOnClickListener(v -> finish());
+    }
+
+
+    private void mostrarDialogoConfirmacao() {
+        new AlertDialog.Builder(this)
+                .setTitle("Confirmar Exclusão")
+                .setMessage("Tem certeza que deseja excluir esta vaga permanentemente?")
+                .setPositiveButton("Excluir", (dialog, which) -> excluirVaga())
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
+    private void excluirVaga() {
+        if (vaga == null) return;
+
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Excluindo vaga...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(Api.URL_EXCLUIR_VAGA);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setDoOutput(true);
+                    connection.setDoInput(true);
+
+                    // Envie o parâmetro id_vaga
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                    writer.write("id_vaga=" + vaga.getVaga_id());
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        StringBuilder response = new StringBuilder();
+                        String line;
+                        while ((line = in.readLine()) != null) {
+                            response.append(line);
+                        }
+                        in.close();
+
+                        JSONObject jsonResponse = new JSONObject(response.toString());
+                        return !jsonResponse.getBoolean("error");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                progressDialog.dismiss();
+                if (success) {
+                    Toast.makeText(DetalheVagaActivity.this, "Vaga excluída com sucesso", Toast.LENGTH_SHORT).show();
+
+                    // Retorne para a tela anterior com o resultado
+                    Intent resultIntent = new Intent();
+                    resultIntent.putExtra("vagaExcluida", vaga);
+                    setResult(RESULT_FIRST_USER, resultIntent);
+                    finish();
+                } else {
+                    Toast.makeText(DetalheVagaActivity.this, "Erro ao excluir vaga", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute();
     }
 
     private void inicializarComponentes() {
@@ -45,31 +137,23 @@ public class DetalheVagaActivity extends AppCompatActivity {
         textNivelExperienciaDetalhe = findViewById(R.id.textNivelExperienciaDetalhe);
         textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
         textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
-        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe); // Initialize it
+        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
     }
 
     private void exibirDetalhesVaga() {
-        Intent intent = getIntent();
-        if (intent != null && intent.hasExtra("vaga")) {
-            vaga = (Vaga) intent.getSerializableExtra("vaga");
+        Vagas vaga = (Vagas) getIntent().getSerializableExtra("vaga");
+        if (vaga != null) {
             textTituloDetalhe.setText(vaga.getTitulo());
             textDescricaoDetalhe.setText(vaga.getDescricao());
             textLocalizacaoDetalhe.setText("Localização: " + vaga.getLocalizacao());
             textSalarioDetalhe.setText("Salário: " + vaga.getSalario());
             textRequisitosDetalhe.setText("Requisitos: " + vaga.getRequisitos());
-            textNivelExperienciaDetalhe.setText("Nível: " + vaga.getNivelExperiencia());
-            textTipoContratoDetalhe.setText("Contrato: " + vaga.getTipoContrato());
-            textAreaAtuacaoDetalhe.setText("Área: " + vaga.getAreaAtuacao());
+            textNivelExperienciaDetalhe.setText(vaga.getNivel_experiencia());
+            textTipoContratoDetalhe.setText(vaga.getTipo_contrato());
+            textAreaAtuacaoDetalhe.setText(vaga.getArea_atuacao());
         } else {
             textTituloDetalhe.setText("Erro ao carregar os dados");
             textDescricaoDetalhe.setText("Tente novamente mais tarde.");
         }
-    }
-
-    private void excluirVaga() {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("vagaExcluida", vaga);
-        setResult(Activity.RESULT_FIRST_USER, resultIntent);
-        finish();
     }
 }

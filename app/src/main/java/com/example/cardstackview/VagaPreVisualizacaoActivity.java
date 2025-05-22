@@ -1,27 +1,40 @@
 package com.example.cardstackview;
 
-import android.app.Activity;
-import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.button.MaterialButton;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
+
 public class VagaPreVisualizacaoActivity extends AppCompatActivity {
 
-    private static final int REQUEST_EDITAR_VAGA = 1002;
     private TextView preVisualizacaoTextTitulo, preVisualizacaoTextDescricao;
     private TextView preVisualizacaoTextLocalizacao, preVisualizacaoTextSalario;
     private TextView preVisualizacaoTextRequisitos, preVisualizacaoTextNivelExperiencia;
     private TextView preVisualizacaoTextTipoContrato, preVisualizacaoTextAreaAtuacao;
+    private TextView preVisualizacaoTextBeneficios;
     private MaterialButton preVisualizacaoBtnPublicar;
-    private ImageButton preVisualizacaoBtnEditar, preVisualizacaoBtnExcluir;
-    private Vaga vaga;
-    private boolean modoEdicao;
+    private ImageButton preVisualizacaoBtnEditar;
+    private Vagas vaga;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,88 +55,119 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         preVisualizacaoTextNivelExperiencia = findViewById(R.id.preVisualizacaoTextNivelExperiencia);
         preVisualizacaoTextTipoContrato = findViewById(R.id.preVisualizacaoTextTipoContrato);
         preVisualizacaoTextAreaAtuacao = findViewById(R.id.preVisualizacaoTextAreaAtuacao);
+        preVisualizacaoTextBeneficios = findViewById(R.id.preVisualizacaoTextBeneficios);
 
         preVisualizacaoBtnPublicar = findViewById(R.id.btnPreVisualizacaoPublicar);
         preVisualizacaoBtnEditar = findViewById(R.id.btnPreVisualizacaoBEditar);
-        preVisualizacaoBtnExcluir = findViewById(R.id.btnPreVisualizacaoExcluir);
     }
 
     private void configurarListeners() {
         preVisualizacaoBtnPublicar.setOnClickListener(v -> publicarVaga());
-        preVisualizacaoBtnEditar.setOnClickListener(v -> editarVaga());
-        preVisualizacaoBtnExcluir.setOnClickListener(v -> excluirVaga());
+        preVisualizacaoBtnEditar.setOnClickListener(v -> finish());
     }
 
     private void exibirDadosVaga() {
         if (getIntent() != null && getIntent().hasExtra(Constants.EXTRA_VAGA)) {
-            vaga = (Vaga) getIntent().getSerializableExtra(Constants.EXTRA_VAGA);
-            modoEdicao = getIntent().getBooleanExtra("modoEdicao", false);
+            vaga = (Vagas) getIntent().getSerializableExtra(Constants.EXTRA_VAGA);
 
             preVisualizacaoTextTitulo.setText(vaga.getTitulo());
             preVisualizacaoTextDescricao.setText(vaga.getDescricao());
-            preVisualizacaoTextLocalizacao.setText(String.format("Local: %s", vaga.getLocalizacao()));
-            preVisualizacaoTextSalario.setText(String.format("Salário: %s", vaga.getSalario()));
-            preVisualizacaoTextRequisitos.setText(String.format("Requisitos: %s", vaga.getRequisitos()));
-            preVisualizacaoTextNivelExperiencia.setText(String.format("Nível: %s", vaga.getNivelExperiencia()));
-            preVisualizacaoTextTipoContrato.setText(String.format("Contrato: %s", vaga.getTipoContrato()));
-            preVisualizacaoTextAreaAtuacao.setText(String.format("Área: %s", vaga.getAreaAtuacao()));
+            preVisualizacaoTextLocalizacao.setText("Local: " + vaga.getLocalizacao());
+            preVisualizacaoTextSalario.setText("Salário: " + vaga.getSalario());
+            preVisualizacaoTextRequisitos.setText("Requisitos: " + vaga.getRequisitos());
+            preVisualizacaoTextNivelExperiencia.setText("Nível: " + vaga.getNivel_experiencia());
+            preVisualizacaoTextTipoContrato.setText("Contrato: " + vaga.getTipo_contrato());
+            preVisualizacaoTextAreaAtuacao.setText("Área: " + vaga.getArea_atuacao());
+            preVisualizacaoTextBeneficios.setText("Benefícios: " + vaga.getBeneficios());
         }
     }
 
     private void publicarVaga() {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra(Constants.EXTRA_VAGA_PUBLICADA, vaga);
-        resultIntent.putExtra("modoEdicao", modoEdicao);
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Publicando vaga...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("titulo", vaga.getTitulo());
+        params.put("descricao", vaga.getDescricao());
+        params.put("localizacao", vaga.getLocalizacao());
+        params.put("salario", vaga.getSalario());
+        params.put("requisitos", vaga.getRequisitos());
+        params.put("nivel_experiencia", vaga.getNivel_experiencia());
+        params.put("tipo_contrato", vaga.getTipo_contrato());
+        params.put("area_atuacao", vaga.getArea_atuacao());
+        params.put("beneficios", vaga.getBeneficios());
+        params.put("id_empresa", String.valueOf(vaga.getEmpresa_id()));
+
+        new CadastrarVagaTask(progressDialog).execute(params);
     }
 
-    private void editarVaga() {
-        Intent intent = new Intent(this, CriarVagaActivity.class);
-        intent.putExtra(Constants.EXTRA_VAGA_EDITAR, vaga);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
-        startActivityForResult(intent, REQUEST_EDITAR_VAGA);
-    }
+    private class CadastrarVagaTask extends AsyncTask<Map<String, String>, Void, Boolean> {
+        private final ProgressDialog progressDialog;
 
-    private void excluirVaga() {
-        new AlertDialog.Builder(this)
-                .setTitle("Confirmar Exclusão")
-                .setMessage("Tem certeza que deseja excluir esta vaga?")
-                .setPositiveButton("Excluir", (dialog, which) -> {
-                    enviarResultadoExclusao(); // Chama o método que envia o resultado
-                })
-                .setNegativeButton("Cancelar", null)
-                .show();
-    }
+        public CadastrarVagaTask(ProgressDialog progressDialog) {
+            this.progressDialog = progressDialog;
+        }
 
+        @Override
+        protected Boolean doInBackground(Map<String, String>... params) {
+            Map<String, String> postData = params[0];
+            try {
+                URL url = new URL(Api.URL_CADASTRAR_VAGA);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setReadTimeout(15000);
+                conn.setConnectTimeout(15000);
+                conn.setRequestMethod("POST");
+                conn.setDoInput(true);
+                conn.setDoOutput(true);
 
-    private void enviarResultadoExclusao() {
-        Intent resultIntent = new Intent();
-        resultIntent.putExtra("limparCampos", true); // Adicione esta linha
-        setResult(Activity.RESULT_OK, resultIntent); // Use RESULT_OK para indicar que a ação foi realizada
-        finish();
-    }
+                Uri.Builder builder = new Uri.Builder();
+                for (Map.Entry<String, String> entry : postData.entrySet()) {
+                    builder.appendQueryParameter(entry.getKey(), entry.getValue());
+                }
+                String query = builder.build().getEncodedQuery();
 
+                OutputStream os = conn.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                writer.write(query);
+                writer.flush();
+                writer.close();
+                os.close();
 
+                int responseCode = conn.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                    StringBuilder sb = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        sb.append(line);
+                    }
+                    in.close();
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (requestCode == REQUEST_EDITAR_VAGA && resultCode == RESULT_OK) {
-            if (data != null && data.hasExtra(Constants.EXTRA_VAGA_PUBLICADA)) {
-                vaga = (Vaga) data.getSerializableExtra(Constants.EXTRA_VAGA_PUBLICADA);
-                exibirDadosVaga();
-                Intent resultIntent = new Intent();
-                resultIntent.putExtra(Constants.EXTRA_VAGA_PUBLICADA, vaga);
-                setResult(Activity.RESULT_OK, resultIntent);
+                    String response = sb.toString();
+                    JSONObject jsonResponse = new JSONObject(response);
+                    return !jsonResponse.getBoolean("error");
+                } else {
+                    return false;
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                return false;
             }
         }
-    }
 
-    @Override
-    public void finish() {
-        super.finish();
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        @Override
+        protected void onPostExecute(Boolean success) {
+            progressDialog.dismiss();
+            if (success) {
+                Toast.makeText(VagaPreVisualizacaoActivity.this, "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(VagaPreVisualizacaoActivity.this, TelaEmpresaActivity.class);
+                startActivity(intent);
+                finish();
+            } else {
+                Toast.makeText(VagaPreVisualizacaoActivity.this, "Erro ao publicar vaga!", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 }

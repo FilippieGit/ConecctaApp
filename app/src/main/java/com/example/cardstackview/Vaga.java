@@ -1,17 +1,10 @@
 package com.example.cardstackview;
 
-import android.os.Parcel;
-import android.os.Parcelable;
 import java.io.Serializable;
-
+import java.util.List;
 
 public class Vaga implements Serializable {
-
-    private String id; // ou int id
-
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
-
+    private String id; // pode ser String (Firebase) ou int (SQL)
     private String titulo;
     private String descricao;
     private String localizacao;
@@ -20,22 +13,16 @@ public class Vaga implements Serializable {
     private String nivelExperiencia;
     private String tipoContrato;
     private String areaAtuacao;
+    private String idEmpresa; // Para associar ao usuário logado
+    private List<String> habilidadesDesejaveis; // Opcional: para chips
 
-    // Construtor padrão (sem argumentos)
-    public Vaga() {
-    }
+    // Construtor padrão
+    public Vaga() {}
 
-    // Construtor com 5 argumentos
-    public Vaga(String titulo, String descricao, String localizacao, String salario, String requisitos) {
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.localizacao = localizacao;
-        this.salario = salario;
-        this.requisitos = requisitos;
-    }
-
-    // Construtor com 8 argumentos
-    public Vaga(String titulo, String descricao, String localizacao, String salario, String requisitos, String nivelExperiencia, String tipoContrato, String areaAtuacao) {
+    // Construtor completo (sem habilidades)
+    public Vaga(String titulo, String descricao, String localizacao, String salario,
+                String requisitos, String nivelExperiencia, String tipoContrato,
+                String areaAtuacao, String idEmpresa) {
         this.titulo = titulo;
         this.descricao = descricao;
         this.localizacao = localizacao;
@@ -44,70 +31,48 @@ public class Vaga implements Serializable {
         this.nivelExperiencia = nivelExperiencia;
         this.tipoContrato = tipoContrato;
         this.areaAtuacao = areaAtuacao;
+        this.idEmpresa = idEmpresa;
     }
 
-    // Getters e setters para os atributos
-    public String getTitulo() {
-        return titulo;
+    // Construtor completo (com habilidades)
+    public Vaga(String titulo, String descricao, String localizacao, String salario,
+                String requisitos, String nivelExperiencia, String tipoContrato,
+                String areaAtuacao, String idEmpresa, List<String> habilidadesDesejaveis) {
+        this(titulo, descricao, localizacao, salario, requisitos, nivelExperiencia, tipoContrato, areaAtuacao, idEmpresa);
+        this.habilidadesDesejaveis = habilidadesDesejaveis;
     }
 
-    public void setTitulo(String titulo) {
-        this.titulo = titulo;
-    }
+    // Getters e Setters
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
-    public String getDescricao() {
-        return descricao;
-    }
+    public String getTitulo() { return titulo; }
+    public void setTitulo(String titulo) { this.titulo = titulo; }
 
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
+    public String getDescricao() { return descricao; }
+    public void setDescricao(String descricao) { this.descricao = descricao; }
 
-    public String getLocalizacao() {
-        return localizacao;
-    }
+    public String getLocalizacao() { return localizacao; }
+    public void setLocalizacao(String localizacao) { this.localizacao = localizacao; }
 
-    public void setLocalizacao(String localizacao) {
-        this.localizacao = localizacao;
-    }
+    public String getSalario() { return salario; }
+    public void setSalario(String salario) { this.salario = salario; }
 
-    public String getSalario() {
-        return salario;
-    }
+    public String getRequisitos() { return requisitos; }
+    public void setRequisitos(String requisitos) { this.requisitos = requisitos; }
 
-    public void setSalario(String salario) {
-        this.salario = salario;
-    }
+    public String getNivelExperiencia() { return nivelExperiencia; }
+    public void setNivelExperiencia(String nivelExperiencia) { this.nivelExperiencia = nivelExperiencia; }
 
-    public String getRequisitos() {
-        return requisitos;
-    }
+    public String getTipoContrato() { return tipoContrato; }
+    public void setTipoContrato(String tipoContrato) { this.tipoContrato = tipoContrato; }
 
-    public void setRequisitos(String requisitos) {
-        this.requisitos = requisitos;
-    }
+    public String getAreaAtuacao() { return areaAtuacao; }
+    public void setAreaAtuacao(String areaAtuacao) { this.areaAtuacao = areaAtuacao; }
 
-    public String getNivelExperiencia() {
-        return nivelExperiencia;
-    }
+    public String getIdEmpresa() { return idEmpresa; }
+    public void setIdEmpresa(String idEmpresa) { this.idEmpresa = idEmpresa; }
 
-    public void setNivelExperiencia(String nivelExperiencia) {
-        this.nivelExperiencia = nivelExperiencia;
-    }
-
-    public String getTipoContrato() {
-        return tipoContrato;
-    }
-
-    public void setTipoContrato(String tipoContrato) {
-        this.tipoContrato = tipoContrato;
-    }
-
-    public String getAreaAtuacao() {
-        return areaAtuacao;
-    }
-
-    public void setAreaAtuacao(String areaAtuacao) {
-        this.areaAtuacao = areaAtuacao;
-    }
+    public List<String> getHabilidadesDesejaveis() { return habilidadesDesejaveis; }
+    public void setHabilidadesDesejaveis(List<String> habilidadesDesejaveis) { this.habilidadesDesejaveis = habilidadesDesejaveis; }
 }

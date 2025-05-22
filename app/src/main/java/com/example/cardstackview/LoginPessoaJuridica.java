@@ -2,7 +2,6 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
@@ -21,13 +20,12 @@ import com.google.firebase.firestore.FirebaseFirestore;
 public class LoginPessoaJuridica extends AppCompatActivity {
 
     Button btnempresaentrar, btncadastrar, btnesquecisenha;
+    Button btnIrParaTelaEmpresa; // Botão temporário
 
     TextInputEditText txtPessoaEmpresaEmail, txtPessoaEmpresaSenha;
 
-
     FirebaseAuth mAuth;
     ImageView imgLoginJbtnVoltar;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +43,24 @@ public class LoginPessoaJuridica extends AppCompatActivity {
         btnempresaentrar = findViewById(R.id.btnPessoaEmpresaEntrar);
         btncadastrar = findViewById(R.id.btnPessoaEmpresaCriarConta);
         btnesquecisenha = findViewById(R.id.btnPessoaEmpresaEsqSenha);
+        btnIrParaTelaEmpresa = findViewById(R.id.btnIrParaTelaEmpresa); // Vincula o botão temporário
 
         txtPessoaEmpresaEmail = findViewById(R.id.txtPessoaEmpresaEmail);
         txtPessoaEmpresaSenha = findViewById(R.id.txtPessoaEmpresaSenha);
-
-        //Função de voltar
-
         imgLoginJbtnVoltar = findViewById(R.id.imgLoginJbtnVoltar);
+
+        // Função de voltar
+        imgLoginJbtnVoltar.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginPessoaJuridica.this, SelecaoActivity.class);
+            startActivity(intent);
+            finish(); // para não voltar para o login ao pressionar o botão físico voltar
+        });
+
+        // Clique do botão temporário para abrir TelaEmpresaActivity
+        btnIrParaTelaEmpresa.setOnClickListener(v -> {
+            Intent intent = new Intent(LoginPessoaJuridica.this, TelaEmpresaActivity.class);
+            startActivity(intent);
+        });
 
         btnempresaentrar.setOnClickListener(view -> {
             String email = txtPessoaEmpresaEmail.getText().toString().trim();
@@ -102,13 +111,14 @@ public class LoginPessoaJuridica extends AppCompatActivity {
                     });
         });
 
+        btncadastrar.setOnClickListener(v -> {
+            startActivity(new Intent(LoginPessoaJuridica.this, CadPJuridicaActivity.class));
+            finish();
+        });
 
-        btncadastrar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                startActivity(new Intent(LoginPessoaJuridica.this,CadPJuridicaActivity.class));
-                finish();
-            }
+        btnesquecisenha.setOnClickListener(v -> {
+            startActivity(new Intent(LoginPessoaJuridica.this, RecSenhaActivity.class));
+            finish();
         });
     }
 }

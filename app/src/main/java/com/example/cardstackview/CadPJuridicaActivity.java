@@ -1,8 +1,10 @@
 package com.example.cardstackview;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -27,6 +29,7 @@ public class CadPJuridicaActivity extends AppCompatActivity {
     private FirebaseFirestore db;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -42,6 +45,13 @@ public class CadPJuridicaActivity extends AppCompatActivity {
         EditText edtCNPJ = findViewById(R.id.edtcnpj);
         EditText edtSenha = findViewById(R.id.edtLoginSenha);
         Button btnCadastrar = findViewById(R.id.btnLoginEntrar);
+        ImageView btnVoltar = findViewById(R.id.imgEsqSenhabtnVoltar);
+
+        btnVoltar.setOnClickListener(v -> {
+            Intent intent = new Intent(CadPJuridicaActivity.this, LoginPessoaJuridica.class);
+            startActivity(intent);
+            finish(); // Fecha a tela atual para não voltar ao cadastro ao pressionar voltar
+        });
 
         btnCadastrar.setOnClickListener(v -> {
             String email = edtEmail.getText().toString().trim();
