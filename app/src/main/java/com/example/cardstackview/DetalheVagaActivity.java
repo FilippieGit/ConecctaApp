@@ -40,15 +40,17 @@ public class DetalheVagaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detalhe_vaga_layout);
 
-        inicializarComponentes();
+        inicializarComponentes(); // Deve inicializar TODOS os componentes
 
         // Verifique se é uma empresa (pessoa jurídica)
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
         vaga = (Vagas) getIntent().getSerializableExtra("vaga");
 
-        // Mostrar botão apenas para empresas
-        btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
-        btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
+        // Só tente usar btnExcluir se ele foi encontrado no layout
+        if (btnExcluir != null) {
+            btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
+            btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
+        }
 
         exibirDetalhesVaga();
         btnVoltarDetalhe.setOnClickListener(v -> finish());
@@ -138,6 +140,9 @@ public class DetalheVagaActivity extends AppCompatActivity {
         textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
         textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
         btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
+
+        // ADICIONE ESTA LINHA PARA INICIALIZAR O FAB
+        btnExcluir = findViewById(R.id.BtnDetalheExcluir); // Substitua pelo ID correto do seu FAB
     }
 
     private void exibirDetalhesVaga() {

@@ -5,6 +5,7 @@
     import android.content.Intent;
     import android.os.AsyncTask;
     import android.os.Bundle;
+    import android.util.Log;
     import android.view.LayoutInflater;
     import android.view.MenuItem;
     import android.view.View;
@@ -216,17 +217,23 @@
         private void configurarRecyclerView(View view) {
             recyclerView = view.findViewById(R.id.idRecLista);
             recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
-            recyclerView.setHasFixedSize(true);
 
             adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
             recyclerView.setAdapter(adapter);
 
-            // Set click listener for each item
             adapter.setOnItemClickListener(vaga -> {
+                Log.d("VagaClick", "Vaga clicada: " + vaga.getTitulo());
+
                 Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
                 intent.putExtra("vaga", vaga);
-                intent.putExtra("isPessoaJuridica", true); // Set this based on user type
-                startActivityForResult(intent, REQUEST_DETALHES_VAGA);
+                intent.putExtra("isPessoaJuridica", true); // ou false conforme necessário
+
+                try {
+                    startActivityForResult(intent, REQUEST_DETALHES_VAGA);
+                } catch (Exception e) {
+                    Log.e("VagaClick", "Erro ao abrir detalhes", e);
+                    Toast.makeText(requireContext(), "Erro ao abrir detalhes", Toast.LENGTH_SHORT).show();
+                }
             });
         }
 

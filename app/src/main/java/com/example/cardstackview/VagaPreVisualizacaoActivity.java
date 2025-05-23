@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -83,6 +84,18 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
     }
 
     private void publicarVaga() {
+        // Verifica se a vaga existe
+        if (vaga == null) {
+            Toast.makeText(this, "Dados da vaga não encontrados", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Valida campos obrigatórios
+        if (vaga.getTitulo() == null || vaga.getTitulo().isEmpty()) {
+            Toast.makeText(this, "Título da vaga é obrigatório", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ProgressDialog progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Publicando vaga...");
         progressDialog.setCancelable(false);
@@ -90,20 +103,20 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
 
         Map<String, String> params = new HashMap<>();
         params.put("titulo", vaga.getTitulo());
-        params.put("descricao", vaga.getDescricao());
-        params.put("localizacao", vaga.getLocalizacao());
-        params.put("salario", vaga.getSalario());
-        params.put("requisitos", vaga.getRequisitos());
-        params.put("nivel_experiencia", vaga.getNivel_experiencia());
-        params.put("tipo_contrato", vaga.getTipo_contrato());
-        params.put("area_atuacao", vaga.getArea_atuacao());
-        params.put("beneficios", vaga.getBeneficios());
+        params.put("descricao", vaga.getDescricao() != null ? vaga.getDescricao() : "");
+        params.put("localizacao", vaga.getLocalizacao() != null ? vaga.getLocalizacao() : "");
+        params.put("salario", vaga.getSalario() != null ? vaga.getSalario() : "");
+        params.put("requisitos", vaga.getRequisitos() != null ? vaga.getRequisitos() : "");
+        params.put("nivel_experiencia", vaga.getNivel_experiencia() != null ? vaga.getNivel_experiencia() : "");
+        params.put("tipo_contrato", vaga.getTipo_contrato() != null ? vaga.getTipo_contrato() : "");
+        params.put("area_atuacao", vaga.getArea_atuacao() != null ? vaga.getArea_atuacao() : "");
+        params.put("beneficios", vaga.getBeneficios() != null ? vaga.getBeneficios() : "");
         params.put("id_empresa", String.valueOf(vaga.getEmpresa_id()));
 
         new CadastrarVagaTask(progressDialog).execute(params);
     }
 
-    private class CadastrarVagaTask extends AsyncTask<Map<String, String>, Void, Boolean> {
+    private class CadastrarVagaTask extends AsyncTask<Map<String, String>, Void, String> {
         private final ProgressDialog progressDialog;
 
         public CadastrarVagaTask(ProgressDialog progressDialog) {
@@ -111,7 +124,7 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         }
 
         @Override
-        protected Boolean doInBackground(Map<String, String>... params) {
+        protected String doInBackground(Map<String, String>... params) {
             Map<String, String> postData = params[0];
             try {
                 URL url = new URL(Api.URL_CADASTRAR_VAGA);
@@ -121,6 +134,10 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                 conn.setRequestMethod("POST");
                 conn.setDoInput(true);
                 conn.setDoOutput(true);
+
+                // Adiciona logs para depuração
+                Log.d("CadastroVaga", "URL: " + Api.URL_CADASTRAR_VAGA);
+                Log.d("CadastroVaga", "Dados: " + postData.toString());
 
                 Uri.Builder builder = new Uri.Builder();
                 for (Map.Entry<String, String> entry : postData.entrySet()) {
@@ -136,37 +153,55 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                 os.close();
 
                 int responseCode = conn.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-                    StringBuilder sb = new StringBuilder();
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        sb.append(line);
-                    }
-                    in.close();
+                Log.d("CadastroVaga", "Código de resposta: " + responseCode);
 
-                    String response = sb.toString();
-                    JSONObject jsonResponse = new JSONObject(response);
-                    return !jsonResponse.getBoolean("error");
-                } else {
-                    return false;
+                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    sb.append(line);
                 }
+                in.close();
+
+                String response = sb.toString();
+                Log.d("CadastroVaga", "Resposta: " + response);
+
+                return response;
+
             } catch (Exception e) {
-                e.printStackTrace();
-                return false;
+                Log.e("CadastroVaga", "Erro: " + e.getMessage(), e);
+                return "error:" + e.getMessage();
             }
         }
 
         @Override
-        protected void onPostExecute(Boolean success) {
+        protected void onPostExecute(String result) {
             progressDialog.dismiss();
-            if (success) {
-                Toast.makeText(VagaPreVisualizacaoActivity.this, "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
-                Intent intent = new Intent(VagaPreVisualizacaoActivity.this, TelaEmpresaActivity.class);
-                startActivity(intent);
-                finish();
-            } else {
-                Toast.makeText(VagaPreVisualizacaoActivity.this, "Erro ao publicar vaga!", Toast.LENGTH_SHORT).show();
+
+            if (result.startsWith("error:")) {
+                Toast.makeText(VagaPreVisualizacaoActivity.this,
+                        "Erro: " + result.substring(6), Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            try {
+                JSONObject jsonResponse = new JSONObject(result);
+                if (!jsonResponse.getBoolean("error")) {
+                    Toast.makeText(VagaPreVisualizacaoActivity.this,
+                            "Vaga publicada com sucesso!", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(VagaPreVisualizacaoActivity.this, TelaEmpresaActivity.class);
+                    startActivity(intent);
+                    finish();
+                } else {
+                    String message = jsonResponse.optString("message", "Erro desconhecido ao publicar vaga");
+                    Toast.makeText(VagaPreVisualizacaoActivity.this,
+                            message, Toast.LENGTH_LONG).show();
+                }
+            } catch (Exception e) {
+                Toast.makeText(VagaPreVisualizacaoActivity.this,
+                        "Erro ao processar resposta: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.e("CadastroVaga", "Erro no JSON: " + e.getMessage(), e);
             }
         }
     }
