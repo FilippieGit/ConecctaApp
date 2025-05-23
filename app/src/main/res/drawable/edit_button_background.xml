@@ -2,13 +2,13 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:state_pressed="true">
         <shape android:shape="rectangle">
-            <solid android:color="@color/diferencial" /> <!-- Cor azul quando pressionado -->
+            <solid android:color="@color/azulprimary" /> <!-- Cor azul quando pressionado -->
             <corners android:radius="10dp" /> <!-- Ajuste o valor para controlar o arredondamento -->
         </shape>
     </item>
     <item>
         <shape android:shape="rectangle">
-            <solid android:color="@color/diferencial" /> <!-- Cor azul normal -->
+            <solid android:color="@color/azulprimary" /> <!-- Cor azul normal -->
             <corners android:radius="10dp" /> <!-- Ajuste o valor para controlar o arredondamento -->
         </shape>
     </item>

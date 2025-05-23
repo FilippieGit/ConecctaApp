@@ -2,9 +2,9 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/perfil"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
     tools:context=".MainActivity">
 
     <LinearLayout
@@ -27,7 +27,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/chillax_bold"
             android:text="Edição de perfil"
-            android:textColor="@color/black"
+            android:textColor="@color/preto"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
                         android:fontFamily="@font/chillax_medium"
                         android:text="Davi"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -84,16 +84,18 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <TextView
-                        android:id="@+id/perfilSetor"
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/edicaoPerfilArea"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/chillax_light"
-                        android:text="Marketing | Graphic Design"
-                        android:textAlignment="center"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
+                        android:gravity="center"
+                        android:hint="Área de atuação">
+
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content" />
+
+                    </com.google.android.material.textfield.TextInputLayout>
 
                 </LinearLayout>
 
@@ -101,49 +103,44 @@
 
         </com.google.android.material.card.MaterialCardView>
 
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/chillax_bold"
+            android:paddingLeft="25dp"
+            android:paddingBottom="5dp"
+            android:paddingTop="25dp"
+            android:text="Descrição"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chillax_regular"
+            android:paddingLeft="25dp"
+            android:paddingBottom="25dp"
+            android:text="Fale sobre você, quais são seus interesses, suas habilidades, objetivos profissionais e demais informações que achar relevante."
+            android:textSize="18dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/textField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Escreva aqui sua descrição"
+            app:expandedHintEnabled="true">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="100dp" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
         <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:cardCornerRadius="10dp">
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="15dp">
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Descrição"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/perfilDescricao"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
-                </RelativeLayout>
-
-
-            </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
@@ -171,28 +168,31 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Experiência Profissional"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/perfilExpProfissional"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
                 </RelativeLayout>
 
+                <Button
+                    android:id="@+id/btnAddExperiencia"
+                    android:text="Adicionar Experiência"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutExperiencias"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp" />
+
                 <RelativeLayout
-                    android:layout_marginTop="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="10dp">
 
                     <TextView
@@ -201,28 +201,33 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Formação Acadêmica"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/perfilFormAcademica"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
                 </RelativeLayout>
 
+
+                <!-- Formações -->
+                <Button
+                    android:id="@+id/btnAddFormacao"
+                    android:text="Adicionar Formação"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp" />
+
+                <LinearLayout
+                    android:id="@+id/layoutFormacoes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp" />
+
                 <RelativeLayout
-                    android:layout_marginTop="15dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="10dp"
+                    android:layout_marginTop="15dp"
                     android:layout_marginEnd="10dp">
 
                     <TextView
@@ -231,283 +236,111 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Certificados"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    <TextView
-                        android:id="@+id/perfilCertificados"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:layout_marginStart="0dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/chillax_regular"
-                        android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
-                        android:textSize="15sp" />
                 </RelativeLayout>
 
+                <Button
+                    android:id="@+id/btnAddCertificado"
+                    android:text="Adicionar Certificado"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <LinearLayout
+                    android:id="@+id/layoutCertificados"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingTop="10dp" />
 
             </LinearLayout>
 
         </com.google.android.material.card.MaterialCardView>
 
-        <com.google.android.material.card.MaterialCardView
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/chillax_bold"
+            android:padding="25dp"
+            android:text="Informações de Contato"
+            android:textSize="20dp" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edicaoPerfilEmail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:cardCornerRadius="10dp">
+            android:gravity="center"
+            android:hint="E-mail de contato">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="15dp">
+                android:layout_height="wrap_content" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
+        </com.google.android.material.textfield.TextInputLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Informações do usuário"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Nome de usuário"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="mogitures"
-                        android:textColor="#6E6C6C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Gênero"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Masculino"
-                        android:textColor="#6E6C6C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Idade"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="19"
-                        android:textColor="#6E6C6C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp"
-                    android:layout_marginTop="15dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Informações de Contato"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Telefone"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/perfilTelefone"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="+55 (11) 99939-9991"
-                        android:textColor="#6E6C6C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginTop="15dp"
-                    android:layout_marginEnd="10dp">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="E-mail"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-
-                    <TextView
-                        android:id="@+id/perfilEmail"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentEnd="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="davi@gmail.com"
-                        android:textColor="#6E6C6C"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
-            </LinearLayout>
-
-        </com.google.android.material.card.MaterialCardView>
-
-        <com.google.android.material.card.MaterialCardView
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edicaoPerfilTelefone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="30dp"
-            app:cardCornerRadius="10dp">
+            android:gravity="center"
+            android:hint="Telefone de contato">
 
-            <LinearLayout
+            <com.google.android.material.textfield.TextInputEditText
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="15dp">
+                android:layout_height="wrap_content" />
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="10dp"
-                    android:layout_marginEnd="10dp">
+        </com.google.android.material.textfield.TextInputLayout>
 
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_alignParentStart="true"
-                        android:fontFamily="@font/chillax_medium"
-                        android:text="Redes"
-                        android:textColor="@color/black"
-                        android:textSize="15sp"
-                        android:textStyle="bold" />
-                </RelativeLayout>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="25dp"
+            android:fontFamily="@font/chillax_bold"
+            android:padding="25dp"
+            android:text="Redes"
+            android:textSize="20dp" />
 
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:columnCount="3"
-                    android:rowCount="1"
-                    android:useDefaultMargins="true">
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edicaoPerfilUsuarioLinkedin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="Link do LinkedIn">
 
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        app:lottie_autoPlay="true"
-                        app:lottie_loop="true"
-                        app:lottie_rawRes="@raw/twitter" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        app:lottie_autoPlay="true"
-                        app:lottie_loop="true"
-                        app:lottie_rawRes="@raw/linkedin" />
+        </com.google.android.material.textfield.TextInputLayout>
 
-                    <com.airbnb.lottie.LottieAnimationView
-                        android:layout_width="100dp"
-                        android:layout_height="100dp"
-                        app:lottie_autoPlay="true"
-                        app:lottie_loop="true"
-                        app:lottie_rawRes="@raw/whatsapp" />
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edicaoPerfilUsuarioWhatsapp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="Link do Whatsapp">
 
-                </GridLayout>
-            </LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
 
-        </com.google.android.material.card.MaterialCardView>
+        </com.google.android.material.textfield.TextInputLayout>
 
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/edicaoPerfilUsuarioSetorTwitter"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:hint="Link do X">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </com.google.android.material.textfield.TextInputLayout>
 
     </LinearLayout>
 

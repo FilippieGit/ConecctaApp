@@ -16,7 +16,7 @@
             android:id="@+id/idImgFundoPerfil"
             android:layout_width="match_parent"
             android:layout_height="120dp"
-            android:src="@color/primary" />
+            android:src="@color/azulprimary" />
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/idFundoLogodaEmpresa"
@@ -24,7 +24,7 @@
             android:layout_height="90dp"
             android:layout_marginStart="16dp"
             android:layout_marginTop="35dp"
-            android:src="@color/TEXT">
+            android:src="@color/brancosecondary">
 
         </de.hdodenhof.circleimageview.CircleImageView>
 

@@ -26,7 +26,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/chillax_bold"
             android:text="Perfil"
-            android:textColor="@color/black"
+            android:textColor="@color/preto"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -63,7 +63,7 @@
                         android:fontFamily="@font/chillax_medium"
                         android:text="Davi"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -90,7 +90,7 @@
                         android:fontFamily="@font/chillax_light"
                         android:text="Marketing | Graphic Design"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -156,7 +156,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Descrição"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -169,7 +169,7 @@
                         android:layout_marginTop="30dp"
                         android:fontFamily="@font/chillax_regular"
                         android:text="It is a long established fact that a reader will be distracted by the readable content of a page when looking at its layout. The point of using Lorem Ipsum is that it has a more-or-less normal distribution of letters, as opposed to using 'Content here, content here', making it look like readable English. Many desktop publishing packages and web page editors now use Lorem Ipsum as their default model text, and a search for 'lorem ipsum' will uncover many web sites still in their infancy. Various versions have evolved over the years, sometimes by accident, sometimes on purpose (injected humour and the like)."
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp" />
                 </RelativeLayout>
 
@@ -202,7 +202,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Experiência Profissional"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -215,7 +215,7 @@
                         android:layout_marginTop="30dp"
                         android:fontFamily="@font/chillax_regular"
                         android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp" />
                 </RelativeLayout>
 
@@ -232,7 +232,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Formação Acadêmica"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -245,7 +245,7 @@
                         android:layout_marginTop="30dp"
                         android:fontFamily="@font/chillax_regular"
                         android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp" />
                 </RelativeLayout>
 
@@ -262,7 +262,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Certificados"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -275,7 +275,7 @@
                         android:layout_marginTop="30dp"
                         android:fontFamily="@font/chillax_regular"
                         android:text="Texto lorem ipsum bro"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp" />
                 </RelativeLayout>
 
@@ -308,7 +308,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Informações do usuário"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -326,7 +326,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Nome de usuário"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -354,7 +354,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Gênero"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -382,7 +382,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Idade"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -410,7 +410,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Informações de Contato"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
@@ -428,7 +428,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Telefone"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -457,7 +457,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="E-mail"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -501,7 +501,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Redes"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
                 </RelativeLayout>

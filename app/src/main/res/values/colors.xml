@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="primary">#2a8ece</color>
-    <color name="secudary">#0D456D</color>
-    <color name="FUND">#8299A8</color>
-    <color name="TEXT">#E8ECEE</color>
-    <color name="diferencial">#0c466e</color>
-    <color name="black">#000000</color>
-    <color name="cinza">#48444E</color>
+    <color name="azulprimary">#2a8ece</color>
+    <color name="cinza">#839aa9</color>
+    <color name="brancosecondary">#E8ECEE</color>
+    <color name="azulescuro">#0c466e</color>
+    <color name="verdeescuro">#3b5737</color>
+    <color name="verde">#69b763</color>
+    <color name="preto">#0F0F16</color>
 
 
 </resources>

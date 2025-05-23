@@ -20,104 +20,61 @@
 
         <!-- Activity inicial (launcher) -->
         <activity
-            android:name=".SelecaoActivity"
+            android:name=".SplashActivity"
             android:exported="true"
-            android:launchMode="singleTop">
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <!-- Outras Activities principais -->
-        <activity
-            android:name=".MainActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
+        <!-- Dialogs -->
+        <activity android:name=".DialogAdicionarFormacaoActivity" android:exported="false" />
+        <activity android:name=".DialogAdicionarExperienciaActivity" android:exported="false" />
+        <activity android:name=".DialogAdicionarCertificadoActivity" android:exported="false" />
 
-        <activity
-            android:name=".SplashActivity"
-            android:exported="false"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
+        <!-- Activities principais -->
+        <activity android:name=".MainActivity" android:exported="false" android:launchMode="singleTop" />
+        <activity android:name=".SelecaoActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
 
-        <!-- Activities de Fluxo de Vagas -->
-        <activity
-            android:name=".CriarVagaActivity"
-            android:exported="false"
-            android:launchMode="singleTop"
-            android:windowSoftInputMode="adjustResize" />
+        <!-- Fluxo de Vagas -->
+        <activity android:name=".CriarVagaActivity" android:exported="false" android:launchMode="singleTop" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".VagaPreVisualizacaoActivity" android:exported="false" android:launchMode="singleTop" />
+        <activity android:name=".DetalheVagaActivity" android:exported="false" android:launchMode="singleTop" />
 
-        <activity
-            android:name=".VagaPreVisualizacaoActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
+        <!-- Autenticação -->
+        <activity android:name=".LoginPessoaFisica" android:exported="false" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".LoginPessoaJuridica" android:exported="false" android:windowSoftInputMode="adjustResize" />
 
-        <activity
-            android:name=".DetalheVagaActivity"
-            android:exported="false"
-            android:launchMode="singleTop" />
+        <!-- Perfil -->
+        <activity android:name=".PerfilActivity" android:exported="false" />
+        <activity android:name=".PerfilEmpresaActivity" android:exported="false" />
+        <activity android:name=".EdicaoPerfilPessoaActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".EdicaoPerfilEmpresaActivity" android:exported="false" />
 
-        <!-- Activities de Autenticação -->
-        <activity
-            android:name=".LoginPessoaFisica"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <activity
-            android:name=".LoginPessoaJuridica"
-            android:exported="false"
-            android:windowSoftInputMode="adjustResize" />
-
-        <!-- Activities de Perfil -->
-        <activity
-            android:name=".PerfilActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".PerfilEmpresaActivity"
-            android:exported="false" />
-
-        <!-- Activities Secundárias -->
-        <activity
-            android:name=".TelaEmpresaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".SobreNosActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".ConfigActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".EdicaoPerfilEmpresaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".CadPJuridicaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".RecSenhaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".EdicaoPerfilPessoaActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".DrawerActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".CadastroActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".FeedbackActivity"
-            android:exported="false" />
+        <!-- Secundárias -->
+        <activity android:name=".TelaEmpresaActivity" android:exported="false" />
+        <activity android:name=".SobreNosActivity" android:exported="false" />
+        <activity android:name=".ConfigActivity" android:exported="false" />
+        <activity android:name=".CadPJuridicaActivity" android:exported="false" />
+        <activity android:name=".RecSenhaActivity" android:exported="false" />
+        <activity android:name=".DrawerActivity" android:exported="false" />
+        <activity android:name=".CadastroActivity" android:exported="false" />
+        <activity android:name=".FeedbackActivity" android:exported="false" />
 
     </application>
-
 </manifest>
