@@ -32,7 +32,7 @@
         <!-- Dialogs -->
         <activity android:name=".DialogAdicionarFormacaoActivity" android:exported="false" />
         <activity android:name=".DialogAdicionarExperienciaActivity" android:exported="false" />
-        <activity android:name=".DialogAdicionarExper" android:exported="false" />
+        <activity android:name=".DialogAdicionarCertificadoActivity" android:exported="false" />
 
         <!-- Activities principais -->
         <activity android:name=".MainActivity" android:exported="false" android:launchMode="singleTop" />

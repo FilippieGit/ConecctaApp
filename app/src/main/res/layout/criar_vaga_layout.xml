@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/TEXT">
+    android:background="@color/brancosecondary">
 
     <!-- Botão de Voltar -->
     <ImageView
@@ -244,8 +244,8 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:layout_marginVertical="10dp"
-                android:backgroundTint="@color/diferencial"
-                android:fontFamily="@font/font"
+                android:backgroundTint="@color/azulprimary"
+                android:fontFamily="@font/chillax_regular"
                 android:text="Salvar"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />

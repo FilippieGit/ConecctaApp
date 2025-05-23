@@ -58,7 +58,7 @@
                             android:layout_height="wrap_content"
                             android:paddingBottom="4dp"
                             android:text="Nosso projeto nasce com um objetivo claro:"
-                            android:textColor="@android:color/black"
+                            android:textColor="@color/preto"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
@@ -67,7 +67,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="Facilitar e modernizar o processo de empregabilidade na zona sul de São Paulo. Nossa plataforma usa um sistema de 'match' semelhante ao Tinder, tornando a seleção rápida e assertiva."
-                            android:textColor="@android:color/darker_gray"
+                            android:textColor="@color/cinza"
                             android:textSize="16sp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>
@@ -92,11 +92,12 @@
                             android:layout_height="wrap_content"
                             android:paddingBottom="4dp"
                             android:text="Tecnologias Utilizadas"
-                            android:textColor="@android:color/black"
+                            android:textColor="@color/preto"
                             android:textSize="18sp"
                             android:textStyle="bold" />
 
                         <TextView
+                            android:textColor="@color/cinza"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="- Laravel e PHP\n- JavaScript e Bootstrap 5.3\n- HTML e CSS"

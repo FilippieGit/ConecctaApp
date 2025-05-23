@@ -3,7 +3,7 @@
     android:id="@+id/preVisualizacaoMain"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/TEXT">
+    android:background="@color/brancosecondary">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -212,7 +212,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:layout_margin="3dp"
-                android:backgroundTint="@color/diferencial"
+                android:backgroundTint="@color/azulprimary"
                 android:fontFamily="@font/font"
                 android:text="Publicar"
                 android:textColor="#FFFFFF"
@@ -227,7 +227,7 @@
                 android:background="@drawable/edit_button_background"
                 android:contentDescription="Editar"
                 android:src="@drawable/baseline_edit"
-                app:tint="@android:color/white" />
+                app:tint="@color/brancosecondary" />
 
 
         </LinearLayout>

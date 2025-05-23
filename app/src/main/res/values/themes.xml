@@ -9,5 +9,11 @@
         <item name="android:windowBackground">@color/brancosecondary</item>
     </style>
 
+    <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="itemIconSize">26dp</item>
+        <item name="itemIconTint">@color/cinza</item> <!-- Altere para a cor desejada -->
+        <item name="itemTextColor">@color/cinza</item> <!-- Altere para a cor desejada -->
+    </style>
+
     <style name="Theme.CardStackView" parent="Base.Theme.CardStackView" />
 </resources>

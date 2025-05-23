@@ -47,7 +47,7 @@
                     app:boxCornerRadiusBottomStart="50dp"
                     app:boxCornerRadiusTopEnd="50dp"
                     app:boxCornerRadiusTopStart="50dp"
-                    app:boxStrokeColor="@color/black"
+                    app:boxStrokeColor="@color/preto"
                     app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -69,7 +69,7 @@
                     app:boxCornerRadiusBottomStart="50dp"
                     app:boxCornerRadiusTopEnd="50dp"
                     app:boxCornerRadiusTopStart="50dp"
-                    app:boxStrokeColor="@color/black"
+                    app:boxStrokeColor="@color/preto"
                     app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -91,7 +91,7 @@
                     app:boxCornerRadiusBottomStart="50dp"
                     app:boxCornerRadiusTopEnd="50dp"
                     app:boxCornerRadiusTopStart="50dp"
-                    app:boxStrokeColor="@color/black"
+                    app:boxStrokeColor="@color/preto"
                     app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
@@ -113,7 +113,7 @@
                     app:boxCornerRadiusBottomStart="50dp"
                     app:boxCornerRadiusTopEnd="50dp"
                     app:boxCornerRadiusTopStart="50dp"
-                    app:boxStrokeColor="@color/black"
+                    app:boxStrokeColor="@color/preto"
                     app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText

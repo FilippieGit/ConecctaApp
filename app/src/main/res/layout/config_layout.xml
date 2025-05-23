@@ -51,7 +51,7 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_bold"
                     android:text="Notificações"
-                    android:textColor="@color/diferencial"
+                    android:textColor="@color/azulprimary"
                     android:textSize="16sp" />
 
 
@@ -199,7 +199,7 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_bold"
                     android:text="Exibição"
-                    android:textColor="@color/diferencial"
+                    android:textColor="@color/azulprimary"
                     android:textSize="16sp" />
 
 
@@ -219,7 +219,7 @@
                     app:icon="@drawable/baseline_format_paint"
                     app:iconPadding="8dp"
                     app:iconSize="22dp"
-                    app:iconTint="@color/black" />
+                    app:iconTint="@color/preto" />
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -247,7 +247,7 @@
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_bold"
                     android:text="Conta"
-                    android:textColor="@color/diferencial"
+                    android:textColor="@color/azulprimary"
                     android:textSize="16sp" />
 
 
@@ -267,7 +267,7 @@
                     app:icon="@drawable/baseline_exit_to_app"
                     app:iconPadding="8dp"
                     app:iconSize="22dp"
-                    app:iconTint="@color/black" />
+                    app:iconTint="@color/cinza" />
 
 
                 <com.google.android.material.button.MaterialButton

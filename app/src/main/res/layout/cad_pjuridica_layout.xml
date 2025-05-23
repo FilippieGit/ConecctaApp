@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/TEXT"
+    android:background="@color/brancosecondary"
     android:orientation="vertical">
 
     <ImageView
@@ -159,7 +159,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="30dp"
-            android:backgroundTint="@color/diferencial"
+            android:backgroundTint="@color/azulprimary"
             android:fontFamily="@font/font"
             android:text="Cadastrar"
             android:textColor="@android:color/white"

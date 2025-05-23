@@ -5,7 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/TEXT"
+    android:background="@color/brancosecondary"
     android:orientation="vertical">
 
 
@@ -60,7 +60,6 @@
                 android:fontFamily="@font/font"
                 android:inputType="textEmailAddress"
                 android:maxLength="50"
-
                 android:textColor="@color/cinza"
                 android:textSize="20sp"
                 />
@@ -102,11 +101,11 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"
-            android:backgroundTint="@color/diferencial"
+            android:backgroundTint="@color/azulprimary"
             android:fontFamily="@font/font"
             android:padding="15sp"
             android:text="Entrar"
-            android:textColor="@color/TEXT"
+            android:textColor="@color/brancosecondary"
             android:textSize="20sp" />
 
 

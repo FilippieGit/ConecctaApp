@@ -27,7 +27,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/chillax_bold"
             android:text="Edição de perfil"
-            android:textColor="@color/black"
+            android:textColor="@color/preto"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
                         android:fontFamily="@font/chillax_medium"
                         android:text="Davi"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 
@@ -168,7 +168,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Experiência Profissional"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -201,7 +201,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Formação Acadêmica"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
@@ -236,7 +236,7 @@
                         android:layout_alignParentStart="true"
                         android:fontFamily="@font/chillax_medium"
                         android:text="Certificados"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="15sp"
                         android:textStyle="bold" />
 

@@ -27,7 +27,7 @@
             android:layout_gravity="center"
             android:fontFamily="@font/chillax_bold"
             android:text="Perfil"
-            android:textColor="@color/black"
+            android:textColor="@color/preto"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -64,7 +64,7 @@
                         android:fontFamily="@font/chillax_medium"
                         android:text="Nubank"
                         android:textAlignment="center"
-                        android:textColor="@color/black"
+                        android:textColor="@color/preto"
                         android:textSize="20sp"
                         android:textStyle="bold" />
 

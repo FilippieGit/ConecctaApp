@@ -61,7 +61,7 @@
                 android:layout_gravity="bottom|end"
                 android:layout_margin="16dp"
                 android:src="@drawable/baseline_add"
-                app:backgroundTint="@color/primary" />
+                app:backgroundTint="@color/azulprimary" />
 
         </FrameLayout>
     </LinearLayout>
