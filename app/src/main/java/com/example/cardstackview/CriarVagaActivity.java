@@ -2,8 +2,11 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,22 +21,48 @@ import java.util.List;
 
 public class CriarVagaActivity extends AppCompatActivity {
 
+    private ChipGroup chipGroupHabilidades;
+    private TextView tvExpandir;
+
     private TextInputEditText edtTituloVaga, edtDescricaoVaga, edtLocalizacao,
             edtSalario, edtRequisitos, edtBeneficios;
     private Spinner spinnerNivelExperiencia, spinnerTipoContrato, spinnerAreaAtuacao;
-    private ChipGroup chipGroupHabilidades;
-    private String[] habilidadesArray = {"Java", "Kotlin", "Android SDK", "Firebase", "UI/UX", "Git"};
+
+    private final String[] habilidadesArray = {
+            // Técnicas de programação
+            "Java", "Kotlin", "Android SDK", "Firebase", "Git", "SQL", "REST APIs", "Docker", "CI/CD",
+            // Design e experiência do usuário
+            "UI/UX Design", "Adobe XD", "Figma", "Photoshop", "Prototipagem",
+            // Metodologias ágeis e gestão
+            "Scrum", "Kanban", "Gestão de Projetos", "JIRA", "Trello",
+            // Comunicação e trabalho em equipe
+            "Comunicação Efetiva", "Trabalho em Equipe", "Liderança", "Negociação",
+            // Outras habilidades técnicas
+            "Cloud Computing (AWS, Azure, GCP)", "Testes Automatizados", "Análise de Dados", "Machine Learning",
+            // Competências pessoais
+            "Resolução de Problemas", "Pensamento Crítico", "Adaptabilidade", "Criatividade",
+            // Idiomas
+            "Inglês Avançado", "Espanhol Básico", "Francês Intermediário"
+    };
+
+    private final int maxLinesCollapsed = 2;
+    private boolean expanded = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.criar_vaga_layout);
+
         inicializarComponentes();
         carregarHabilidades();
+        configurarExpansaoChipGroup();
     }
 
     private void inicializarComponentes() {
-        // Campos de texto
+        // Views
+        chipGroupHabilidades = findViewById(R.id.chipGroupHabilidades);
+        tvExpandir = findViewById(R.id.tvExpandir);
+
         edtTituloVaga = findViewById(R.id.edtTituloVaga);
         edtDescricaoVaga = findViewById(R.id.edtDescricaoVaga);
         edtLocalizacao = findViewById(R.id.edtLocalizacao);
@@ -41,18 +70,12 @@ public class CriarVagaActivity extends AppCompatActivity {
         edtRequisitos = findViewById(R.id.edtRequisitos);
         edtBeneficios = findViewById(R.id.edtBeneficios);
 
-        // Spinners
         spinnerNivelExperiencia = findViewById(R.id.spinnerNivelExperiencia);
         spinnerTipoContrato = findViewById(R.id.spinnerTipoContrato);
         spinnerAreaAtuacao = findViewById(R.id.spinnerAreaAtuacao);
 
-        // ChipGroup para habilidades
-        chipGroupHabilidades = findViewById(R.id.chipGroupHabilidades);
-
-        // Configurar adaptadores para os Spinners
         configurarSpinners();
 
-        // Botões
         MaterialButton btnPreVisualizar = findViewById(R.id.btnCriarVaga);
         btnPreVisualizar.setOnClickListener(v -> enviarParaPreVisualizacao());
 
@@ -77,6 +100,7 @@ public class CriarVagaActivity extends AppCompatActivity {
     }
 
     private void carregarHabilidades() {
+        chipGroupHabilidades.removeAllViews();
         for (String habilidade : habilidadesArray) {
             Chip chip = new Chip(this);
             chip.setText(habilidade);
@@ -84,6 +108,35 @@ public class CriarVagaActivity extends AppCompatActivity {
             chip.setChipBackgroundColorResource(R.color.chip_background);
             chipGroupHabilidades.addView(chip);
         }
+        // Ajusta altura inicial após adicionar chips
+        chipGroupHabilidades.post(() -> setChipGroupHeight(expanded));
+    }
+
+    private void configurarExpansaoChipGroup() {
+        tvExpandir.setOnClickListener(v -> {
+            expanded = !expanded;
+            setChipGroupHeight(expanded);
+        });
+    }
+
+    private void setChipGroupHeight(boolean expanded) {
+        if (expanded) {
+            chipGroupHabilidades.getLayoutParams().height = ViewGroup.LayoutParams.WRAP_CONTENT;
+            tvExpandir.setText("Mostrar menos");
+        } else {
+            int chipHeight = 0;
+            if (chipGroupHabilidades.getChildCount() > 0) {
+                View chip = chipGroupHabilidades.getChildAt(0);
+                chipHeight = chip.getHeight() + chipGroupHabilidades.getChipSpacingVertical();
+            }
+            if (chipHeight == 0) {
+                chipHeight = (int) (48 * getResources().getDisplayMetrics().density);
+            }
+            int height = chipHeight * maxLinesCollapsed + chipGroupHabilidades.getPaddingTop() + chipGroupHabilidades.getPaddingBottom();
+            chipGroupHabilidades.getLayoutParams().height = height;
+            tvExpandir.setText("Mostrar mais");
+        }
+        chipGroupHabilidades.requestLayout();
     }
 
     private void enviarParaPreVisualizacao() {
