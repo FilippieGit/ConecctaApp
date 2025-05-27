@@ -245,7 +245,8 @@
                 android:layout_gravity="center"
                 android:layout_marginVertical="10dp"
                 android:backgroundTint="@color/azulprimary"
-                android:fontFamily="@font/chillax_regular"
+                android:fontFamily="@font/chillax_semibold"
+                app:cornerRadius="50dp"
                 android:text="Salvar"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp" />
