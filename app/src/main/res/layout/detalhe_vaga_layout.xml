@@ -17,7 +17,7 @@
             android:id="@+id/btnVoltarDetalhe"
             android:layout_width="40dp"
             android:layout_height="40dp"
-            android:layout_marginTop="25dp"
+            android:layout_marginTop="45dp"
             android:layout_marginBottom="8dp"
             android:background="@null"
             android:src="@drawable/baseline_arrow_back"

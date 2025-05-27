@@ -93,6 +93,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
         btnExcluir = findViewById(R.id.BtnDetalheExcluir);
     }
 
+
     private void exibirDetalhesVaga() {
         if (vaga != null) {
             textTituloDetalhe.setText(vaga.getTitulo());
