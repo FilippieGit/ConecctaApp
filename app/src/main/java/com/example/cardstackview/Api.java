@@ -32,8 +32,8 @@ public class Api {
             URL url = new URL(ROOT_URL);
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(3000); // 3 segundos
-            connection.setReadTimeout(3000);
+            connection.setConnectTimeout(30000); // 3 segundos
+            connection.setReadTimeout(30000);
 
             int responseCode = connection.getResponseCode();
             return (responseCode == HttpURLConnection.HTTP_OK);

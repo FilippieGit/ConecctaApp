@@ -161,15 +161,22 @@ public class CriarVagaActivity extends AppCompatActivity {
         // Obter habilidades selecionadas
         List<String> habilidadesDesejaveis = obterHabilidadesSelecionadas();
 
+        // Verificar se ao menos uma habilidade foi selecionada
+        if (habilidadesDesejaveis.isEmpty()) {
+            Toast.makeText(this, "Selecione ao menos uma habilidade desejável", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         // Criar objeto Vaga
         int empresaId = 1; // ID da empresa (ajustar conforme necessário)
         String ramo = "Tecnologia"; // Definir ramo ou adicionar campo no formulário
-        String vinculo = contrato; // Usar tipo de contrato como vínculo
+        String vinculo = contrato;
 
+        String habilidadesStr = String.join(", ", habilidadesDesejaveis);
         Vagas vaga = new Vagas(
                 titulo, descricao, localizacao, salario, requisitos,
                 nivel, contrato, area, beneficios, vinculo, ramo,
-                empresaId, habilidadesDesejaveis
+                empresaId, habilidadesStr
         );
 
         // Enviar para pré-visualização
@@ -177,6 +184,7 @@ public class CriarVagaActivity extends AppCompatActivity {
         intent.putExtra(Constants.EXTRA_VAGA, vaga);
         startActivity(intent);
     }
+
 
     private List<String> obterHabilidadesSelecionadas() {
         List<String> habilidades = new ArrayList<>();

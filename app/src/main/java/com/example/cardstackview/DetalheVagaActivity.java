@@ -5,6 +5,7 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -13,6 +14,8 @@ import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.android.material.chip.Chip;
+import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.json.JSONObject;
@@ -24,8 +27,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
 public class DetalheVagaActivity extends AppCompatActivity {
+
+    private TextView textBeneficiosDetalhe, textRamoDetalhe;
+    private com.google.android.material.chip.ChipGroup chipGroupHabilidadesDetalhe;
 
     private ImageView imageLogoDetalhe;
     private TextView textTituloDetalhe, textDescricaoDetalhe, textLocalizacaoDetalhe;
@@ -40,20 +47,90 @@ public class DetalheVagaActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detalhe_vaga_layout);
 
-        inicializarComponentes(); // Deve inicializar TODOS os componentes
+        inicializarComponentes();
 
-        // Verifique se é uma empresa (pessoa jurídica)
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
         vaga = (Vagas) getIntent().getSerializableExtra("vaga");
 
-        // Só tente usar btnExcluir se ele foi encontrado no layout
+        // Log para verificar o objeto recebido e seus campos
+        if (vaga != null) {
+            Log.d("DetalheVagaActivity", "Vaga recebida: " + vaga.toString());
+            Log.d("DetalheVagaActivity", "Habilidades desejáveis (String): " + vaga.getHabilidadesDesejaveisStr());
+            Log.d("DetalheVagaActivity", "Habilidades desejáveis (List): " + vaga.getHabilidadesDesejaveis());
+            Log.d("DetalheVagaActivity", "Descrição: " + vaga.getDescricao());
+        } else {
+            Log.d("DetalheVagaActivity", "Objeto vaga está null!");
+        }
+
         if (btnExcluir != null) {
             btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
             btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
         }
 
         exibirDetalhesVaga();
+
         btnVoltarDetalhe.setOnClickListener(v -> finish());
+    }
+
+
+    private void inicializarComponentes() {
+        textBeneficiosDetalhe = findViewById(R.id.textBeneficiosDetalhe);
+        textRamoDetalhe = findViewById(R.id.textRamoDetalhe);
+        chipGroupHabilidadesDetalhe = findViewById(R.id.chipGroupHabilidadesDetalhe);
+        imageLogoDetalhe = findViewById(R.id.imageLogoDetalhe);
+        textTituloDetalhe = findViewById(R.id.textTituloDetalhe);
+        textDescricaoDetalhe = findViewById(R.id.textDescricaoDetalhe);
+        textLocalizacaoDetalhe = findViewById(R.id.textLocalizacaoDetalhe);
+        textSalarioDetalhe = findViewById(R.id.textSalarioDetalhe);
+        textRequisitosDetalhe = findViewById(R.id.textRequisitosDetalhe);
+        textNivelExperienciaDetalhe = findViewById(R.id.textNivelExperienciaDetalhe);
+        textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
+        textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
+        textBeneficiosDetalhe = findViewById(R.id.textBeneficiosDetalhe);
+        textRamoDetalhe = findViewById(R.id.textRamoDetalhe);
+        chipGroupHabilidadesDetalhe = findViewById(R.id.chipGroupHabilidadesDetalhe);
+        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
+        btnExcluir = findViewById(R.id.BtnDetalheExcluir);
+    }
+
+    private void exibirDetalhesVaga() {
+        if (vaga != null) {
+            textTituloDetalhe.setText(vaga.getTitulo());
+            textDescricaoDetalhe.setText(vaga.getDescricao());
+            textTituloDetalhe.setText(vaga.getTitulo());
+            textDescricaoDetalhe.setText(vaga.getDescricao());
+            textLocalizacaoDetalhe.setText("Localização: " + vaga.getLocalizacao());
+            textSalarioDetalhe.setText("Salário: " + vaga.getSalario());
+            textRequisitosDetalhe.setText("Requisitos: " + vaga.getRequisitos());
+            textNivelExperienciaDetalhe.setText(vaga.getNivel_experiencia());
+            textTipoContratoDetalhe.setText(vaga.getTipo_contrato());
+            textAreaAtuacaoDetalhe.setText(vaga.getArea_atuacao());
+            if (textBeneficiosDetalhe != null) textBeneficiosDetalhe.setText(vaga.getBeneficios());
+            if (textRamoDetalhe != null) textRamoDetalhe.setText(vaga.getRamo());
+
+            // Habilidades desejáveis (chips)
+            chipGroupHabilidadesDetalhe.removeAllViews();
+
+
+            Log.d("DetalheVagaActivity", "Habilidades (String): " + vaga.getHabilidadesDesejaveisStr());
+            Log.d("DetalheVagaActivity", "Habilidades (Lista): " + vaga.getHabilidadesDesejaveis());
+
+
+            List<String> habilidadesList = vaga.getHabilidadesDesejaveis();
+            if (habilidadesList != null && !habilidadesList.isEmpty()) {
+                for (String habilidade : habilidadesList) {
+                    Chip chip = new Chip(this);
+                    chip.setText(habilidade);
+                    chip.setCheckable(false);
+                    chipGroupHabilidadesDetalhe.addView(chip);
+                }
+            } else {
+                Log.e("DetalheVagaActivity", "Lista de habilidades vazia ou nula!");
+            }
+        } else {
+            textTituloDetalhe.setText("Erro ao carregar os dados");
+            textDescricaoDetalhe.setText("Tente novamente mais tarde.");
+        }
     }
 
 
@@ -84,7 +161,6 @@ public class DetalheVagaActivity extends AppCompatActivity {
                     connection.setDoOutput(true);
                     connection.setDoInput(true);
 
-                    // Envie o parâmetro id_vaga
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
                     writer.write("id_vaga=" + vaga.getVaga_id());
@@ -116,8 +192,6 @@ public class DetalheVagaActivity extends AppCompatActivity {
                 progressDialog.dismiss();
                 if (success) {
                     Toast.makeText(DetalheVagaActivity.this, "Vaga excluída com sucesso", Toast.LENGTH_SHORT).show();
-
-                    // Retorne para a tela anterior com o resultado
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra("vagaExcluida", vaga);
                     setResult(RESULT_FIRST_USER, resultIntent);
@@ -127,38 +201,5 @@ public class DetalheVagaActivity extends AppCompatActivity {
                 }
             }
         }.execute();
-    }
-
-    private void inicializarComponentes() {
-        imageLogoDetalhe = findViewById(R.id.imageLogoDetalhe);
-        textTituloDetalhe = findViewById(R.id.textTituloDetalhe);
-        textDescricaoDetalhe = findViewById(R.id.textDescricaoDetalhe);
-        textLocalizacaoDetalhe = findViewById(R.id.textLocalizacaoDetalhe);
-        textSalarioDetalhe = findViewById(R.id.textSalarioDetalhe);
-        textRequisitosDetalhe = findViewById(R.id.textRequisitosDetalhe);
-        textNivelExperienciaDetalhe = findViewById(R.id.textNivelExperienciaDetalhe);
-        textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
-        textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
-        btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
-
-        // ADICIONE ESTA LINHA PARA INICIALIZAR O FAB
-        btnExcluir = findViewById(R.id.BtnDetalheExcluir); // Substitua pelo ID correto do seu FAB
-    }
-
-    private void exibirDetalhesVaga() {
-        Vagas vaga = (Vagas) getIntent().getSerializableExtra("vaga");
-        if (vaga != null) {
-            textTituloDetalhe.setText(vaga.getTitulo());
-            textDescricaoDetalhe.setText(vaga.getDescricao());
-            textLocalizacaoDetalhe.setText("Localização: " + vaga.getLocalizacao());
-            textSalarioDetalhe.setText("Salário: " + vaga.getSalario());
-            textRequisitosDetalhe.setText("Requisitos: " + vaga.getRequisitos());
-            textNivelExperienciaDetalhe.setText(vaga.getNivel_experiencia());
-            textTipoContratoDetalhe.setText(vaga.getTipo_contrato());
-            textAreaAtuacaoDetalhe.setText(vaga.getArea_atuacao());
-        } else {
-            textTituloDetalhe.setText("Erro ao carregar os dados");
-            textDescricaoDetalhe.setText("Tente novamente mais tarde.");
-        }
     }
 }

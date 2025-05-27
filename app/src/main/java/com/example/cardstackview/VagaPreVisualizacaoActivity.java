@@ -32,6 +32,7 @@ import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class VagaPreVisualizacaoActivity extends AppCompatActivity {
@@ -88,10 +89,14 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                 txtTipoContrato.setText(formatarCampo("Contrato", vaga.getTipo_contrato()));
                 txtAreaAtuacao.setText(formatarCampo("Área", vaga.getArea_atuacao()));
                 txtBeneficios.setText(formatarCampo("Benefícios", vaga.getBeneficios()));
-                txtHabilidades.setText(formatarCampo("Habilidades", vaga.getHabilidades_desejaveis()));
+
+                List<String> habilidadesList = vaga.getHabilidadesDesejaveis();
+                String habilidadesFormatadas = habilidadesList.isEmpty() ? "Não informado" : String.join(", ", habilidadesList);
+                txtHabilidades.setText(formatarCampo("Habilidades", habilidadesFormatadas));
             }
         }
     }
+
 
     private String formatarCampo(String rotulo, String valor) {
         return String.format("%s: %s", rotulo, valor != null ? valor : "Não informado");
@@ -118,7 +123,8 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         params.put("area_atuacao", vaga.getArea_atuacao());
         params.put("beneficios", vaga.getBeneficios());
         params.put("nivel_experiencia", vaga.getNivel_experiencia());
-        params.put("habilidades_desejaveis", vaga.getHabilidades_desejaveis());
+        params.put("habilidades_desejaveis", vaga.getHabilidadesDesejaveisStr() != null ? vaga.getHabilidadesDesejaveisStr() : "");
+
         params.put("ramo", vaga.getRamo());
         params.put("vinculo", vaga.getVinculo());
         params.put("id_empresa", String.valueOf(vaga.getEmpresa_id()));

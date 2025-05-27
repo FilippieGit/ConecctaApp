@@ -1,31 +1,64 @@
 package com.example.cardstackview;
 
+import android.util.Log;
+
+import com.google.gson.annotations.SerializedName;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Vagas implements Serializable {
+    @SerializedName("id_vagas")
     private int vaga_id;
-    private String titulo;
-    private String descricao;
-    private String localizacao;
-    private String salario;
-    private String requisitos;
-    private String nivel_experiencia;
-    private String tipo_contrato;
-    private String area_atuacao;
-    private String beneficios;
-    private String vinculo;
-    private String ramo;
-    private int empresa_id;
-    private String nome_empresa;
-    private List<String> habilidadesDesejaveis;
 
-    // Construtor completo
+    @SerializedName("titulo_vagas")
+    private String titulo;
+
+    @SerializedName("descricao_vagas")
+    private String descricao;
+
+    @SerializedName("local_vagas")
+    private String localizacao;
+
+    @SerializedName("salario_vagas")
+    private String salario;
+
+    @SerializedName("requisitos_vagas")
+    private String requisitos;
+
+    @SerializedName("nivel_experiencia")
+    private String nivel_experiencia;
+
+    @SerializedName("tipo_contrato")
+    private String tipo_contrato;
+
+    @SerializedName("area_atuacao")
+    private String area_atuacao;
+
+    @SerializedName("beneficios_vagas")
+    private String beneficios;
+
+    @SerializedName("vinculo_vagas")
+    private String vinculo;
+
+    @SerializedName("ramo_vagas")
+    private String ramo;
+
+    @SerializedName("id_empresa")
+    private int empresa_id;
+
+    @SerializedName("nome_empresa")
+    private String nome_empresa;
+
+    @SerializedName("habilidades_desejaveis")
+    private String habilidadesDesejaveisStr; // String recebida do JSON
+
+    // Construtor completo (usando String para habilidadesDesejaveis)
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
                  String salario, String requisitos, String nivel_experiencia,
                  String tipo_contrato, String area_atuacao, String beneficios,
                  String vinculo, String ramo, int empresa_id, String nome_empresa,
-                 List<String> habilidadesDesejaveis) {
+                 String habilidadesDesejaveisStr) {
         this.vaga_id = vaga_id;
         this.titulo = titulo;
         this.descricao = descricao;
@@ -40,20 +73,20 @@ public class Vagas implements Serializable {
         this.ramo = ramo;
         this.empresa_id = empresa_id;
         this.nome_empresa = nome_empresa;
-        this.habilidadesDesejaveis = habilidadesDesejaveis;
+        this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
     }
 
     // Construtor para criação de novas vagas
     public Vagas(String titulo, String descricao, String localizacao, String salario,
                  String requisitos, String nivel_experiencia, String tipo_contrato,
                  String area_atuacao, String beneficios, String vinculo, String ramo,
-                 int empresa_id, List<String> habilidadesDesejaveis) {
+                 int empresa_id, String habilidadesDesejaveisStr) {
         this(0, titulo, descricao, localizacao, salario, requisitos, nivel_experiencia,
                 tipo_contrato, area_atuacao, beneficios, vinculo, ramo, empresa_id,
-                null, habilidadesDesejaveis);
+                null, habilidadesDesejaveisStr);
     }
 
-    // Construtor para visualização
+    // Construtor para visualização (sem habilidadesDesejaveis)
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
                  String salario, String requisitos, String nivel_experiencia,
                  String tipo_contrato, String area_atuacao, String beneficios,
@@ -66,7 +99,7 @@ public class Vagas implements Serializable {
     // Construtor vazio
     public Vagas() {}
 
-    // Getters e Setters
+    // Getters e Setters (mantidos iguais)
     public int getVaga_id() {
         return vaga_id;
     }
@@ -179,20 +212,26 @@ public class Vagas implements Serializable {
         this.nome_empresa = nome_empresa;
     }
 
+    // Getter que converte a String em List<String>
     public List<String> getHabilidadesDesejaveis() {
-        return habilidadesDesejaveis;
-    }
-
-    // Método de compatibilidade se necessário
-    public String getHabilidades_desejaveis() {
-        if (habilidadesDesejaveis != null && !habilidadesDesejaveis.isEmpty()) {
-            return String.join(", ", habilidadesDesejaveis);
+        if (habilidadesDesejaveisStr != null && !habilidadesDesejaveisStr.trim().isEmpty()) {
+            String[] arr = habilidadesDesejaveisStr.split(",");
+            List<String> list = new ArrayList<>();
+            for (String s : arr) {
+                list.add(s.trim());
+            }
+            return list;
         }
-        return "Não informado";
+        return new ArrayList<>();
     }
 
-    public void setHabilidadesDesejaveis(List<String> habilidadesDesejaveis) {
-        this.habilidadesDesejaveis = habilidadesDesejaveis;
+    public String getHabilidadesDesejaveisStr() {
+        return habilidadesDesejaveisStr;
+    }
+
+    public void setHabilidadesDesejaveisStr(String habilidadesDesejaveisStr) {
+        Log.d("Vagas", "Set habilidadesDesejaveisStr: " + habilidadesDesejaveisStr);
+        this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
     }
 
     // Método para formatar salário (opcional)
