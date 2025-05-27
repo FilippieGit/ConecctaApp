@@ -156,19 +156,23 @@
                                 System.out.println("Vaga " + i + ": " + vagaJson.toString());
 
                                 Vagas vaga = new Vagas(
-                                        vagaJson.optInt("id_vagas", 0),
-                                        vagaJson.optString("titulo_vagas", "Sem título"),
-                                        vagaJson.optString("descricao_vagas", "Sem descrição"),
-                                        vagaJson.optString("local_vagas", "Local não informado"),
-                                        vagaJson.optString("salario_vagas", "Salário não informado"),
-                                        vagaJson.optString("requisitos_vagas", "Requisitos não informados"),
-                                        vagaJson.optString("nivel_experiencia", "Nível não informado"),
-                                        vagaJson.optString("tipo_contrato", "Tipo não informado"),
-                                        vagaJson.optString("area_atuacao", "Área não informada"),
-                                        vagaJson.optString("beneficios", "Sem benefícios"),
-                                        vagaJson.optInt("id_empresa", 0),
-                                        vagaJson.optString("nome_empresa", "Empresa não informada")
+                                        vagaJson.optInt("id_vagas"),                                  // vaga_id
+                                        vagaJson.optString("titulo_vagas", "Não informado"),          // titulo
+                                        vagaJson.optString("descricao_vagas", "Não informado"),       // descricao
+                                        vagaJson.optString("local_vagas", "Não informado"),           // localizacao
+                                        vagaJson.optString("salario_vagas", "Não informado"),         // salario
+                                        vagaJson.optString("requisitos_vagas", "Não informado"),      // requisitos
+                                        vagaJson.optString("nivel_experiencia", "Não informado"),     // nivel_experiencia
+                                        vagaJson.optString("tipo_contrato", "Não informado"),         // tipo_contrato
+                                        vagaJson.optString("area_atuacao", "Não informado"),          // area_atuacao
+                                        vagaJson.optString("beneficios_vagas", "Não informado"),      // beneficios
+                                        vagaJson.optString("vinculo_vagas", "Não informado"),         // vinculo
+                                        vagaJson.optString("ramo_vagas", "Não informado"),            // ramo
+                                        vagaJson.optInt("id_empresa"),                                // empresa_id
+                                        vagaJson.optString("nome_empresa", "Empresa não informada"),  // nome_empresa
+                                        null                                                          // habilidadesDesejaveis
                                 );
+
 
                                 listaVagas.add(vaga);
                             }
