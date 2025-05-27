@@ -160,8 +160,14 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_profile) {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_profile) {
                 startActivity(new Intent(this, PerfilActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_favorite) {
+                startActivity(new Intent(this, FavoritosActivity.class));
+                overridePendingTransition(R.anim.slide_out_right, R.anim.slide_in_left);
                 return true;
             }
             return false;
