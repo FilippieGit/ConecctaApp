@@ -40,7 +40,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class
+MainActivity extends AppCompatActivity {
     private MaterialToolbar idTopAppBar;
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
@@ -81,16 +82,20 @@ public class MainActivity extends AppCompatActivity {
     private void setupCardStackView() {
         // Configura o CardStackListener
         CardStackListener cardStackListener = new CardStackListener() {
+            // No seu CardStackListener na MainActivity
             @Override
             public void onCardSwiped(Direction direction) {
                 int pos = layoutManager.getTopPosition() - 1;
                 if (pos >= 0 && pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
                     if (direction == Direction.Right) {
-                        Toast.makeText(MainActivity.this, "Curtiu: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
+                        // Adiciona aos favoritos
+                        VagaDatabaseHelper dbHelper = new VagaDatabaseHelper(MainActivity.this);
+                        if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
+                            dbHelper.adicionarVagaFavorita(vaga);
+                            Toast.makeText(MainActivity.this, "Vaga favoritada!", Toast.LENGTH_SHORT).show();
+                        }
                         registrarInteresse(vaga);
-                    } else if (direction == Direction.Left) {
-                        Toast.makeText(MainActivity.this, "Descartou: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -167,7 +172,6 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (itemId == R.id.nav_favorite) {
                 startActivity(new Intent(this, FavoritosActivity.class));
-                overridePendingTransition(R.anim.slide_out_right, R.anim.slide_in_left);
                 return true;
             }
             return false;

@@ -63,7 +63,7 @@
                 android:layout_width="56dp"
                 android:layout_height="56dp"
                 android:background="@null"
-                android:src="@drawable/ic_favorite_24dp"
+                android:src="@drawable/ic_favorite_filled"
                 app:tint="#E53935"
                 app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
                 app:layout_constraintEnd_toEndOf="parent"

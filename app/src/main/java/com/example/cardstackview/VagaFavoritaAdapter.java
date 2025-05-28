@@ -11,14 +11,15 @@ import java.util.List;
 
 public class VagaFavoritaAdapter extends RecyclerView.Adapter<VagaFavoritaAdapter.VagaViewHolder> {
 
-    private List<Vaga> vagas;
+    private List<Vagas> vagas;
     private final OnVagaClickListener listener;
 
     public interface OnVagaClickListener {
-        void onVagaClick(Vaga vaga);
+        void onVagaClick(Vagas vaga);
+        void onVagaDetalhesClick(Vagas vaga);
     }
 
-    public VagaFavoritaAdapter(List<Vaga> vagas, OnVagaClickListener listener) {
+    public VagaFavoritaAdapter(List<Vagas> vagas, OnVagaClickListener listener) {
         this.vagas = vagas;
         this.listener = listener;
     }
@@ -33,7 +34,7 @@ public class VagaFavoritaAdapter extends RecyclerView.Adapter<VagaFavoritaAdapte
 
     @Override
     public void onBindViewHolder(@NonNull VagaViewHolder holder, int position) {
-        Vaga vaga = vagas.get(position);
+        Vagas vaga = vagas.get(position);
         holder.bind(vaga, listener);
     }
 
@@ -42,18 +43,13 @@ public class VagaFavoritaAdapter extends RecyclerView.Adapter<VagaFavoritaAdapte
         return vagas.size();
     }
 
-    public void updateList(List<Vaga> newList) {
+    public void updateList(List<Vagas> newList) {
         vagas = newList;
         notifyDataSetChanged();
     }
 
     static class VagaViewHolder extends RecyclerView.ViewHolder {
-        private final TextView tvTituloVaga;
-        private final TextView tvEmpresa;
-        private final TextView tvLocalizacao;
-        private final TextView tvTipoContrato;
-        private final TextView tvSalario;
-        private final TextView tvDataPublicacao;
+        private final TextView tvTituloVaga, tvEmpresa, tvLocalizacao, tvTipoContrato, tvSalario, tvDataPublicacao;
         private final ImageButton btnRemoveFavorito;
 
         public VagaViewHolder(@NonNull View itemView) {
@@ -67,20 +63,16 @@ public class VagaFavoritaAdapter extends RecyclerView.Adapter<VagaFavoritaAdapte
             btnRemoveFavorito = itemView.findViewById(R.id.btnRemoveFavorito);
         }
 
-        public void bind(Vaga vaga, OnVagaClickListener listener) {
+        public void bind(Vagas vaga, OnVagaClickListener listener) {
             tvTituloVaga.setText(vaga.getTitulo());
-            tvEmpresa.setText(vaga.getEmpresa());
+            tvEmpresa.setText(vaga.getNome_empresa());
             tvLocalizacao.setText(vaga.getLocalizacao());
-            tvTipoContrato.setText(vaga.getTipoContrato());
+            tvTipoContrato.setText(vaga.getTipo_contrato());
             tvSalario.setText(vaga.getSalario());
-            tvDataPublicacao.setText(formatarData(vaga.getDataPublicacao()));
+            tvDataPublicacao.setText("Publicada recentemente"); // Você pode formatar a data real aqui
 
             btnRemoveFavorito.setOnClickListener(v -> listener.onVagaClick(vaga));
-        }
-
-        private String formatarData(String dataOriginal) {
-            // Implemente a formatação da data conforme necessário
-            return "Publicada em " + dataOriginal;
+            itemView.setOnClickListener(v -> listener.onVagaDetalhesClick(vaga));
         }
     }
 }

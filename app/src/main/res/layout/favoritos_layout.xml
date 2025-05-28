@@ -8,19 +8,22 @@
     android:orientation="vertical">
 
     <!-- Cabeçalho com botão de voltar e título -->
+
+    <!-- Lista de vagas favoritas -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:padding="16dp">
+        android:padding="8dp"
+        android:layout_marginTop="20dp">
 
         <ImageButton
             android:id="@+id/imgVoltar"
             android:layout_width="50dp"
-            android:layout_height="50dp"
+            android:layout_height="30dp"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/baseline_arrow_back"
             android:contentDescription="Voltar para tela anterior"
+            android:src="@drawable/baseline_arrow_back"
             app:tint="@color/cinza" />
 
         <TextView
@@ -34,7 +37,6 @@
             android:textSize="22sp" />
     </LinearLayout>
 
-    <!-- Lista de vagas favoritas -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFavoritos"
         android:layout_width="match_parent"
