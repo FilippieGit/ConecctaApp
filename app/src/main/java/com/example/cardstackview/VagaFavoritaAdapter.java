@@ -1,5 +1,7 @@
 package com.example.cardstackview;
 
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -69,9 +71,39 @@ public class VagaFavoritaAdapter extends RecyclerView.Adapter<VagaFavoritaAdapte
             tvLocalizacao.setText(vaga.getLocalizacao());
             tvTipoContrato.setText(vaga.getTipo_contrato());
             tvSalario.setText(vaga.getSalario());
-            tvDataPublicacao.setText("Publicada recentemente"); // Você pode formatar a data real aqui
+            tvDataPublicacao.setText("Publicada recentemente");
 
-            btnRemoveFavorito.setOnClickListener(v -> listener.onVagaClick(vaga));
+            // Configura o ícone inicial (cheio e vermelho)
+            btnRemoveFavorito.setImageResource(R.drawable.ic_favorite_filled);
+            btnRemoveFavorito.setImageTintList(ColorStateList.valueOf(Color.parseColor("#ED0707")));
+
+            btnRemoveFavorito.setOnClickListener(v -> {
+                // Remove a tintagem para evitar sobreposição de cores
+                btnRemoveFavorito.setImageTintList(null);
+
+                // Animação de escala
+                btnRemoveFavorito.animate()
+                        .scaleX(0.7f)
+                        .scaleY(0.7f)
+                        .setDuration(150)
+                        .withEndAction(() -> {
+                            // Troca para o ícone vazio (apenas borda preta)
+                            btnRemoveFavorito.setImageResource(R.drawable.ic_favorite_empty);
+
+                            // Volta ao tamanho normal
+                            btnRemoveFavorito.animate()
+                                    .scaleX(1f)
+                                    .scaleY(1f)
+                                    .setDuration(150)
+                                    .withEndAction(() -> {
+                                        // Notifica o clique só após toda animação
+                                        listener.onVagaClick(vaga);
+                                    })
+                                    .start();
+                        })
+                        .start();
+            });
+
             itemView.setOnClickListener(v -> listener.onVagaDetalhesClick(vaga));
         }
     }

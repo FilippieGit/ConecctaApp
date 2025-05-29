@@ -8,7 +8,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 public class Api {
-    private static final String ROOT_URL = "http://10.67.96.128/ConecctaAPI/v1/Api.php?apicall=";
+    private static final String ROOT_URL = "http://192.168.1.23/ConecctaAPI/v1/Api.php?apicall=";
     public static final String URL_CADASTRAR_VAGA = ROOT_URL + "cadastrarVaga";
     public static final String URL_GET_VAGAS = ROOT_URL + "getVagas";
     public static final String URL_REGISTRAR_INTERESSE = ROOT_URL + "registrarinteresse";
