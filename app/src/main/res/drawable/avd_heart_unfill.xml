@@ -1,0 +1,9 @@
+<!-- res/drawable/avd_heart_unfill.xml -->
+<animated-vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:drawable="@drawable/ic_favorite_filled">
+
+    <target
+        android:name="heart"
+        android:animation="@drawable/heart_unfill_anim"/>
+
+</animated-vector>

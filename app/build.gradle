@@ -41,6 +41,7 @@ android {
 
 
 dependencies {
+    implementation 'com.google.code.gson:gson:2.10.1'
     implementation 'com.google.firebase:firebase-analytics:22.4.0' // Exemplo: Firebase Analytics
     implementation libs.appcompat
     implementation libs.material

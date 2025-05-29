@@ -41,7 +41,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class
+MainActivity extends AppCompatActivity {
     private MaterialToolbar idTopAppBar;
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
@@ -82,16 +83,20 @@ public class MainActivity extends AppCompatActivity {
     private void setupCardStackView() {
         // Configura o CardStackListener
         CardStackListener cardStackListener = new CardStackListener() {
+            // No seu CardStackListener na MainActivity
             @Override
             public void onCardSwiped(Direction direction) {
                 int pos = layoutManager.getTopPosition() - 1;
                 if (pos >= 0 && pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
                     if (direction == Direction.Right) {
-                        Toast.makeText(MainActivity.this, "Curtiu: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
+                        // Adiciona aos favoritos
+                        VagaDatabaseHelper dbHelper = new VagaDatabaseHelper(MainActivity.this);
+                        if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
+                            dbHelper.adicionarVagaFavorita(vaga);
+                            Toast.makeText(MainActivity.this, "Vaga favoritada!", Toast.LENGTH_SHORT).show();
+                        }
                         registrarInteresse(vaga);
-                    } else if (direction == Direction.Left) {
-                        Toast.makeText(MainActivity.this, "Descartou: " + vaga.getTitulo(), Toast.LENGTH_SHORT).show();
                     }
                 }
             }
@@ -161,8 +166,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            if (item.getItemId() == R.id.nav_profile) {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_profile) {
                 startActivity(new Intent(this, PerfilActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_favorite) {
+                startActivity(new Intent(this, FavoritosActivity.class));
                 return true;
             }
             return false;
@@ -231,20 +241,23 @@ public class MainActivity extends AppCompatActivity {
                             }
 
                             Vagas vaga = new Vagas(
-                                    vagaJson.optInt("id_vagas"),
-                                    vagaJson.optString("titulo_vagas", "Não informado"),
-                                    vagaJson.optString("descricao_vagas", "Não informado"),
-                                    vagaJson.optString("local_vagas", "Não informado"),
-                                    vagaJson.optString("salario_vagas", "Não informado"),
-                                    vagaJson.optString("requisitos_vagas", "Não informado"),
-                                    "", // nivel_experiencia
-                                    vagaJson.optString("vinculo_vagas", "Não informado"),
-                                    vagaJson.optString("ramo_vagas", "Não informado"),
-                                    beneficios,
-                                    vagaJson.optInt("id_empresa"),
-                                    vagaJson.optString("nome_empresa", "Empresa não informada"),
-                                    null
+                                    vagaJson.optInt("id_vagas"),                                  // vaga_id
+                                    vagaJson.optString("titulo_vagas", "Não informado"),          // titulo
+                                    vagaJson.optString("descricao_vagas", "Não informado"),       // descricao
+                                    vagaJson.optString("local_vagas", "Não informado"),           // localizacao
+                                    vagaJson.optString("salario_vagas", "Não informado"),         // salario
+                                    vagaJson.optString("requisitos_vagas", "Não informado"),      // requisitos
+                                    vagaJson.optString("nivel_experiencia", "Não informado"),     // nivel_experiencia
+                                    vagaJson.optString("tipo_contrato", "Não informado"),         // tipo_contrato
+                                    vagaJson.optString("area_atuacao", "Não informado"),          // area_atuacao
+                                    vagaJson.optString("beneficios_vagas", "Não informado"),      // beneficios
+                                    vagaJson.optString("vinculo_vagas", "Não informado"),         // vinculo
+                                    vagaJson.optString("ramo_vagas", "Não informado"),            // ramo
+                                    vagaJson.optInt("id_empresa"),                                // empresa_id
+                                    vagaJson.optString("nome_empresa", "Empresa não informada"),  // nome_empresa
+                                    null                                                          // habilidadesDesejaveis
                             );
+
 
                             vagasList.add(vaga);
                         }

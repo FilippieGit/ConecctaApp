@@ -1,0 +1,28 @@
+<!-- res/animator/heart_unfill_anim.xml -->
+<set xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Animação de mudança de cor -->
+    <objectAnimator
+        android:propertyName="fillColor"
+        android:duration="300"
+        android:valueFrom="#ED0707"
+        android:valueTo="#8A8A8A"
+        android:valueType="colorType"
+        android:interpolator="@android:interpolator/fast_out_slow_in"/>
+
+    <!-- Animação de escala (opcional) -->
+    <objectAnimator
+        android:propertyName="scaleX"
+        android:duration="150"
+        android:valueFrom="1.0"
+        android:valueTo="0.8"
+        android:repeatCount="1"
+        android:repeatMode="reverse"/>
+
+    <objectAnimator
+        android:propertyName="scaleY"
+        android:duration="150"
+        android:valueFrom="1.0"
+        android:valueTo="0.8"
+        android:repeatCount="1"
+        android:repeatMode="reverse"/>
+</set>

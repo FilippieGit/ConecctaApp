@@ -156,19 +156,23 @@
                                 System.out.println("Vaga " + i + ": " + vagaJson.toString());
 
                                 Vagas vaga = new Vagas(
-                                        vagaJson.optInt("id_vagas", 0),
-                                        vagaJson.optString("titulo_vagas", "Sem título"),
-                                        vagaJson.optString("descricao_vagas", "Sem descrição"),
-                                        vagaJson.optString("local_vagas", "Local não informado"),
-                                        vagaJson.optString("salario_vagas", "Salário não informado"),
-                                        vagaJson.optString("requisitos_vagas", "Requisitos não informados"),
-                                        vagaJson.optString("nivel_experiencia", "Nível não informado"),
-                                        vagaJson.optString("tipo_contrato", "Tipo não informado"),
-                                        vagaJson.optString("area_atuacao", "Área não informada"),
-                                        vagaJson.optString("beneficios", "Sem benefícios"),
-                                        vagaJson.optInt("id_empresa", 0),
-                                        vagaJson.optString("nome_empresa", "Empresa não informada")
+                                        vagaJson.optInt("id_vagas"),
+                                        vagaJson.optString("titulo_vagas", "Não informado"),
+                                        vagaJson.optString("descricao_vagas", "Não informado"),
+                                        vagaJson.optString("local_vagas", "Não informado"),
+                                        vagaJson.optString("salario_vagas", "Não informado"),
+                                        vagaJson.optString("requisitos_vagas", "Não informado"),
+                                        vagaJson.optString("nivel_experiencia", "Não informado"),
+                                        vagaJson.optString("tipo_contrato", "Não informado"),
+                                        vagaJson.optString("area_atuacao", "Não informado"),
+                                        vagaJson.optString("beneficios_vagas", "Não informado"),
+                                        vagaJson.optString("vinculo_vagas", "Não informado"),
+                                        vagaJson.optString("ramo_vagas", "Não informado"),
+                                        vagaJson.optInt("id_empresa"),
+                                        vagaJson.optString("nome_empresa", "Empresa não informada"),
+                                        vagaJson.optString("habilidades_desejaveis", "")  // ← Corrigido: pega do JSON
                                 );
+
 
                                 listaVagas.add(vaga);
                             }
