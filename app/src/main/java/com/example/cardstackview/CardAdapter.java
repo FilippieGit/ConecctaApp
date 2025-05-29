@@ -83,6 +83,7 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
         return vagasList.size();
     }
 
+
     public static class VagasViewHolder extends RecyclerView.ViewHolder {
         ImageView imgCompanyLogo;
         TextView tvJobTitle, tvCompanyName, tvBranch, tvLocation, tvBenefits, tvrequisitos;
