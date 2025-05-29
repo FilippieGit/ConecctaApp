@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,6 +75,11 @@ public class CadastroActivity extends AppCompatActivity {
                                                     userMap.put("nome", nome);
                                                     userMap.put("cidade", cidade);
                                                     userMap.put("tipo", "Física");
+
+// >>> adicione estas 3 linhas:
+                                                    userMap.put("certificados", new ArrayList<String>());
+                                                    userMap.put("experiencias", new ArrayList<String>());
+                                                    userMap.put("formacoes", new ArrayList<String>());
 
                                                     db.collection("users").document(user.getUid())
                                                             .set(userMap)
