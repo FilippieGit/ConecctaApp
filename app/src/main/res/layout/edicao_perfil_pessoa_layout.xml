@@ -341,6 +341,13 @@
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
+        <Button
+            android:id="@+id/btnSalvarPerfil"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Salvar Perfil"
+            android:layout_margin="16dp"/>
+
 
     </LinearLayout>
 

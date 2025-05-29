@@ -66,4 +66,8 @@ dependencies {
 
     //biblioteca image-circular
     implementation 'de.hdodenhof:circleimageview:3.1.0'
+
+    //sincronizar banco de dados
+    implementation 'com.squareup.okhttp3:okhttp:4.9.0'
+
 }

@@ -2,57 +2,126 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.view.View;
-import android.widget.ImageView;
+import android.widget.Toast;
+
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
-    LinearLayout layoutCertificados, layoutExperiencias, layoutFormacoes;
+    private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private String uid;
+
+    private LinearLayout layoutCertificados, layoutExperiencias, layoutFormacoes;
+    private Button btnAddCertificado, btnAddExperiencia, btnAddFormacao, btnSalvarPerfil;
+    private ImageView imgVoltarPerfilPessoa;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
+        EdgeToEdge.enable(this);
         setContentView(R.layout.edicao_perfil_pessoa_layout);
 
-        layoutCertificados = findViewById(R.id.layoutCertificados);
-        layoutExperiencias = findViewById(R.id.layoutExperiencias);
-        layoutFormacoes = findViewById(R.id.layoutFormacoes);
+        // 1) Init Firebase
+        mAuth = FirebaseAuth.getInstance();
+        db    = FirebaseFirestore.getInstance();
+        uid   = mAuth.getCurrentUser().getUid();
 
-        Button btnAddCertificado = findViewById(R.id.btnAddCertificado);
-        Button btnAddExperiencia = findViewById(R.id.btnAddExperiencia);
-        Button btnAddFormacao = findViewById(R.id.btnAddFormacao);
+        // 2) Bind views
+        layoutCertificados    = findViewById(R.id.layoutCertificados);
+        layoutExperiencias    = findViewById(R.id.layoutExperiencias);
+        layoutFormacoes       = findViewById(R.id.layoutFormacoes);
 
+        btnAddCertificado     = findViewById(R.id.btnAddCertificado);
+        btnAddExperiencia     = findViewById(R.id.btnAddExperiencia);
+        btnAddFormacao        = findViewById(R.id.btnAddFormacao);
+        btnSalvarPerfil       = findViewById(R.id.btnSalvarPerfil);
+        imgVoltarPerfilPessoa = findViewById(R.id.imgVoltarPerfilPessoa);
+
+        // 3) Listeners
         btnAddCertificado.setOnClickListener(v -> mostrarDialogCertificado());
         btnAddExperiencia.setOnClickListener(v -> mostrarDialogExperiencia());
         btnAddFormacao.setOnClickListener(v -> mostrarDialogFormacao());
+        btnSalvarPerfil.setOnClickListener(v -> saveProfile());
+        imgVoltarPerfilPessoa.setOnClickListener(v -> finish());
 
-        ImageView imgVoltarPerfilPessoa = findViewById(R.id.imgVoltarPerfilPessoa);
-        imgVoltarPerfilPessoa.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
-                finish(); // Encerra a tela atual para não empilhar
-            }
-        });
+        // 4) Load existing data
 
+    }
+
+    private void loadProfile() {
+        db.collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(doc -> {
+                    if (!doc.exists()) return;
+                    List<String> certs = (List<String>) doc.get("certificados");
+                    List<String> exps  = (List<String>) doc.get("experiencias");
+                    List<String> forms = (List<String>) doc.get("formacoes");
+                    if (certs  != null) for (String s : certs) adicionarItem(layoutCertificados, s);
+                    if (exps   != null) for (String s : exps) adicionarItem(layoutExperiencias, s);
+                    if (forms  != null) for (String s : forms) adicionarItem(layoutFormacoes, s);
+                })
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Erro ao carregar perfil: "+e.getMessage(),
+                                Toast.LENGTH_LONG).show()
+                );
+    }
+
+    private void saveProfile() {
+        List<String> certs = new ArrayList<>();
+        for (int i = 0; i < layoutCertificados.getChildCount(); i++) {
+            LinearLayout item = (LinearLayout) layoutCertificados.getChildAt(i);
+            TextView tv = (TextView) item.getChildAt(0);
+            certs.add(tv.getText().toString());
+        }
+        List<String> exps = new ArrayList<>();
+        for (int i = 0; i < layoutExperiencias.getChildCount(); i++) {
+            LinearLayout item = (LinearLayout) layoutExperiencias.getChildAt(i);
+            TextView tv = (TextView) item.getChildAt(0);
+            exps.add(tv.getText().toString());
+        }
+        List<String> forms = new ArrayList<>();
+        for (int i = 0; i < layoutFormacoes.getChildCount(); i++) {
+            LinearLayout item = (LinearLayout) layoutFormacoes.getChildAt(i);
+            TextView tv = (TextView) item.getChildAt(0);
+            forms.add(tv.getText().toString());
+        }
+
+        Map<String, Object> updates = new HashMap<>();
+        updates.put("certificados", certs);
+        updates.put("experiencias", exps);
+        updates.put("formacoes", forms);
+
+        db.collection("users")
+                .document(uid)
+                .update(updates)
+                .addOnSuccessListener(a ->
+                        Toast.makeText(this, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
+                )
+                .addOnFailureListener(e ->
+                        Toast.makeText(this, "Erro ao salvar perfil: "+e.getMessage(),
+                                Toast.LENGTH_LONG).show()
+                );
     }
 
     private void mostrarDialogCertificado() {
@@ -140,5 +209,4 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
         layout.addView(itemLayout);
     }
-
 }
