@@ -42,6 +42,8 @@ public class DetalheVagaActivity extends AppCompatActivity {
     private FloatingActionButton btnExcluir;
     private Vagas vaga;
 
+    private ImageButton btnVerCandidatos;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -51,6 +53,16 @@ public class DetalheVagaActivity extends AppCompatActivity {
 
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
         vaga = (Vagas) getIntent().getSerializableExtra("vaga");
+
+        // Configurar botão de candidatos
+        if (isPessoaJuridica && vaga != null) {
+            btnVerCandidatos.setVisibility(View.VISIBLE);
+            btnVerCandidatos.setOnClickListener(v -> {
+                Intent intent = new Intent(DetalheVagaActivity.this, CandidatosActivity.class);
+                intent.putExtra("vaga_id", vaga.getVaga_id());
+                startActivity(intent);
+            });
+        }
 
         // Log para verificar o objeto recebido e seus campos
         if (vaga != null) {
@@ -91,6 +103,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
         chipGroupHabilidadesDetalhe = findViewById(R.id.chipGroupHabilidadesDetalhe);
         btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
         btnExcluir = findViewById(R.id.BtnDetalheExcluir);
+        btnVerCandidatos = findViewById(R.id.btnVerCandidatos);
     }
 
 

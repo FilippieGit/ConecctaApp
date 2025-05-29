@@ -7,4 +7,6 @@
         <item name="colorSecondary">@color/verde</item>
         <item name="android:windowBackground">@color/brancosecondary</item>
     </style>
+
+
 </resources>
