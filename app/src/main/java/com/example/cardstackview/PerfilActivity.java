@@ -33,7 +33,7 @@ public class PerfilActivity extends AppCompatActivity {
     // Componentes da interface
     ImageView imgPerfilPbtnVoltar;
     Button btnPEditarPerfil;
-    TextView perfilNome, perfilEmail, perfilTelefone, perfilDescricao, perfilSetor, perfilExpProfissional, perfilFormAcademica, perfilCertificados;
+    TextView perfilNome, perfilidade,perfilgenero , perfilEmail, perfilusername, perfilTelefone, perfilDescricao, perfilSetor, perfilExpProfissional, perfilFormAcademica, perfilCertificados;
     ImageView imageViewPerfil;
 
     @Override
@@ -53,6 +53,9 @@ public class PerfilActivity extends AppCompatActivity {
         perfilExpProfissional = findViewById(R.id.perfilExpProfissional);
         perfilFormAcademica = findViewById(R.id.perfilFormAcademica);
         perfilCertificados = findViewById(R.id.perfilCertificados);
+        perfilusername = findViewById(R.id.username);
+        perfilgenero = findViewById(R.id.generouser);
+        perfilidade = findViewById(R.id.idadeuser);
         imageViewPerfil = findViewById(R.id.imgPerfilCandidato); // A imagem de perfil
 
         // Função de voltar para a tela principal
@@ -74,7 +77,7 @@ public class PerfilActivity extends AppCompatActivity {
     // Função para carregar os dados do usuário após o login
     private void carregarDadosUsuario() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Pegando o user_id do Firebase
-        String url = "http://192.168.15.78/CRUD_user/getUser.php?id=" + userId;  // Alteração aqui para usar o parâmetro 'id'
+        String url = "http://192.168.227.214/CRUD_user/getUser.php?id=" + userId;  // Alteração aqui para usar o parâmetro 'id'
 
         OkHttpClient client = new OkHttpClient();
 
@@ -115,6 +118,9 @@ public class PerfilActivity extends AppCompatActivity {
                         String experiencia = json.optString("experiencia_profissional", "");
                         String formacao = json.optString("formacao_academica", "");
                         String certificados = json.optString("certificados", "");
+                        String username = json.optString("nome", "");
+                        String genero = json.optString("genero", "");
+                        String idade = json.optString("idade", "");
                         String imagemPerfil = json.optString("imagem_perfil", "");
 
                         // Atualizando os campos de UI com os dados
@@ -126,6 +132,9 @@ public class PerfilActivity extends AppCompatActivity {
                         perfilExpProfissional.setText(experiencia);
                         perfilFormAcademica.setText(formacao);
                         perfilCertificados.setText(certificados);
+                        perfilusername.setText(username);
+                        perfilgenero.setText(genero);
+                        perfilidade.setText(idade);
 
                         // Se a URL da imagem de perfil não estiver vazia, carregue a imagem
 

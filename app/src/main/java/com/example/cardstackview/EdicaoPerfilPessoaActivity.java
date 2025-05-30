@@ -20,10 +20,14 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import okhttp3.Call;
+import okhttp3.OkHttpClient;
 
 public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
@@ -34,6 +38,9 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
     private LinearLayout layoutCertificados, layoutExperiencias, layoutFormacoes;
     private Button btnAddCertificado, btnAddExperiencia, btnAddFormacao, btnSalvarPerfil;
     private ImageView imgVoltarPerfilPessoa;
+
+    private EditText edtDescricao, edtTelefone, edtEmail, edtSetor;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -66,6 +73,13 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
         // 4) Load existing data
 
+        edtDescricao = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.textField)).getEditText();
+        edtTelefone  = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilTelefone)).getEditText();
+        edtEmail     = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilEmail)).getEditText();
+        edtSetor     = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilArea)).getEditText();
+
+
+
     }
 
     private void loadProfile() {
@@ -94,12 +108,14 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
             TextView tv = (TextView) item.getChildAt(0);
             certs.add(tv.getText().toString());
         }
+
         List<String> exps = new ArrayList<>();
         for (int i = 0; i < layoutExperiencias.getChildCount(); i++) {
             LinearLayout item = (LinearLayout) layoutExperiencias.getChildAt(i);
             TextView tv = (TextView) item.getChildAt(0);
             exps.add(tv.getText().toString());
         }
+
         List<String> forms = new ArrayList<>();
         for (int i = 0; i < layoutFormacoes.getChildCount(); i++) {
             LinearLayout item = (LinearLayout) layoutFormacoes.getChildAt(i);
@@ -107,22 +123,44 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
             forms.add(tv.getText().toString());
         }
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("certificados", certs);
-        updates.put("experiencias", exps);
-        updates.put("formacoes", forms);
+        // Mapa com os dados
+        Map<String, String> dados = new HashMap<>();
+        dados.put("uid", uid);
+        dados.put("telefone", edtTelefone.getText().toString());
+        dados.put("descricao", edtDescricao.getText().toString());
+        dados.put("setor", edtSetor.getText().toString());
+        dados.put("formacao_academica", String.join(" | ", forms));
+        dados.put("experiencia_profissional", String.join(" | ", exps));
+        dados.put("certificados", String.join(" | ", certs));
 
-        db.collection("users")
-                .document(uid)
-                .update(updates)
-                .addOnSuccessListener(a ->
-                        Toast.makeText(this, "Perfil atualizado com sucesso!", Toast.LENGTH_SHORT).show()
-                )
-                .addOnFailureListener(e ->
-                        Toast.makeText(this, "Erro ao salvar perfil: "+e.getMessage(),
-                                Toast.LENGTH_LONG).show()
-                );
+        // Envio via POST
+        OkHttpClient client = new OkHttpClient();
+        okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+        for (Map.Entry<String, String> entry : dados.entrySet()) {
+            formBuilder.add(entry.getKey(), entry.getValue());
+        }
+
+        okhttp3.RequestBody body = formBuilder.build();
+        okhttp3.Request request = new okhttp3.Request.Builder()
+                .url("http://192.168.227.214/update/update.php") // <- Substituir pelo seu endpoint
+                .post(body)
+                .build();
+
+        client.newCall(request).enqueue(new okhttp3.Callback() {
+            @Override
+            public void onFailure(Call call, IOException e) {
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show());
+            }
+
+            @Override
+            public void onResponse(Call call, okhttp3.Response response) throws IOException {
+                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Perfil atualizado!", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
+                finish();
+            }
+        });
     }
+
 
     private void mostrarDialogCertificado() {
         View view = getLayoutInflater().inflate(R.layout.dialog_adicionar_certificado_layout, null);

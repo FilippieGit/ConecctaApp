@@ -332,6 +332,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -360,6 +361,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/generouser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -388,6 +390,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/idadeuser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
