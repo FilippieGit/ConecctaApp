@@ -3,22 +3,17 @@ package com.example.cardstackview;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.core.graphics.Insets;
-import androidx.core.view.GravityCompat;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.cardstackview.databinding.ActivityMainBinding;
@@ -34,15 +29,14 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
-public class
-MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
     private MaterialToolbar idTopAppBar;
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
@@ -50,77 +44,78 @@ MainActivity extends AppCompatActivity {
     private CardStackLayoutManager layoutManager;
     private CardAdapter adapter;
     private List<Vagas> vagasList = new ArrayList<>();
+    private List<Vagas> allVagas = new ArrayList<>();
     private ProgressBar progressBar;
+    private int currentPosition = 0;
+    private static final int BATCH_SIZE = 10;
+    private boolean isLoading = false;
 
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
+
+    private final ExecutorService executor = Executors.newFixedThreadPool(2);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
-
-        // Força o tema claro
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
-
         setContentView(binding.getRoot());
 
         progressBar = findViewById(R.id.progressBar);
-
-        // Inicializa o adapter
         adapter = new CardAdapter(this, vagasList);
-
-        // Configura o CardStackView
         setupCardStackView();
-
-        // Configura a navegação
         setupNavigation();
-
-        // Busca vagas da API
         buscarVagas();
     }
 
     private void setupCardStackView() {
-        // Configura o CardStackListener
         CardStackListener cardStackListener = new CardStackListener() {
-            // No seu CardStackListener na MainActivity
             @Override
             public void onCardSwiped(Direction direction) {
                 int pos = layoutManager.getTopPosition() - 1;
                 if (pos >= 0 && pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
-                    if (direction == Direction.Right) {
-                        // Adiciona aos favoritos
-                        VagaDatabaseHelper dbHelper = new VagaDatabaseHelper(MainActivity.this);
-                        if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
-                            dbHelper.adicionarVagaFavorita(vaga);
-                            Toast.makeText(MainActivity.this, "Vaga favoritada!", Toast.LENGTH_SHORT).show();
+
+                    executor.execute(() -> {
+                        if (direction == Direction.Right) {
+                            processarLike(vaga);
                         }
-                        registrarInteresse(vaga);
-                    }
+
+                        runOnUiThread(() -> {
+                            if (pos >= vagasList.size() - 3 && currentPosition < allVagas.size()) {
+                                loadNextBatch();
+                            }
+                        });
+                    });
                 }
             }
 
-            @Override public void onCardDragging(Direction direction, float ratio) {}
+            @Override
+            public void onCardDragging(Direction direction, float ratio) {
+                if (direction == Direction.Bottom && ratio > 0.5f) {
+                    binding.cardStack.rewind();
+                    binding.cardStack.swipe();
+                }
+            }
+
             @Override public void onCardRewound() {}
             @Override public void onCardCanceled() {}
             @Override public void onCardAppeared(View view, int position) {}
             @Override public void onCardDisappeared(View view, int position) {}
         };
 
-        // Configura o LayoutManager
         layoutManager = new CardStackLayoutManager(this, cardStackListener);
         layoutManager.setStackFrom(StackFrom.None);
         layoutManager.setVisibleCount(3);
-        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right));
+        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right, Direction.Bottom));
 
-        // Aplica configurações ao CardStackView
         binding.cardStack.setLayoutManager(layoutManager);
         binding.cardStack.setAdapter(adapter);
 
-        // Configura botões de ação
         ImageButton btnReject = findViewById(R.id.btnReject);
         ImageButton btnLike = findViewById(R.id.btnLike);
+        ImageButton btnDown = findViewById(R.id.btnDown);
 
         btnLike.setOnClickListener(v -> {
             SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
@@ -139,43 +134,53 @@ MainActivity extends AppCompatActivity {
             layoutManager.setSwipeAnimationSetting(setting);
             binding.cardStack.swipe();
         });
+
+        btnDown.setOnClickListener(v -> {
+            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                    .setDirection(Direction.Bottom)
+                    .setDuration(400)
+                    .build();
+            layoutManager.setSwipeAnimationSetting(setting);
+            binding.cardStack.swipe();
+        });
     }
 
-    private void setupNavigation() {
-        idTopAppBar = findViewById(R.id.idMainTopAppBar);
-        idDrawer = findViewById(R.id.idDrawer);
-        idNavView = findViewById(R.id.idNavView);
+    private void processarLike(Vagas vaga) {
+        VagaDatabaseHelper dbHelper = new VagaDatabaseHelper(MainActivity.this);
+        if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
+            dbHelper.adicionarVagaFavorita(vaga);
+            runOnUiThread(() ->
+                    Toast.makeText(MainActivity.this, "Vaga favoritada!", Toast.LENGTH_SHORT).show()
+            );
+        }
+        registrarInteresse(vaga);
+    }
 
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, idDrawer, idTopAppBar,
-                R.string.open_drawer, R.string.close_drawer
-        );
-        idDrawer.addDrawerListener(toggle);
-        toggle.syncState();
+    private void loadNextBatch() {
+        if (isLoading || currentPosition >= allVagas.size()) return;
 
-        idNavView.setNavigationItemSelectedListener(item -> {
-            int id = item.getItemId();
-            if (id == R.id.idLoginItemMenu) goToLoginCandidato();
-            else if (id == R.id.idVagasItemMenu)
-                Toast.makeText(this, "Já está em Vagas", Toast.LENGTH_SHORT).show();
-            else if (id == R.id.idConfigItemMenu) startActivity(new Intent(this, ConfigActivity.class));
-            else if (id == R.id.idAjudaItemMenu) startActivity(new Intent(this, FeedbackActivity.class));
-            else if (id == R.id.idSobreItemMenu) startActivity(new Intent(this, SobreNosActivity.class));
-            idDrawer.closeDrawers();
-            return true;
-        });
+        isLoading = true;
+        binding.progressBar.setVisibility(View.VISIBLE);
 
-        binding.bottomNavigation.setOnItemSelectedListener(item -> {
-            int itemId = item.getItemId();
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            int end = Math.min(currentPosition + BATCH_SIZE, allVagas.size());
+            List<Vagas> batch = allVagas.subList(currentPosition, end);
 
-            if (itemId == R.id.nav_profile) {
-                startActivity(new Intent(this, PerfilActivity.class));
-                return true;
-            } else if (itemId == R.id.nav_favorite) {
-                startActivity(new Intent(this, FavoritosActivity.class));
-                return true;
-            }
-            return false;
+            int startPosition = vagasList.size();
+            vagasList.addAll(batch);
+            currentPosition = end;
+
+            adapter.notifyItemRangeInserted(startPosition, batch.size());
+            isLoading = false;
+            binding.progressBar.setVisibility(View.GONE);
+
+            preloadImages(batch);
+        }, 150);
+    }
+
+    private void preloadImages(List<Vagas> batch) {
+        executor.execute(() -> {
+            // Implemente o pré-carregamento de imagens aqui se necessário
         });
     }
 
@@ -184,11 +189,21 @@ MainActivity extends AppCompatActivity {
     }
 
     private void registrarInteresse(Vagas vaga) {
-        HashMap<String, String> params = new HashMap<>();
-        params.put("vaga_id", String.valueOf(vaga.getVaga_id()));
-        params.put("usuario_id", "1"); // Substitua pelo ID do usuário logado
+        executor.execute(() -> {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("vaga_id", String.valueOf(vaga.getVaga_id()));
+            params.put("usuario_id", "1");
 
-        new PerformNetworkRequest(Api.URL_REGISTRAR_INTERESSE, params, CODE_POST_REQUEST).execute();
+            try {
+                String resultado = new RequestHandler().sendPostRequest(Api.URL_REGISTRAR_INTERESSE, params);
+                JSONObject response = new JSONObject(resultado);
+                if (response.getBoolean("error")) {
+                    Log.e("API", "Erro ao registrar interesse: " + response.getString("message"));
+                }
+            } catch (Exception e) {
+                Log.e("API", "Erro ao registrar interesse", e);
+            }
+        });
     }
 
     private class PerformNetworkRequest extends AsyncTask<Void, Void, String> {
@@ -215,22 +230,15 @@ MainActivity extends AppCompatActivity {
             progressBar.setVisibility(View.GONE);
             binding.cardStack.setVisibility(View.VISIBLE);
 
-            if (!s.trim().startsWith("{")) {
-                Toast.makeText(MainActivity.this, "Resposta não é JSON:\n" + s.substring(0, Math.min(200, s.length())), Toast.LENGTH_LONG).show();
-                Log.e("API_RESPONSE", "Resposta não JSON: " + s);
-                return;
-            }
-            if (s == null || s.isEmpty()) {
-                Toast.makeText(MainActivity.this, "Resposta vazia do servidor", Toast.LENGTH_SHORT).show();
-                return;
-            }
-
             try {
                 JSONObject response = new JSONObject(s);
                 if (!response.getBoolean("error")) {
                     if (response.has("vagas")) {
                         JSONArray vagasArray = response.getJSONArray("vagas");
+
+                        allVagas.clear();
                         vagasList.clear();
+                        currentPosition = 0;
 
                         for (int i = 0; i < vagasArray.length(); i++) {
                             JSONObject vagaJson = vagasArray.getJSONObject(i);
@@ -241,30 +249,27 @@ MainActivity extends AppCompatActivity {
                             }
 
                             Vagas vaga = new Vagas(
-                                    vagaJson.optInt("id_vagas"),                                  // vaga_id
-                                    vagaJson.optString("titulo_vagas", "Não informado"),          // titulo
-                                    vagaJson.optString("descricao_vagas", "Não informado"),       // descricao
-                                    vagaJson.optString("local_vagas", "Não informado"),           // localizacao
-                                    vagaJson.optString("salario_vagas", "Não informado"),         // salario
-                                    vagaJson.optString("requisitos_vagas", "Não informado"),      // requisitos
-                                    vagaJson.optString("nivel_experiencia", "Não informado"),     // nivel_experiencia
-                                    vagaJson.optString("tipo_contrato", "Não informado"),         // tipo_contrato
-                                    vagaJson.optString("area_atuacao", "Não informado"),          // area_atuacao
-                                    vagaJson.optString("beneficios_vagas", "Não informado"),      // beneficios
-                                    vagaJson.optString("vinculo_vagas", "Não informado"),         // vinculo
-                                    vagaJson.optString("ramo_vagas", "Não informado"),            // ramo
-                                    vagaJson.optInt("id_empresa"),                                // empresa_id
-                                    vagaJson.optString("nome_empresa", "Empresa não informada"),  // nome_empresa
-                                    null                                                          // habilidadesDesejaveis
+                                    vagaJson.optInt("id_vagas"),
+                                    vagaJson.optString("titulo_vagas", "Não informado"),
+                                    vagaJson.optString("descricao_vagas", "Não informado"),
+                                    vagaJson.optString("local_vagas", "Não informado"),
+                                    vagaJson.optString("salario_vagas", "Não informado"),
+                                    vagaJson.optString("requisitos_vagas", "Não informado"),
+                                    vagaJson.optString("nivel_experiencia", "Não informado"),
+                                    vagaJson.optString("tipo_contrato", "Não informado"),
+                                    vagaJson.optString("area_atuacao", "Não informado"),
+                                    vagaJson.optString("beneficios_vagas", "Não informado"),
+                                    vagaJson.optString("vinculo_vagas", "Não informado"),
+                                    vagaJson.optString("ramo_vagas", "Não informado"),
+                                    vagaJson.optInt("id_empresa"),
+                                    vagaJson.optString("nome_empresa", "Empresa não informada"),
+                                    null
                             );
 
-
-                            vagasList.add(vaga);
+                            allVagas.add(vaga);
                         }
 
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(MainActivity.this, "Dados de vagas não encontrados", Toast.LENGTH_SHORT).show();
+                        loadNextBatch();
                     }
                 } else {
                     Toast.makeText(MainActivity.this, response.getString("message"), Toast.LENGTH_SHORT).show();
@@ -275,13 +280,9 @@ MainActivity extends AppCompatActivity {
             }
         }
 
-
-
-
         @Override
         protected String doInBackground(Void... voids) {
             RequestHandler requestHandler = new RequestHandler();
-
             try {
                 if (requestCode == CODE_POST_REQUEST) {
                     return requestHandler.sendPostRequest(url, params);
@@ -295,17 +296,57 @@ MainActivity extends AppCompatActivity {
         }
     }
 
-    @Override
-    public void onBackPressed() {
-        if (idDrawer.isDrawerOpen(GravityCompat.START)) {
-            idDrawer.closeDrawer(GravityCompat.START);
-        } else {
-            super.onBackPressed();
-        }
+    private void setupNavigation() {
+        idTopAppBar = findViewById(R.id.idMainTopAppBar);
+        setSupportActionBar(idTopAppBar);
+
+        idDrawer = findViewById(R.id.idDrawer);
+        idNavView = findViewById(R.id.idNavView);
+
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                this, idDrawer, idTopAppBar,
+                R.string.open_drawer, R.string.close_drawer
+        );
+        idDrawer.addDrawerListener(toggle);
+        toggle.syncState();
+
+        idNavView.setNavigationItemSelectedListener(item -> {
+            int id = item.getItemId();
+
+            if (id == R.id.idLoginItemMenu) {
+                startActivity(new Intent(this, LoginPessoaFisica.class));
+                finish();
+            } else if (id == R.id.idVagasItemMenu) {
+                Toast.makeText(this, "Já está em Vagas", Toast.LENGTH_SHORT).show();
+            } else if (id == R.id.idConfigItemMenu) {
+                startActivity(new Intent(this, ConfigActivity.class));
+            } else if (id == R.id.idAjudaItemMenu) {
+                startActivity(new Intent(this, FeedbackActivity.class));
+            } else if (id == R.id.idSobreItemMenu) {
+                startActivity(new Intent(this, SobreNosActivity.class));
+            }
+
+            idDrawer.closeDrawers();
+            return true;
+        });
+
+        binding.bottomNavigation.setOnItemSelectedListener(item -> {
+            int itemId = item.getItemId();
+
+            if (itemId == R.id.nav_profile) {
+                startActivity(new Intent(this, PerfilActivity.class));
+                return true;
+            } else if (itemId == R.id.nav_favorite) {
+                startActivity(new Intent(this, FavoritosActivity.class));
+                return true;
+            }
+            return false;
+        });
     }
 
-    private void goToLoginCandidato() {
-        startActivity(new Intent(this, LoginPessoaFisica.class));
-        finish();
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        executor.shutdown();
     }
 }
