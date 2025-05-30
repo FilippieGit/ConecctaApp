@@ -15,7 +15,7 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:padding="8dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="35dp">
 
         <ImageButton
             android:id="@+id/imgVoltar"

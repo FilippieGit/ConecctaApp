@@ -2,11 +2,26 @@
 <resources>
     <!-- Tema base do app, sem modo dark -->
     <style name="Base.Theme.CardStackView" parent="Theme.MaterialComponents.Light.NoActionBar">
+        <!-- Cores principais -->
         <item name="colorPrimary">@color/azulprimary</item>
         <item name="colorPrimaryVariant">@color/azulescuro</item>
         <item name="colorOnPrimary">@color/brancosecondary</item>
         <item name="colorSecondary">@color/verde</item>
+
+        <!-- Cores de superfície (evitam conflitos com DrawerLayout) -->
+        <item name="colorSurface">@color/brancosecondary</item>
+        <item name="colorOnSurface">@color/preto</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor">@color/azulprimary</item>
+        <item name="android:windowLightStatusBar">true</item> <!-- Ícones escuros -->
+
+        <!-- Fundo padrão -->
         <item name="android:windowBackground">@color/brancosecondary</item>
+
+        <!-- Desativa translucidez (pode causar roxo) -->
+        <item name="android:windowTranslucentStatus">false</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
     </style>
 
     <style name="BottomNavigationStyle" parent="Widget.MaterialComponents.BottomNavigationView">
@@ -15,5 +30,8 @@
         <item name="itemTextColor">@color/cinza</item> <!-- Altere para a cor desejada -->
     </style>
 
+
     <style name="Theme.CardStackView" parent="Base.Theme.CardStackView" />
+
+
 </resources>
