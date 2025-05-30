@@ -20,9 +20,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <ImageView
@@ -75,8 +75,8 @@
             app:boxCornerRadiusBottomStart="10dp"
             app:boxCornerRadiusTopEnd="10dp"
             app:boxCornerRadiusTopStart="10dp"
-            app:startIconDrawable="@drawable/baseline_lock"
-            app:passwordToggleEnabled="true">
+            app:passwordToggleEnabled="true"
+            app:startIconDrawable="@drawable/baseline_lock">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/txtPessoaEmpresaSenha"
@@ -99,8 +99,9 @@
             android:layout_marginStart="20dp"
             android:layout_marginTop="40dp"
             android:layout_marginEnd="20dp"
+            app:cornerRadius="50dp"
             android:backgroundTint="@color/azulprimary"
-            android:fontFamily="@font/font"
+            android:fontFamily="@font/chillax_semibold"
             android:padding="15sp"
             android:text="Entrar"
             android:textColor="@color/brancosecondary"
@@ -113,20 +114,24 @@
             android:layout_marginRight="20dp">
 
             <Button
+                android:fontFamily="@font/chillax_medium"
                 android:id="@+id/btnPessoaEmpresaCriarConta"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentStart="true"
-                android:text="Cadastrar conta" />
+                android:text="Criar conta"
+                android:textSize="15sp" />
 
             <Button
+                android:fontFamily="@font/chillax_medium"
                 android:id="@+id/btnPessoaEmpresaEsqSenha"
                 style="@style/Widget.Material3.Button.TextButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
-                android:text="Esqueci a senha" />
+                android:text="Esqueci a senha"
+                android:textSize="15sp" />
 
 
         </RelativeLayout>
@@ -136,10 +141,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="16dp"
-            android:text="Ir para Tela Empresa"
             android:backgroundTint="@color/azulprimary"
-            android:textColor="@color/brancosecondary"
-            android:fontFamily="@font/font" />
+            android:fontFamily="@font/font"
+            android:text="Ir para Tela Empresa"
+            android:textColor="@color/brancosecondary" />
 
 
     </LinearLayout>
