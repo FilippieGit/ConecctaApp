@@ -277,6 +277,19 @@
             android:textColor="@color/brancosecondary"
             android:visibility="gone" />
 
+        <!-- Adicione este botão logo após o btnCandidatar -->
+        <Button
+            android:id="@+id/btnPerguntas"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginBottom="8dp"
+            android:background="@drawable/button_rounded_blue"
+            android:text="Responder Perguntas"
+            android:textColor="@color/brancosecondary"
+            android:visibility="gone" />
+
         <!-- Botão Excluir -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnDetalheExcluir"

@@ -77,7 +77,7 @@ public class PerfilActivity extends AppCompatActivity {
     // Função para carregar os dados do usuário após o login
     private void carregarDadosUsuario() {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Pegando o user_id do Firebase
-        String url = "http://10.67.96.144/CRUD_user/getUser.php?id=" + userId;  // Alteração aqui para usar o parâmetro 'id'
+        String url = Api.URL_GET_USER + userId;  // Alteração aqui para usar o parâmetro 'id'
 
         OkHttpClient client = new OkHttpClient();
 
