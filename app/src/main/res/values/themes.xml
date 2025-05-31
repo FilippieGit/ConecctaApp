@@ -3,9 +3,11 @@
     <!-- Tema base do app, sem modo dark -->
     <style name="Base.Theme.CardStackView" parent="Theme.MaterialComponents.Light.NoActionBar">
         <item name="colorPrimary">@color/azulprimary</item>
+        <item name="android:statusBarColor">@color/azulprimary</item>
         <item name="colorPrimaryVariant">@color/azulescuro</item>
         <item name="colorOnPrimary">@color/brancosecondary</item>
         <item name="colorSecondary">@color/verde</item>
+        <item name="colorSecondaryVariant">@color/verdeescuro</item>
         <item name="android:windowBackground">@color/brancosecondary</item>
     </style>
 

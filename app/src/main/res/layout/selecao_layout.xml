@@ -23,16 +23,26 @@
             android:layout_height="230dp"
             android:src="@drawable/logoviii"
             android:layout_marginTop="170dp"
-            android:layout_marginBottom="70dp"/>
+            android:layout_marginBottom="5dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/chillax_medium"
+            android:textColor="@color/cinza"
+            android:textSize="25sp"
+            android:text="Criar conta como"
+            android:layout_marginBottom="15dp"/>
 
         <!-- Botão Empresa -->
         <com.google.android.material.button.MaterialButton
+            app:cornerRadius="50dp"
             android:id="@+id/btnEmpresa"
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:text="Empresa"
             android:textSize="30sp"
-            android:fontFamily="@font/chillax_medium"
+            android:fontFamily="@font/chillax_semibold"
             android:backgroundTint="@color/azulprimary"
             android:textColor="#FFFFFF"/>
 
@@ -44,7 +54,8 @@
             android:layout_height="60dp"
             android:text="Candidato"
             android:textSize="30sp"
-            android:fontFamily="@font/chillax_medium"
+            app:cornerRadius="50dp"
+            android:fontFamily="@font/chillax_semibold"
             android:backgroundTint="@color/azulprimary"
             android:textColor="#FFFFFF"/>
 
