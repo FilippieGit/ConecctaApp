@@ -14,12 +14,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:title="Sobre nós"
             app:menu="@menu/menu_bar"
-            app:navigationIcon="@drawable/baseline_menu" />
+            app:navigationIcon="@drawable/baseline_menu"
+            app:title="Sobre nós"
+            app:titleTextAppearance="@style/ToolbarTitleText"
+            app:titleTextColor="@color/brancosecondary" />
 
     </com.google.android.material.appbar.AppBarLayout>
-
 
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -14,9 +14,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:minHeight="?attr/actionBarSize"
-            app:title="Currículos aleatórios"
             app:menu="@menu/menu_bar"
-            app:navigationIcon="@drawable/baseline_menu" />
+            app:navigationIcon="@drawable/baseline_menu"
+            app:title="Central de Currículos"
+            app:titleTextAppearance="@style/ToolbarTitleText"
+            app:titleTextColor="@color/brancosecondary" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

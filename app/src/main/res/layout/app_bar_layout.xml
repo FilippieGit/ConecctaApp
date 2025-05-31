@@ -16,7 +16,9 @@
             android:minHeight="?attr/actionBarSize"
             app:menu="@menu/menu_bar"
             app:navigationIcon="@drawable/baseline_menu"
-            app:title="Aplicativo" />
+            app:title="Aplicativo"
+            app:titleTextAppearance="@style/ToolbarTitleText"
+            app:titleTextColor="@color/brancosecondary" />
 
     </com.google.android.material.appbar.AppBarLayout>
 

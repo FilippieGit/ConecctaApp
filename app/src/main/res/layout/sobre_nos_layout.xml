@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/idDrawer"
@@ -34,9 +33,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent">
+                app:layout_constraintTop_toTopOf="parent">
 
                 <!-- CardView com descrição do projeto -->
                 <androidx.cardview.widget.CardView
@@ -56,6 +55,7 @@
                             android:id="@+id/tvTitulo"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/chillax_semibold"
                             android:paddingBottom="4dp"
                             android:text="Nosso projeto nasce com um objetivo claro:"
                             android:textColor="@color/preto"
@@ -66,6 +66,7 @@
                             android:id="@+id/tvDescricao"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/roundo_regular"
                             android:text="Facilitar e modernizar o processo de empregabilidade na zona sul de São Paulo. Nossa plataforma usa um sistema de 'match' semelhante ao Tinder, tornando a seleção rápida e assertiva."
                             android:textColor="@color/cinza"
                             android:textSize="16sp" />
@@ -90,6 +91,7 @@
                             android:id="@+id/tvTecnologias"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/chillax_semibold"
                             android:paddingBottom="4dp"
                             android:text="Tecnologias Utilizadas"
                             android:textColor="@color/preto"
@@ -97,10 +99,11 @@
                             android:textStyle="bold" />
 
                         <TextView
-                            android:textColor="@color/cinza"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
+                            android:fontFamily="@font/roundo_regular"
                             android:text="- Laravel e PHP\n- JavaScript e Bootstrap 5.3\n- HTML e CSS"
+                            android:textColor="@color/cinza"
                             android:textSize="16sp" />
                     </LinearLayout>
                 </androidx.cardview.widget.CardView>

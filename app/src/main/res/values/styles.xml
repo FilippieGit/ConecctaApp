@@ -7,4 +7,11 @@
         <item name="colorSecondary">@color/verde</item>
         <item name="android:windowBackground">@color/brancosecondary</item>
     </style>
+
+    <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="fontFamily">@font/chillax_semibold</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">@color/brancosecondary</item>
+    </style>
+
 </resources>
