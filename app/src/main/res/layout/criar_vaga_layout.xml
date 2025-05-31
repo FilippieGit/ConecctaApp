@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="@color/brancosecondary">
+    android:background="@color/brancosecondary"
+    android:orientation="vertical">
 
     <!-- Botão de Voltar -->
     <ImageView
@@ -48,10 +47,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
                 android:hint="Título da Vaga"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtTituloVaga"
@@ -68,10 +67,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
                 android:hint="Descrição da Vaga"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtDescricaoVaga"
@@ -96,8 +95,8 @@
                 android:id="@+id/spinnerNivelExperiencia"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:layout_marginVertical="5dp"
+                android:minHeight="48dp"
                 android:spinnerMode="dropdown" />
 
             <!-- Tipo de Contrato -->
@@ -114,8 +113,8 @@
                 android:id="@+id/spinnerTipoContrato"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:layout_marginVertical="5dp"
+                android:minHeight="48dp"
                 android:spinnerMode="dropdown" />
 
             <!-- Área de Atuação -->
@@ -132,8 +131,8 @@
                 android:id="@+id/spinnerAreaAtuacao"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:minHeight="48dp"
                 android:layout_marginVertical="5dp"
+                android:minHeight="48dp"
                 android:spinnerMode="dropdown" />
 
             <!-- Localização -->
@@ -142,10 +141,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
                 android:hint="Localização"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtLocalizacao"
@@ -162,10 +161,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
                 android:hint="Salário (opcional)"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtSalario"
@@ -183,10 +182,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
                 android:hint="Benefícios"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtBeneficios"
@@ -199,22 +198,39 @@
             </com.google.android.material.textfield.TextInputLayout>
 
 
-            <!-- Habilidades Desejáveis -->
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:fontFamily="@font/font"
-                android:text="Habilidades Desejáveis"
-                android:textColor="@color/cinza"
-                android:textSize="14sp" />
-
-            <com.google.android.material.chip.ChipGroup
-                android:id="@+id/chipGroupHabilidades"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginVertical="5dp"
-                app:chipSpacing="8dp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Habilidades Desejáveis"
+                    android:textColor="@color/cinza"
+                    android:textSize="14sp" />
+
+                <com.google.android.material.chip.ChipGroup
+                    android:id="@+id/chipGroupHabilidades"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:chipSpacing="8dp" />
+
+                <TextView
+                    android:id="@+id/tvExpandir"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:minWidth="48dp"
+                    android:gravity="center"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:padding="8dp"
+                    android:text="Mostrar mais"
+                    android:textColor="@color/azulprimary" />
+
+            </LinearLayout>
+
 
             <!-- Requisitos -->
             <com.google.android.material.textfield.TextInputLayout
@@ -222,10 +238,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="5dp"
                 android:hint="Requisitos"
-                app:boxCornerRadiusTopStart="10dp"
-                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusBottomEnd="10dp"
                 app:boxCornerRadiusBottomStart="10dp"
-                app:boxCornerRadiusBottomEnd="10dp">
+                app:boxCornerRadiusTopEnd="10dp"
+                app:boxCornerRadiusTopStart="10dp">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/edtRequisitos"

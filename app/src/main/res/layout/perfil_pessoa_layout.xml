@@ -44,6 +44,7 @@
                 android:padding="15dp">
 
                 <de.hdodenhof.circleimageview.CircleImageView
+                    android:id="@+id/imgPerfilCandidato"
                     android:layout_width="150dp"
                     android:layout_height="150dp"
                     android:layout_gravity="center"
@@ -331,6 +332,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/username"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -359,6 +361,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/generouser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -387,6 +390,7 @@
                         android:textStyle="bold" />
 
                     <TextView
+                        android:id="@+id/idadeuser"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_alignParentEnd="true"
@@ -461,6 +465,7 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
+                    android:textSize="15sp"
                     <TextView
                         android:id="@+id/perfilEmail"
                         android:layout_width="wrap_content"
@@ -469,7 +474,6 @@
                         android:fontFamily="@font/chillax_medium"
                         android:text="davi@gmail.com"
                         android:textColor="#6E6C6C"
-                        android:textSize="15sp"
                         android:textStyle="bold" />
                 </RelativeLayout>
             </LinearLayout>

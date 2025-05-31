@@ -12,17 +12,35 @@
         android:layout_marginRight="20dp"
         android:orientation="vertical">
 
-        <!-- Botão de Voltar -->
-        <ImageButton
-            android:id="@+id/btnVoltarDetalhe"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:layout_marginTop="25dp"
-            android:layout_marginBottom="8dp"
-            android:background="@null"
-            android:src="@drawable/baseline_arrow_back"
-            android:contentDescription="Voltar"
-            />
+        <!-- Container para os botões superiores -->
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="45dp"
+            android:layout_marginBottom="8dp">
+
+            <!-- Botão de Voltar (esquerda) -->
+            <ImageButton
+                android:id="@+id/btnVoltarDetalhe"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentLeft="true"
+                android:background="@null"
+                android:src="@drawable/baseline_arrow_back"
+                android:contentDescription="Voltar" />
+
+
+            <!-- Botão Ver Candidatos (direita) - visível apenas para PJ dona da vaga -->
+            <ImageButton
+                android:id="@+id/btnVerCandidatos"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_alignParentRight="true"
+                android:background="@null"
+                android:src="@drawable/baseline_group"
+                android:contentDescription="Ver candidatos"
+                android:visibility="gone" />
+        </RelativeLayout>
 
 
         <ImageView
@@ -114,6 +132,7 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
+        <!-- Localização -->
         <TextView
             android:id="@+id/textLocalizacaoDetalhe"
             android:layout_width="match_parent"
@@ -125,6 +144,7 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
+        <!-- Salário -->
         <TextView
             android:id="@+id/textSalarioDetalhe"
             android:layout_width="match_parent"
@@ -133,6 +153,72 @@
             android:layout_marginTop="8dp"
             android:fontFamily="@font/font"
             android:text="Salário: R$ 3.000,00"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+<!--        &lt;!&ndash; Vínculo &ndash;&gt;-->
+<!--        <TextView-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="10dp"-->
+<!--            android:layout_marginTop="8dp"-->
+<!--            android:fontFamily="@font/font"-->
+<!--            android:text="Vínculo:"-->
+<!--            android:textColor="@color/cinza"-->
+<!--            android:textSize="14sp" />-->
+
+<!--        <TextView-->
+<!--            android:id="@+id/textVinculoDetalhe"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginLeft="20dp"-->
+<!--            android:layout_marginRight="10dp"-->
+<!--            android:fontFamily="@font/font"-->
+<!--            android:text="CLT"-->
+<!--            android:textColor="@color/cinza"-->
+<!--            android:textSize="14sp" />-->
+
+        <!-- Benefícios -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/font"
+            android:text="Benefícios:"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textBeneficiosDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/font"
+            android:text="Vale alimentação, plano de saúde..."
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <!-- Ramo -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/font"
+            android:text="Ramo:"
+            android:textColor="@color/cinza"
+            android:textSize="14sp" />
+
+        <TextView
+            android:id="@+id/textRamoDetalhe"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="10dp"
+            android:fontFamily="@font/font"
+            android:text="Tecnologia"
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
@@ -153,10 +239,9 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="10dp"
-            app:chipSpacing="8dp">
-            <!-- Adicione chips dinamicamente via código -->
-        </com.google.android.material.chip.ChipGroup>
+            app:chipSpacing="8dp" />
 
+        <!-- Descrição -->
         <TextView
             android:id="@+id/textDescricaoDetalhe"
             android:layout_width="match_parent"
@@ -168,6 +253,7 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
+        <!-- Requisitos -->
         <TextView
             android:id="@+id/textRequisitosDetalhe"
             android:layout_width="match_parent"
@@ -180,7 +266,18 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
+        <!-- Adicione este botão antes do FloatingActionButton de excluir -->
+        <Button
+            android:id="@+id/btnCandidatar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_rounded_blue"
+            android:text="Candidatar-se"
+            android:textColor="@color/brancosecondary"
+            android:visibility="gone" />
 
+        <!-- Botão Excluir -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnDetalheExcluir"
             android:layout_width="wrap_content"
