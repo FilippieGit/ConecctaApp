@@ -39,9 +39,14 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
     public void onBindViewHolder(@NonNull VagasViewHolder holder, int position) {
         Vagas vaga = vagasList.get(position);
 
+        // Configuração dos dados do card (mantenha seu código atual)
         holder.tvJobTitle.setText(vaga.getTitulo());
         holder.tvBranch.setText(vaga.getArea_atuacao());
         holder.tvLocation.setText(vaga.getLocalizacao());
+
+        holder.itemView.setOnClickListener(v -> {
+            abrirDetalhesVaga(vaga);
+        });
 
         // Tratamento robusto para benefícios no Adapter
         String beneficios = vaga.getBeneficios();
@@ -65,6 +70,16 @@ public class CardAdapter extends RecyclerView.Adapter<CardAdapter.VagasViewHolde
             intent.putExtra("isPessoaJuridica", isPessoaJuridica);
             context.startActivity(intent);
         });
+    }
+
+    private void abrirDetalhesVaga(Vagas vaga) {
+        SharedPreferences prefs = context.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE);
+        boolean isPessoaJuridica = prefs.getBoolean("isPessoaJuridica", false);
+
+        Intent intent = new Intent(context, DetalheVagaActivity.class);
+        intent.putExtra("vaga", vaga);
+        intent.putExtra("isPessoaJuridica", isPessoaJuridica);
+        context.startActivity(intent);
     }
 
 

@@ -13,6 +13,7 @@ public class Api {
     public static final String URL_GET_VAGAS = ROOT_URL + "getVagas";
     public static final String URL_REGISTRAR_INTERESSE = ROOT_URL + "registrarinteresse";
 
+    public static final String URL_CANDIDATAR_VAGA = ROOT_URL + "candidatarVaga";
     public static final String URL_EXCLUIR_VAGA = ROOT_URL + "excluirVaga";
 
     // Adicione este método para verificar a conexão

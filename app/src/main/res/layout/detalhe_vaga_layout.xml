@@ -266,6 +266,17 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
+        <!-- Adicione este botão antes do FloatingActionButton de excluir -->
+        <Button
+            android:id="@+id/btnCandidatar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:background="@drawable/button_rounded_blue"
+            android:text="Candidatar-se"
+            android:textColor="@color/brancosecondary"
+            android:visibility="gone" />
+
         <!-- Botão Excluir -->
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/BtnDetalheExcluir"
