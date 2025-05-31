@@ -19,14 +19,14 @@ public class Api {
     // Endpoints específicos
     public static final String URL_GET_USER = USER_API_URL + "getUser.php?id=";
     public static final String URL_UPDATE_USER = UPDATE_API_URL + "update.php";
-
     public static final String URL_CADASTRAR_VAGA = BASE_URL + "cadastrarVaga";
     public static final String URL_GET_VAGAS = BASE_URL + "getVagas";
     public static final String URL_REGISTRAR_INTERESSE = BASE_URL + "registrarinteresse";
     public static final String URL_CANDIDATAR_VAGA = BASE_URL + "candidatarVaga";
     public static final String URL_EXCLUIR_VAGA = BASE_URL + "excluirVaga";
+    public static final String URL_VERIFICAR_CANDIDATURA = BASE_URL + "verificarCandidatura";
 
-    // Método para verificar conexão (mantido da sua classe Api original)
+    // Método para verificar conexão
     public static boolean isURLReachable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
