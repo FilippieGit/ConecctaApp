@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:id="@+id/candidatarse"
+    android:layout_margin="20dp">
+
+    <ImageView
+        android:id="@+id/imgVoltar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="10dp"
+        android:src="@drawable/baseline_arrow_back" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/chillax_medium"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
+        android:text="O que te interessou nessa vaga?"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtCandidatarseP1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escreva aqui"
+        app:expandedHintEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="80dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/chillax_medium"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
+        android:text="O que você espera conquistar profissionalmente ao fazer parte desta empresa?"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtCandidatarseP2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escreva aqui"
+        app:expandedHintEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="80dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="15dp"
+        android:fontFamily="@font/chillax_medium"
+        android:paddingTop="15dp"
+        android:paddingBottom="10dp"
+        android:text="Quais valores ou características de uma empresa são mais importantes para você ao escolher onde trabalhar?"
+        android:textSize="16sp" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/txtCandidatarseP3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Escreva aqui"
+        app:expandedHintEnabled="true">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="80dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCriarVaga"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginVertical="20dp"
+        android:backgroundTint="@color/azulprimary"
+        android:fontFamily="@font/chillax_semibold"
+        app:cornerRadius="50dp"
+        android:text="enviar"
+        android:textColor="@color/brancosecondary"
+        android:textSize="16sp" />
+
+    </LinearLayout>
+
+</LinearLayout>

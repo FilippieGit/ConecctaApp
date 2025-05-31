@@ -10,7 +10,7 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:cardCornerRadius="8dp"
+        app:cardCornerRadius="20dp"
         app:cardElevation="4dp"
         android:padding="16dp"
         android:clickable="true"
@@ -21,7 +21,7 @@
             android:layout_width="match_parent"
             android:layout_height="560dp"
             android:orientation="vertical"
-            android:layout_margin="25dp">
+            android:layout_margin="20dp">
 
             <!-- Cabeçalho: imagem + título e nome -->
             <LinearLayout
@@ -70,11 +70,12 @@
             <!-- Detalhes -->
             <View
                 android:layout_width="match_parent"
-                android:layout_height="50dp" />
+                android:layout_height="20dp" />
 
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/chillax_bold"
                 android:text="Ramo:"
                 android:textSize="20dp"
                 android:textStyle="bold" />
@@ -84,6 +85,7 @@
                 android:id="@+id/tvBranch"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roundo_regular"
                 android:text="xxxxxxxxxxxxxxxxxxxx"
                 android:textSize="20dp" />
 
@@ -95,6 +97,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/chillax_bold"
                 android:layout_marginTop="0dp"
                 android:text="Local:"
                 android:textSize="20dp"
@@ -104,6 +107,7 @@
                 android:id="@+id/tvLocation"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roundo_regular"
                 android:text="xxxxxxxxxxxxxxxxxxxx"
                 android:textSize="20dp" />
 
@@ -116,6 +120,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
+                android:fontFamily="@font/chillax_bold"
                 android:text="Benefícios:"
                 android:textSize="20dp"
                 android:textStyle="bold" />
@@ -124,6 +129,7 @@
                 android:id="@+id/tvBenefits"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roundo_regular"
                 android:text="xxxxxxxxxxxxxxxxxxxx"
                 android:textSize="20dp" />
 
@@ -136,6 +142,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="0dp"
+                android:fontFamily="@font/chillax_bold"
                 android:text="Requisitos:"
                 android:textSize="20dp"
                 android:textStyle="bold" />
@@ -144,6 +151,7 @@
                 android:id="@+id/tvrequisitos"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:fontFamily="@font/roundo_regular"
                 android:text="xxxxxxxxxxxxxxxxxxxx"
                 android:textSize="20dp" />
 
@@ -155,9 +163,11 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:textSize="20sp"
                 android:layout_marginTop="8dp"
-                android:text="Visualizar" />
+                android:fontFamily="@font/chillax_semibold"
+                android:text="Visualizar"
+                android:textSize="20sp"
+                app:cornerRadius="50dp" />
 
         </LinearLayout>
     </androidx.cardview.widget.CardView>
