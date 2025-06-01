@@ -1,6 +1,7 @@
 package com.example.cardstackview;
 
 import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.Toast;
@@ -101,18 +102,21 @@ public class CandidatosActivity extends AppCompatActivity {
                                     // Trate a data corretamente
                                     Date dataCandidatura = dateFormat.parse(candidatoJson.getString("data_candidatura"));
 
-                                    // Crie o objeto Usuario com todos os campos
                                     Usuario usuario = new Usuario(
                                             candidatoJson.getLong("id"),
                                             candidatoJson.getString("nome"),
                                             candidatoJson.getString("email"),
                                             candidatoJson.optString("cargo", ""),
                                             candidatoJson.getString("status"),
-                                            dataCandidatura,
+                                            new Date(candidatoJson.optLong("data_candidatura", System.currentTimeMillis())),
                                             candidatoJson.optString("telefone", ""),
                                             candidatoJson.optString("descricao", ""),
-                                            candidatoJson.optJSONObject("respostas"),
-                                            candidatoJson.optInt("id_candidatura", 0)
+                                            candidatoJson.optString("experiencia_profissional", ""),
+                                            candidatoJson.optString("formacao_academica", ""),
+                                            candidatoJson.optString("certificados", ""),
+                                            candidatoJson.optString("username", ""),  // Novo campo
+                                            candidatoJson.optString("genero", ""),    // Novo campo
+                                            candidatoJson.optString("idade", "")      // Novo campo
                                     );
                                     candidatosList.add(usuario);
                                 }
@@ -147,7 +151,22 @@ public class CandidatosActivity extends AppCompatActivity {
     }
 
     private void onCandidatoClick(Usuario usuario) {
-        Toast.makeText(this, "Candidato: " + usuario.getNome(), Toast.LENGTH_SHORT).show();
+        // Criar uma Intent para abrir a PerfilActivity
+        Intent intent = new Intent(CandidatosActivity.this, PerfilActivity.class);
+
+        // Passar os dados do candidato como extras
+        intent.putExtra("id", usuario.getId());
+        intent.putExtra("nome", usuario.getNome());
+        intent.putExtra("email", usuario.getEmail());
+        intent.putExtra("setor", usuario.getCargo());
+        intent.putExtra("telefone", usuario.getTelefone());
+        intent.putExtra("descricao", usuario.getDescricao());
+        intent.putExtra("experiencia", usuario.getExperienciaProfissional());
+        intent.putExtra("formacao", usuario.getFormacaoAcademica());
+        intent.putExtra("certificados", usuario.getCertificados());
+
+        // Iniciar a atividade
+        startActivity(intent);
     }
 
     @Override

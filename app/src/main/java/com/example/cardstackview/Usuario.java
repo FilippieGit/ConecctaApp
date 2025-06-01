@@ -11,16 +11,20 @@ public class Usuario {
     private String cargo;
     private String status;
     private Date dataCandidatura;
-    // Adicione os novos campos
     private String telefone;
     private String descricao;
-    private JSONObject respostas; // ou crie uma classe Respostas
-    private int idCandidatura;
+    private String experienciaProfissional;
+    private String formacaoAcademica;
+    private String certificados;
+    private String username;
+    private String genero;
+    private String idade;
 
-    // Construtor atualizado
+    // Construtor completo
     public Usuario(long id, String nome, String email, String cargo, String status,
                    Date dataCandidatura, String telefone, String descricao,
-                   JSONObject respostas, int idCandidatura) {
+                   String experienciaProfissional, String formacaoAcademica,
+                   String certificados, String username, String genero, String idade) {
         this.id = id;
         this.nome = nome;
         this.email = email;
@@ -29,16 +33,12 @@ public class Usuario {
         this.dataCandidatura = dataCandidatura;
         this.telefone = telefone;
         this.descricao = descricao;
-        this.respostas = respostas;
-        this.idCandidatura = idCandidatura;
-    }
-
-    public JSONObject getRespostas() {
-        return respostas;
-    }
-
-    public void setRespostas(JSONObject respostas) {
-        this.respostas = respostas;
+        this.experienciaProfissional = experienciaProfissional;
+        this.formacaoAcademica = formacaoAcademica;
+        this.certificados = certificados;
+        this.username = username;
+        this.genero = genero;
+        this.idade = idade;
     }
 
     public long getId() {
@@ -105,11 +105,51 @@ public class Usuario {
         this.descricao = descricao;
     }
 
-    public int getIdCandidatura() {
-        return idCandidatura;
+    public String getExperienciaProfissional() {
+        return experienciaProfissional;
     }
 
-    public void setIdCandidatura(int idCandidatura) {
-        this.idCandidatura = idCandidatura;
+    public void setExperienciaProfissional(String experienciaProfissional) {
+        this.experienciaProfissional = experienciaProfissional;
+    }
+
+    public String getFormacaoAcademica() {
+        return formacaoAcademica;
+    }
+
+    public void setFormacaoAcademica(String formacaoAcademica) {
+        this.formacaoAcademica = formacaoAcademica;
+    }
+
+    public String getCertificados() {
+        return certificados;
+    }
+
+    public void setCertificados(String certificados) {
+        this.certificados = certificados;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getGenero() {
+        return genero;
+    }
+
+    public void setGenero(String genero) {
+        this.genero = genero;
+    }
+
+    public String getIdade() {
+        return idade;
+    }
+
+    public void setIdade(String idade) {
+        this.idade = idade;
     }
 }
