@@ -3,6 +3,7 @@ package com.example.cardstackview;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -26,6 +27,7 @@ public class Api {
     public static final String URL_EXCLUIR_VAGA = BASE_URL + "excluirVaga";
     public static final String URL_VERIFICAR_CANDIDATURA = BASE_URL + "verificarCandidatura";
 
+
     // Método para verificar conexão
     public static boolean isURLReachable(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -48,6 +50,35 @@ public class Api {
             return (responseCode == HttpURLConnection.HTTP_OK);
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
+        } finally {
+            if (connection != null) {
+                connection.disconnect();
+            }
+        }
+    }
+
+    public static final int CONNECT_TIMEOUT = 15000; // 15 segundos
+    public static final int READ_TIMEOUT = 10000;    // 10 segundos
+
+    // Método auxiliar para verificar URL
+    public static boolean isEndpointReachable(String urlString, Context context) {
+        if (!isURLReachable(context)) {
+            return false;
+        }
+
+        HttpURLConnection connection = null;
+        try {
+            URL url = new URL(urlString);
+            connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("HEAD");
+            connection.setConnectTimeout(CONNECT_TIMEOUT);
+            connection.setReadTimeout(READ_TIMEOUT);
+
+            int responseCode = connection.getResponseCode();
+            return (responseCode == HttpURLConnection.HTTP_OK);
+        } catch (Exception e) {
+            Log.e("API", "Erro ao verificar endpoint: " + urlString, e);
             return false;
         } finally {
             if (connection != null) {

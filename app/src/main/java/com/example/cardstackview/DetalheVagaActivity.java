@@ -41,7 +41,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
     private TextView textNivelExperienciaDetalhe, textTipoContratoDetalhe, textAreaAtuacaoDetalhe;
     private ImageButton btnVoltarDetalhe, btnVerCandidatos;
     private FloatingActionButton btnExcluir;
-    private Button btnCandidatar, btnPerguntas;
+    private Button btnCandidatar;
     private Vagas vaga;
     private FirebaseAuth mAuth;
 
@@ -55,25 +55,21 @@ public class DetalheVagaActivity extends AppCompatActivity {
 
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
         vaga = (Vagas) getIntent().getSerializableExtra("vaga");
+        if (vaga == null) {
+            Toast.makeText(this, "Erro: Dados da vaga não encontrados", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         // Configurar visibilidade dos botões
         if (isPessoaJuridica && vaga != null) {
             btnVerCandidatos.setVisibility(View.VISIBLE);
             btnExcluir.setVisibility(View.VISIBLE);
             btnCandidatar.setVisibility(View.GONE);
-            btnPerguntas.setVisibility(View.GONE);
-
-            btnVerCandidatos.setOnClickListener(v -> {
-                Intent intent = new Intent(DetalheVagaActivity.this, CandidatosActivity.class);
-                intent.putExtra("vaga_id", vaga.getVaga_id());
-                startActivity(intent);
-            });
         } else {
             btnVerCandidatos.setVisibility(View.GONE);
             btnExcluir.setVisibility(View.GONE);
             btnCandidatar.setVisibility(View.VISIBLE);
-            btnPerguntas.setVisibility(View.VISIBLE);
-
             verificarCandidaturaExistente();
         }
 
@@ -90,11 +86,11 @@ public class DetalheVagaActivity extends AppCompatActivity {
         btnVoltarDetalhe.setOnClickListener(v -> finish());
 
         // Configurar listeners dos novos botões
-        btnCandidatar.setOnClickListener(v -> candidatarAVaga());
-        btnPerguntas.setOnClickListener(v -> {
+        btnCandidatar.setOnClickListener(v -> {
             if (vaga != null) {
                 Intent intent = new Intent(DetalheVagaActivity.this, CandidatarSeActivity.class);
-                intent.putExtra("vaga_id", vaga.getVaga_id());
+                // Converter para String explicitamente
+                intent.putExtra("vaga_id", String.valueOf(vaga.getVaga_id()));
                 intent.putExtra("vaga_titulo", vaga.getTitulo());
                 startActivity(intent);
             }
@@ -120,16 +116,14 @@ public class DetalheVagaActivity extends AppCompatActivity {
         btnExcluir = findViewById(R.id.BtnDetalheExcluir);
         btnVerCandidatos = findViewById(R.id.btnVerCandidatos);
         btnCandidatar = findViewById(R.id.btnCandidatar);
-        btnPerguntas = findViewById(R.id.btnPerguntas);
     }
 
     private void verificarCandidaturaExistente() {
         if (vaga == null || mAuth.getCurrentUser() == null) return;
 
         String userId = mAuth.getCurrentUser().getUid();
-        String vagaId = String.valueOf(vaga.getVaga_id()); // Conversão aqui
+        String vagaId = String.valueOf(vaga.getVaga_id());
 
-        // Resto do método permanece igual
         new AsyncTask<Void, Void, Boolean>() {
             @Override
             protected Boolean doInBackground(Void... voids) {
