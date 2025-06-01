@@ -21,6 +21,8 @@ public class Api {
     public static final String URL_GET_USER = USER_API_URL + "getUser.php?id=";
     public static final String URL_UPDATE_USER = UPDATE_API_URL + "update.php";
     public static final String URL_CADASTRAR_VAGA = BASE_URL + "cadastrarVaga";
+
+    public static final String URL_LISTAR_CANDIDATURAS = BASE_URL + "listarCandidaturas";
     public static final String URL_GET_VAGAS = BASE_URL + "getVagas";
     public static final String URL_REGISTRAR_INTERESSE = BASE_URL + "registrarinteresse";
     public static final String URL_CANDIDATAR_VAGA = BASE_URL + "candidatarVaga";

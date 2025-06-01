@@ -4,8 +4,6 @@
     android:layout_height="wrap_content"
     android:orientation="vertical"
     android:padding="16dp"
-    android:focusable="true"
-    android:importantForAccessibility="yes"
     android:background="?attr/selectableItemBackground">
 
     <TextView
@@ -13,23 +11,43 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="18sp"
-        android:textStyle="bold"
-        android:importantForAccessibility="no" />
+        android:textStyle="bold" />
+
 
     <TextView
         android:id="@+id/tvEmailCandidato"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
-        android:textSize="14sp"
-        android:importantForAccessibility="no" />
+        android:textSize="14sp" />
 
     <TextView
         android:id="@+id/tvCargoCandidato"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:textSize="14sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:textSize="14sp"
-        android:textColor="@color/cinza"
-        android:importantForAccessibility="no" />
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/tvStatusCandidato"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:background="@drawable/status_background"
+            android:padding="4dp" />
+
+        <TextView
+            android:id="@+id/tvDataCandidato"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="14sp"
+            android:textColor="@color/cinza"
+            android:gravity="end" />
+    </LinearLayout>
 </LinearLayout>

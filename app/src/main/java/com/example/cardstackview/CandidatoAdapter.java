@@ -6,15 +6,25 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
 public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.CandidatoViewHolder> {
     private List<Usuario> candidatosList;
+    private OnCandidatoClickListener listener;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
 
-    public CandidatoAdapter(List<Usuario> candidatosList) {
+    public interface OnCandidatoClickListener {
+        void onCandidatoClick(Usuario usuario);
+    }
+
+    public CandidatoAdapter(List<Usuario> candidatosList, OnCandidatoClickListener listener) {
         this.candidatosList = candidatosList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -28,16 +38,42 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
     @Override
     public void onBindViewHolder(@NonNull CandidatoViewHolder holder, int position) {
         Usuario candidato = candidatosList.get(position);
+
+        // Defina os valores básicos
         holder.tvNome.setText(candidato.getNome());
         holder.tvEmail.setText(candidato.getEmail());
         holder.tvCargo.setText(candidato.getCargo());
+        holder.tvStatus.setText(candidato.getStatus());
 
-        // Melhoria de acessibilidade
-        holder.itemView.setContentDescription(
-                "Candidato " + candidato.getNome() +
-                        ", E-mail: " + candidato.getEmail() +
-                        ", Cargo: " + candidato.getCargo()
-        );
+        // Formate e exiba a data
+        if (candidato.getDataCandidatura() != null) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm", Locale.getDefault());
+            holder.tvData.setText(dateFormat.format(candidato.getDataCandidatura()));
+        }
+
+        // Defina a cor do status
+        int statusColor = getStatusColor(holder, candidato.getStatus());
+        holder.tvStatus.setBackgroundColor(statusColor);
+
+        // Configure o listener de clique
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onCandidatoClick(candidato);
+            }
+        });
+    }
+
+    private int getStatusColor(CandidatoViewHolder holder, String status) {
+        switch (status.toLowerCase()) {
+            case "aprovada":
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.verde);
+            case "rejeitada":
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.vermelho);
+            case "visualizada":
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.azul);
+            default:
+                return ContextCompat.getColor(holder.itemView.getContext(), R.color.cinza);
+        }
     }
 
     @Override
@@ -46,13 +82,15 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
     }
 
     static class CandidatoViewHolder extends RecyclerView.ViewHolder {
-        TextView tvNome, tvEmail, tvCargo;
+        TextView tvNome, tvEmail, tvCargo, tvStatus, tvData;
 
         public CandidatoViewHolder(@NonNull View itemView) {
             super(itemView);
             tvNome = itemView.findViewById(R.id.tvNomeCandidato);
             tvEmail = itemView.findViewById(R.id.tvEmailCandidato);
             tvCargo = itemView.findViewById(R.id.tvCargoCandidato);
+            tvStatus = itemView.findViewById(R.id.tvStatusCandidato);
+            tvData = itemView.findViewById(R.id.tvDataCandidato);
         }
     }
 }

@@ -85,6 +85,12 @@ public class DetalheVagaActivity extends AppCompatActivity {
         btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
         btnVoltarDetalhe.setOnClickListener(v -> finish());
 
+        btnVerCandidatos.setOnClickListener(v -> {
+            Intent intent = new Intent(DetalheVagaActivity.this, CandidatosActivity.class);
+            intent.putExtra("vaga_id", vaga.getVaga_id());
+            startActivity(intent);
+        });
+
         // Configurar listeners dos novos botões
         btnCandidatar.setOnClickListener(v -> {
             if (vaga != null) {

@@ -8,5 +8,8 @@
     <color name="verde">#69b763</color>
     <color name="preto">#0F0F16</color>
     <color name="chip_background">#2a8ece</color> <!-- Exemplo de cor roxa clara -->
+    <color name="vermelho">#FF3B30</color> <!-- Um vermelho forte -->
+    <color name="azul">#007AFF</color>    <!-- Um azul iOS-like -->
+
 
 </resources>
