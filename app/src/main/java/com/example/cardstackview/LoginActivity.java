@@ -23,7 +23,6 @@ public class LoginActivity extends AppCompatActivity {
     private Button btnEntrar, btnCriarConta, btnEsqSenha;
     private TextInputEditText txtEmail, txtSenha;
     private CheckBox checkEmpresa;
-    private ImageView btnVoltar;
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
 
@@ -43,13 +42,6 @@ public class LoginActivity extends AppCompatActivity {
         txtEmail = findViewById(R.id.txtPessoaLoginEmail);
         txtSenha = findViewById(R.id.txtPessoaLoginSenha);
         checkEmpresa = findViewById(R.id.checkEmpresa);
-        btnVoltar = findViewById(R.id.imgLoginPbtnVoltar);
-
-        // Configura listeners
-        btnVoltar.setOnClickListener(v -> {
-            startActivity(new Intent(this, SelecaoActivity.class));
-            finish();
-        });
 
         btnEntrar.setOnClickListener(v -> fazerLogin());
 
