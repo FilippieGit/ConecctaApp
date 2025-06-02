@@ -1,5 +1,6 @@
 package com.example.cardstackview;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
@@ -60,7 +61,9 @@ public class FavoritosActivity extends AppCompatActivity {
 
                 @Override
                 public void onVagaDetalhesClick(Vagas vaga) {
-                    // Implemente a navegação para detalhes da vaga se necessário
+                    Intent intent = new Intent(FavoritosActivity.this, DetalheVagaActivity.class);
+                    intent.putExtra("vaga", vaga); // Passa o objeto vaga como extra
+                    startActivity(intent);
                 }
             });
 

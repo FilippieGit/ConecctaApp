@@ -94,10 +94,11 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <CheckBox
+            android:id="@+id/checkEmpresa"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textColor="@color/cinza"
             android:layout_marginTop="10dp"
+            android:textColor="@color/cinza"
             android:fontFamily="@font/chillax_medium"
             android:text="Login como Empresa"/>
 
