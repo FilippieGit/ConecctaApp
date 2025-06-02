@@ -42,7 +42,6 @@ public class ModeloTelaPrincipalFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private AdaptadorTelaPrincipal adapter;
-    private MaterialToolbar topAppBar;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,15 +57,8 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     }
 
     private void inicializarComponentes(View view) {
-        topAppBar = view.findViewById(R.id.idTelaPrincipalTopAppBar);
         recyclerView = view.findViewById(R.id.idRecLista);
 
-        // Configura o botão de navegação para interagir com o drawer da Activity
-        topAppBar.setNavigationOnClickListener(v -> {
-            if (getActivity() instanceof TelaEmpresaActivity) {
-                ((TelaEmpresaActivity) getActivity()).toggleDrawer();
-            }
-        });
     }
 
     private void carregarVagas() {

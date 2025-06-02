@@ -2,6 +2,8 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
@@ -16,27 +18,40 @@ public class TelaEmpresaActivity extends AppCompatActivity {
     private NavigationView navigationView;
     private MaterialToolbar topAppBar;
     private BottomNavigationView bottomNavigationView;
+    private ActionBarDrawerToggle toggle;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tela_empresa);
 
-        // Inicializa componentes
-        topAppBar = findViewById(R.id.idMainTopAppBar);
-        drawerLayout = findViewById(R.id.idDrawer);
-        navigationView = findViewById(R.id.idNavView);
+        // Inicializa componentes com os IDs do XML
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        topAppBar = findViewById(R.id.topAppBar);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
 
         // Configura a Toolbar
         setSupportActionBar(topAppBar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
         // Configura o Drawer Toggle
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+        toggle = new ActionBarDrawerToggle(
                 this, drawerLayout, topAppBar,
                 R.string.open_drawer, R.string.close_drawer);
         drawerLayout.addDrawerListener(toggle);
         toggle.syncState();
+
+        // Configura o listener do ícone de navegação
+        topAppBar.setNavigationOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
+            }
+        });
 
         // Configura os itens do Navigation Drawer
         navigationView.setNavigationItemSelectedListener(item -> {
@@ -53,6 +68,58 @@ public class TelaEmpresaActivity extends AppCompatActivity {
         // Carrega o fragment inicial
         if (savedInstanceState == null) {
             bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
+    }
+
+    /**
+     * Atualiza o título da Toolbar
+     * @param title Novo título a ser exibido
+     */
+    public void setToolbarTitle(String title) {
+        if (topAppBar != null) {
+            topAppBar.setTitle(title);
+        }
+    }
+
+
+
+    /**
+     * Mostra ou esconde o ícone de navegação (hamburger/back)
+     * @param show true para mostrar o ícone, false para esconder
+     */
+    public void showNavigationIcon(boolean show) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(show);
+        }
+        toggle.setDrawerIndicatorEnabled(show);
+    }
+
+    /**
+     * Altera o ícone de navegação
+     * @param iconResId Resource ID do ícone a ser exibido
+     * @param listener Listener para o clique no ícone
+     */
+    public void setNavigationIcon(int iconResId, View.OnClickListener listener) {
+        if (topAppBar != null) {
+            topAppBar.setNavigationIcon(iconResId);
+            topAppBar.setNavigationOnClickListener(listener);
+        }
+    }
+
+    /**
+     * Restaura a configuração padrão da Toolbar (ícone hamburger e abre/fecha drawer)
+     */
+    public void restoreDefaultToolbar() {
+        if (topAppBar != null) {
+            topAppBar.setNavigationIcon(R.drawable.baseline_menu);
+            topAppBar.setNavigationOnClickListener(view -> {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+            toggle.setDrawerIndicatorEnabled(true);
         }
     }
 
