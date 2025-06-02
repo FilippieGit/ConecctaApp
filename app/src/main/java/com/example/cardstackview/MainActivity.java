@@ -314,7 +314,7 @@ public class MainActivity extends AppCompatActivity {
             int id = item.getItemId();
 
             if (id == R.id.idLoginItemMenu) {
-                startActivity(new Intent(this, LoginPessoaFisica.class));
+                startActivity(new Intent(this, LoginActivity.class));
                 finish();
             } else if (id == R.id.idVagasItemMenu) {
                 Toast.makeText(this, "Já está em Vagas", Toast.LENGTH_SHORT).show();

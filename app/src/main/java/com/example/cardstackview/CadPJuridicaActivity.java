@@ -17,18 +17,14 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
-
-
 
 public class CadPJuridicaActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
     private FirebaseFirestore db;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,89 +36,94 @@ public class CadPJuridicaActivity extends AppCompatActivity {
         db = FirebaseFirestore.getInstance();
 
         EditText edtEmail = findViewById(R.id.edtLoginEmail);
-        EditText edtname = findViewById(R.id.edtNomeEmpresa);
-        EditText edtwebsite = findViewById(R.id.edtWebsite);
+        EditText edtNome = findViewById(R.id.edtNomeEmpresa);
+        EditText edtWebsite = findViewById(R.id.edtWebsite);
         EditText edtCNPJ = findViewById(R.id.edtcnpj);
         EditText edtSenha = findViewById(R.id.edtLoginSenha);
         Button btnCadastrar = findViewById(R.id.btnLoginEntrar);
         ImageView btnVoltar = findViewById(R.id.imgEsqSenhabtnVoltar);
 
         btnVoltar.setOnClickListener(v -> {
-            Intent intent = new Intent(CadPJuridicaActivity.this, LoginPessoaJuridica.class);
-            startActivity(intent);
-            finish(); // Fecha a tela atual para não voltar ao cadastro ao pressionar voltar
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
         });
 
         btnCadastrar.setOnClickListener(v -> {
             String email = edtEmail.getText().toString().trim();
             String senha = edtSenha.getText().toString().trim();
-            String nome = edtname.getText().toString().trim();
-            String cidade = edtwebsite.getText().toString().trim();
+            String nome = edtNome.getText().toString().trim();
+            String website = edtWebsite.getText().toString().trim();
             String CNPJ = edtCNPJ.getText().toString().trim();
 
-            if (email.isEmpty() || senha.isEmpty() || nome.isEmpty() || cidade.isEmpty() || CNPJ.isEmpty()) {
+            if (email.isEmpty() || senha.isEmpty() || nome.isEmpty() || website.isEmpty() || CNPJ.isEmpty()) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
                 return;
             }
 
-            // Consulta no Firestore para verificar se o CPF já existe
+            if (senha.length() < 6) {
+                Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Verifica se CNPJ já existe
             db.collection("users")
                     .whereEqualTo("CNPJ", CNPJ)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
-                                // CPF já cadastrado
-                                Toast.makeText(this, "CPF já cadastrado. Não é possível concluir o cadastro.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, "CNPJ já cadastrado", Toast.LENGTH_LONG).show();
                             } else {
-                                // CPF livre, pode criar usuário
-                                mAuth.createUserWithEmailAndPassword(email, senha)
-                                        .addOnCompleteListener(authTask -> {
-                                            if (authTask.isSuccessful()) {
-                                                FirebaseUser user = mAuth.getCurrentUser();
-                                                if (user != null) {
-
-                                                    Map<String, Object> userMap = new HashMap<>();
-                                                    userMap.put("CNPJ", CNPJ);
-                                                    userMap.put("email", email);
-                                                    userMap.put("nome", nome);
-                                                    userMap.put("cidade", cidade);
-                                                    userMap.put("tipo", "Jurídica");
-
-                                                    db.collection("users").document(user.getUid())
-                                                            .set(userMap)
-                                                            .addOnSuccessListener(unused -> {
-                                                                user.sendEmailVerification()
-                                                                        .addOnCompleteListener(verifyTask -> {
-                                                                            if (verifyTask.isSuccessful()) {
-                                                                                Toast.makeText(this, "Cadastro realizado! Verifique seu e-mail.", Toast.LENGTH_LONG).show();
-                                                                                finish(); // Fecha a tela de cadastro
-                                                                            } else {
-                                                                                Toast.makeText(this, "Erro ao enviar verificação: " + verifyTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                                                            }
-                                                                        });
-                                                            })
-                                                            .addOnFailureListener(e -> {
-                                                                Toast.makeText(this, "Erro ao salvar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                                            });
-                                                }
-                                            } else {
-                                                Toast.makeText(this, "Erro: " + authTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                            }
-                                        });
+                                criarEmpresa(email, senha, nome, website, CNPJ, "Jurídica");
                             }
                         } else {
-                            Toast.makeText(this, "Erro ao verificar CPF: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Erro ao verificar CNPJ: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
         });
 
-// Esse pedaço para ajustar o layout se quiser também (igual no físico)
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
 
+    private void criarEmpresa(String email, String senha, String nome, String website, String documento, String tipo) {
+        mAuth.createUserWithEmailAndPassword(email, senha)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            Map<String, Object> empresaData = new HashMap<>();
+                            empresaData.put("email", email);
+                            empresaData.put("nome", nome);
+                            empresaData.put("website", website);
+                            empresaData.put("CNPJ", documento);
+                            empresaData.put("tipo", tipo);
+                            empresaData.put("vagasPublicadas", new ArrayList<String>());
+                            empresaData.put("dataCadastro", System.currentTimeMillis());
+
+                            db.collection("users").document(user.getUid())
+                                    .set(empresaData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        user.sendEmailVerification()
+                                                .addOnCompleteListener(verifyTask -> {
+                                                    if (verifyTask.isSuccessful()) {
+                                                        Toast.makeText(this, "Cadastro realizado! Verifique seu e-mail.", Toast.LENGTH_LONG).show();
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(this, "Erro ao enviar verificação: " + verifyTask.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Erro ao salvar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    });
+                        }
+                    } else {
+                        Toast.makeText(this, "Erro no cadastro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

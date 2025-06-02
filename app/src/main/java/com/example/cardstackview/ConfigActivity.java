@@ -1,5 +1,6 @@
 package com.example.cardstackview;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.MenuItem;
@@ -11,23 +12,34 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.google.android.material.appbar.MaterialToolbar;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
 
 public class ConfigActivity extends AppCompatActivity {
 
     MaterialToolbar idTopAppBar;
     DrawerLayout idDrawer;
     NavigationView idNavView;
+    private FirebaseAuth mAuth; // Adicione esta linha
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.config_layout);
 
+        // Inicializa o Firebase Auth
+        mAuth = FirebaseAuth.getInstance();
+
         // Inicializar os componentes
         idTopAppBar = findViewById(R.id.idConfigTopAppBar);
         idDrawer = findViewById(R.id.idDrawer);
         idNavView = findViewById(R.id.idNavView);
+
+        // Configura o botão de sair da conta
+        MaterialButton btnSair = findViewById(R.id.btnSairContaConfig);
+        btnSair.setOnClickListener(v -> fazerLogout());
+
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -68,6 +80,23 @@ public class ConfigActivity extends AppCompatActivity {
         });
     }
 
+    private void fazerLogout() {
+        new AlertDialog.Builder(this)
+                .setTitle("Sair da conta")
+                .setMessage("Tem certeza que deseja sair?")
+                .setPositiveButton("Sair", (dialog, which) -> {
+                    mAuth.signOut();
+                    Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show();
+
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
+    }
+
     @Override
     public void onBackPressed() {
         if (idDrawer.isDrawerOpen(GravityCompat.START)) {
@@ -79,7 +108,7 @@ public class ConfigActivity extends AppCompatActivity {
 
     // Função para redirecionar para a tela de Login de Candidato
     private void goToLoginCandidato() {
-        Intent intent = new Intent(ConfigActivity.this, LoginPessoaFisica.class);
+        Intent intent = new Intent(ConfigActivity.this, LoginActivity.class);
         startActivity(intent);
         finish(); // Fecha a tela atual, se desejar
     }

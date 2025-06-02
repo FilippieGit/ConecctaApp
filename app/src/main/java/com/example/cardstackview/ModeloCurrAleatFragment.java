@@ -111,7 +111,7 @@ public class ModeloCurrAleatFragment extends Fragment {
 
     // Voltar ao login
     private void goToLoginCandidato() {
-        Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
         getActivity().finish();
     }

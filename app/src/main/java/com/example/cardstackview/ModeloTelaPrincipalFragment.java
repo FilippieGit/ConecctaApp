@@ -361,7 +361,7 @@
         }
 
         private void abrirLoginCandidato() {
-            startActivity(new Intent(requireActivity(), LoginPessoaFisica.class));
+            startActivity(new Intent(requireActivity(), LoginActivity.class));
             requireActivity().finish();
         }
 

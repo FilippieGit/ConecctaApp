@@ -89,7 +89,7 @@ public class FeedbackActivity extends AppCompatActivity {
     }
 
     private void goToLoginCandidato() {
-        Intent intent = new Intent(FeedbackActivity.this, LoginPessoaFisica.class);
+        Intent intent = new Intent(FeedbackActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

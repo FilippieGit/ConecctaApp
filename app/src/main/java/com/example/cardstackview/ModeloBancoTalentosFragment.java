@@ -111,7 +111,7 @@ public class ModeloBancoTalentosFragment extends Fragment {
 
     // Função para redirecionar para a tela de Login
     private void goToLoginCandidato() {
-        Intent intent = new Intent(getActivity(), LoginPessoaFisica.class);
+        Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
         getActivity().finish(); // Fecha tela atual após login
     }
