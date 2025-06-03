@@ -65,7 +65,7 @@ public class RecSenhaActivity extends AppCompatActivity {
         imgEsqSenhabtnVoltar.setOnClickListener(view -> finish());
 
         btnCriarContEsqSenha.setOnClickListener(view -> {
-            startActivity(new Intent(getApplicationContext(), CadastroActivity.class));
+            startActivity(new Intent(getApplicationContext(), SelecaoActivity.class));
             finish();
         });
     }

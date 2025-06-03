@@ -62,11 +62,19 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     }
 
     private void carregarVagas() {
+        // Obtenha o ID da empresa logada (passado da LoginActivity)
+        String empresaId = requireActivity().getIntent().getStringExtra("empresa_id");
+        if (empresaId == null || empresaId.isEmpty()) {
+            Toast.makeText(requireContext(), "Erro: ID da empresa não encontrado", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
                 try {
-                    URL url = new URL(Api.URL_GET_VAGAS);
+                    // Modifique a URL para incluir o parâmetro da empresa
+                    URL url = new URL(Api.URL_GET_VAGAS + "?empresa_id=" + empresaId);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
