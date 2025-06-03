@@ -1,45 +1,178 @@
 package com.example.cardstackview;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 
+import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
+import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.fragment.app.Fragment;
-
+import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
+import com.google.android.material.navigation.NavigationView;
 
 public class TelaEmpresaActivity extends AppCompatActivity {
+    private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
+    private MaterialToolbar topAppBar;
+    private BottomNavigationView bottomNavigationView;
+    private ActionBarDrawerToggle toggle;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tela_empresa);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigation);
+        // Inicializa componentes com os IDs do XML
+        drawerLayout = findViewById(R.id.drawer_layout);
+        navigationView = findViewById(R.id.navigation_view);
+        topAppBar = findViewById(R.id.topAppBar);
+        bottomNavigationView = findViewById(R.id.bottomNavigation);
 
-        // Listener do BottomNavigationView
-        bottomNavigationView.setOnItemSelectedListener(item -> {
-            Fragment selectedFragment = null;
+        // Configura a Toolbar
+        setSupportActionBar(topAppBar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        }
 
-            int id = item.getItemId();
+        // Configura o Drawer Toggle
+        toggle = new ActionBarDrawerToggle(
+                this, drawerLayout, topAppBar,
+                R.string.open_drawer, R.string.close_drawer);
+        drawerLayout.addDrawerListener(toggle);
+        toggle.syncState();
 
-            if (id == R.id.nav_favorite) {
-                selectedFragment = new ModeloBancoTalentosFragment(); // ou qualquer outro fragment
-            } else if (id == R.id.nav_home) {
-                selectedFragment = new ModeloTelaPrincipalFragment();
-            } else if (id == R.id.nav_profile) {
-                selectedFragment = new ModeloCurrAleatFragment();
+        // Configura o listener do ícone de navegação
+        topAppBar.setNavigationOnClickListener(view -> {
+            if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                drawerLayout.closeDrawer(GravityCompat.START);
+            } else {
+                drawerLayout.openDrawer(GravityCompat.START);
             }
+        });
 
-            if (selectedFragment != null) {
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container_empresa, selectedFragment)
-                        .commit();
-            }
-
+        // Configura os itens do Navigation Drawer
+        navigationView.setNavigationItemSelectedListener(item -> {
+            handleNavigationItemSelected(item.getItemId());
             return true;
         });
 
-        // Define visualmente o item nav_home como selecionado
-        bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        // Configura o Bottom Navigation
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            handleBottomNavigationItemSelected(item.getItemId());
+            return true;
+        });
+
+        // Carrega o fragment inicial
+        if (savedInstanceState == null) {
+            bottomNavigationView.setSelectedItemId(R.id.nav_home);
+        }
     }
 
+    /**
+     * Atualiza o título da Toolbar
+     * @param title Novo título a ser exibido
+     */
+    public void setToolbarTitle(String title) {
+        if (topAppBar != null) {
+            topAppBar.setTitle(title);
+        }
+    }
+
+
+
+    /**
+     * Mostra ou esconde o ícone de navegação (hamburger/back)
+     * @param show true para mostrar o ícone, false para esconder
+     */
+    public void showNavigationIcon(boolean show) {
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(show);
+        }
+        toggle.setDrawerIndicatorEnabled(show);
+    }
+
+    /**
+     * Altera o ícone de navegação
+     * @param iconResId Resource ID do ícone a ser exibido
+     * @param listener Listener para o clique no ícone
+     */
+    public void setNavigationIcon(int iconResId, View.OnClickListener listener) {
+        if (topAppBar != null) {
+            topAppBar.setNavigationIcon(iconResId);
+            topAppBar.setNavigationOnClickListener(listener);
+        }
+    }
+
+    /**
+     * Restaura a configuração padrão da Toolbar (ícone hamburger e abre/fecha drawer)
+     */
+    public void restoreDefaultToolbar() {
+        if (topAppBar != null) {
+            topAppBar.setNavigationIcon(R.drawable.baseline_menu);
+            topAppBar.setNavigationOnClickListener(view -> {
+                if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+                    drawerLayout.closeDrawer(GravityCompat.START);
+                } else {
+                    drawerLayout.openDrawer(GravityCompat.START);
+                }
+            });
+            toggle.setDrawerIndicatorEnabled(true);
+        }
+    }
+
+    private void handleNavigationItemSelected(int itemId) {
+        if (itemId == R.id.idLoginItemMenu) {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        } else if (itemId == R.id.idVagasItemMenu) {
+            startActivity(new Intent(this, MainActivity.class));
+            finish();
+        } else if (itemId == R.id.idConfigItemMenu) {
+            startActivity(new Intent(this, ConfigActivity.class));
+        } else if (itemId == R.id.idAjudaItemMenu) {
+            startActivity(new Intent(this, FeedbackActivity.class));
+        } else if (itemId == R.id.idSobreItemMenu) {
+            startActivity(new Intent(this, SobreNosActivity.class));
+        }
+        drawerLayout.closeDrawer(GravityCompat.START);
+    }
+
+    private void handleBottomNavigationItemSelected(int itemId) {
+        Fragment selectedFragment = null;
+
+        if (itemId == R.id.nav_favorite) {
+            selectedFragment = new ModeloBancoTalentosFragment();
+        } else if (itemId == R.id.nav_home) {
+            selectedFragment = new ModeloTelaPrincipalFragment();
+        } else if (itemId == R.id.nav_profile) {
+            selectedFragment = new ModeloCurrAleatFragment();
+        }
+
+        if (selectedFragment != null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container_empresa, selectedFragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
+
+    // Método para os fragments controlarem o drawer
+    public void toggleDrawer() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            drawerLayout.openDrawer(GravityCompat.START);
+        }
+    }
 }

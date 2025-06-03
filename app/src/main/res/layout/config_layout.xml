@@ -279,7 +279,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginRight="10dp"
                     android:fontFamily="@font/chillax_semibold"
-                    android:text="Sair da conta"
+                    android:text="Excluir conta"
                     android:textAlignment="textStart"
                     android:textColor="#C81818"
                     android:textSize="16sp"

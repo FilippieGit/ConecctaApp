@@ -41,7 +41,7 @@ public class SelecaoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Log.d("SelecaoActivity", "Botão Empresa clicado");
-                Intent intent = new Intent(SelecaoActivity.this, LoginPessoaJuridica.class);//Trocar para LoginPessoaJuridica para ir rapido TelaEmpresaActivity
+                Intent intent = new Intent(SelecaoActivity.this, CadPJuridicaActivity.class);//Trocar para LoginPessoaJuridica para ir rapido TelaEmpresaActivity
                 startActivity(intent);
             }
         });
@@ -51,7 +51,7 @@ public class SelecaoActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Navegar para a tela de login de pessoa física
-                startActivity(new Intent(SelecaoActivity.this, MainActivity.class));//Trocar para LoginPessoaFisica
+                startActivity(new Intent(SelecaoActivity.this, CadastroActivity.class));//Trocar para LoginPessoaFisica
                 finish();  // Finaliza a atividade atual
             }
         });

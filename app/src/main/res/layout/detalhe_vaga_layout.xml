@@ -266,7 +266,7 @@
             android:textColor="@color/cinza"
             android:textSize="14sp" />
 
-        <!-- Adicione este botão antes do FloatingActionButton de excluir -->
+        <!-- Mantenha apenas este botão -->
         <Button
             android:id="@+id/btnCandidatar"
             android:layout_width="match_parent"

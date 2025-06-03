@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -17,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.chip.Chip;
 import com.google.android.material.chip.ChipGroup;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
 
 import org.json.JSONObject;
 
@@ -33,38 +35,44 @@ public class DetalheVagaActivity extends AppCompatActivity {
 
     private TextView textBeneficiosDetalhe, textRamoDetalhe;
     private com.google.android.material.chip.ChipGroup chipGroupHabilidadesDetalhe;
-
     private ImageView imageLogoDetalhe;
     private TextView textTituloDetalhe, textDescricaoDetalhe, textLocalizacaoDetalhe;
     private TextView textSalarioDetalhe, textRequisitosDetalhe;
     private TextView textNivelExperienciaDetalhe, textTipoContratoDetalhe, textAreaAtuacaoDetalhe;
-    private ImageButton btnVoltarDetalhe;
+    private ImageButton btnVoltarDetalhe, btnVerCandidatos;
     private FloatingActionButton btnExcluir;
+    private Button btnCandidatar;
     private Vagas vaga;
-
-    private ImageButton btnVerCandidatos;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.detalhe_vaga_layout);
 
+        mAuth = FirebaseAuth.getInstance();
         inicializarComponentes();
 
         boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
         vaga = (Vagas) getIntent().getSerializableExtra("vaga");
-
-        // Configurar botão de candidatos
-        if (isPessoaJuridica && vaga != null) {
-            btnVerCandidatos.setVisibility(View.VISIBLE);
-            btnVerCandidatos.setOnClickListener(v -> {
-                Intent intent = new Intent(DetalheVagaActivity.this, CandidatosActivity.class);
-                intent.putExtra("vaga_id", vaga.getVaga_id());
-                startActivity(intent);
-            });
+        if (vaga == null) {
+            Toast.makeText(this, "Erro: Dados da vaga não encontrados", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
         }
 
-        // Log para verificar o objeto recebido e seus campos
+        // Configurar visibilidade dos botões
+        if (isPessoaJuridica && vaga != null) {
+            btnVerCandidatos.setVisibility(View.VISIBLE);
+            btnExcluir.setVisibility(View.VISIBLE);
+            btnCandidatar.setVisibility(View.GONE);
+        } else {
+            btnVerCandidatos.setVisibility(View.GONE);
+            btnExcluir.setVisibility(View.GONE);
+            btnCandidatar.setVisibility(View.VISIBLE);
+            verificarCandidaturaExistente();
+        }
+
         if (vaga != null) {
             Log.d("DetalheVagaActivity", "Vaga recebida: " + vaga.toString());
             Log.d("DetalheVagaActivity", "Habilidades desejáveis (String): " + vaga.getHabilidadesDesejaveisStr());
@@ -74,16 +82,28 @@ public class DetalheVagaActivity extends AppCompatActivity {
             Log.d("DetalheVagaActivity", "Objeto vaga está null!");
         }
 
-        if (btnExcluir != null) {
-            btnExcluir.setVisibility(isPessoaJuridica ? View.VISIBLE : View.GONE);
-            btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
-        }
+        btnExcluir.setOnClickListener(v -> mostrarDialogoConfirmacao());
+        btnVoltarDetalhe.setOnClickListener(v -> finish());
+
+        btnVerCandidatos.setOnClickListener(v -> {
+            Intent intent = new Intent(DetalheVagaActivity.this, CandidatosActivity.class);
+            intent.putExtra("vaga_id", vaga.getVaga_id());
+            startActivity(intent);
+        });
+
+        // Configurar listeners dos novos botões
+        btnCandidatar.setOnClickListener(v -> {
+            if (vaga != null) {
+                Intent intent = new Intent(DetalheVagaActivity.this, CandidatarSeActivity.class);
+                // Converter para String explicitamente
+                intent.putExtra("vaga_id", String.valueOf(vaga.getVaga_id()));
+                intent.putExtra("vaga_titulo", vaga.getTitulo());
+                startActivity(intent);
+            }
+        });
 
         exibirDetalhesVaga();
-
-        btnVoltarDetalhe.setOnClickListener(v -> finish());
     }
-
 
     private void inicializarComponentes() {
         textBeneficiosDetalhe = findViewById(R.id.textBeneficiosDetalhe);
@@ -98,19 +118,118 @@ public class DetalheVagaActivity extends AppCompatActivity {
         textNivelExperienciaDetalhe = findViewById(R.id.textNivelExperienciaDetalhe);
         textTipoContratoDetalhe = findViewById(R.id.textTipoContratoDetalhe);
         textAreaAtuacaoDetalhe = findViewById(R.id.textAreaAtuacaoDetalhe);
-        textBeneficiosDetalhe = findViewById(R.id.textBeneficiosDetalhe);
-        textRamoDetalhe = findViewById(R.id.textRamoDetalhe);
-        chipGroupHabilidadesDetalhe = findViewById(R.id.chipGroupHabilidadesDetalhe);
         btnVoltarDetalhe = findViewById(R.id.btnVoltarDetalhe);
         btnExcluir = findViewById(R.id.BtnDetalheExcluir);
         btnVerCandidatos = findViewById(R.id.btnVerCandidatos);
+        btnCandidatar = findViewById(R.id.btnCandidatar);
     }
 
+    private void verificarCandidaturaExistente() {
+        if (vaga == null || mAuth.getCurrentUser() == null) return;
+
+        String userId = mAuth.getCurrentUser().getUid();
+        String vagaId = String.valueOf(vaga.getVaga_id());
+
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(Api.URL_VERIFICAR_CANDIDATURA + "?user_id=" + userId + "&vaga_id=" + vagaId);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String response = in.readLine();
+                        in.close();
+
+                        JSONObject jsonResponse = new JSONObject(response);
+                        return jsonResponse.getBoolean("ja_candidatado");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean jaCandidatado) {
+                if (jaCandidatado) {
+                    btnCandidatar.setEnabled(false);
+                    btnCandidatar.setText("Já candidatado");
+                }
+            }
+        }.execute();
+    }
+
+    private void candidatarAVaga() {
+        if (vaga == null || mAuth.getCurrentUser() == null) return;
+
+        String userId = mAuth.getCurrentUser().getUid();
+        String vagaId = String.valueOf(vaga.getVaga_id()); // Conversão aqui
+
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Enviando candidatura...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                try {
+                    URL url = new URL(Api.URL_CANDIDATAR_VAGA);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("POST");
+                    connection.setDoOutput(true);
+
+                    OutputStream os = connection.getOutputStream();
+                    BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                    writer.write("user_id=" + userId + "&vaga_id=" + vagaId);
+                    writer.flush();
+                    writer.close();
+                    os.close();
+
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+                        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                        String response = in.readLine();
+                        in.close();
+
+                        JSONObject jsonResponse = new JSONObject(response);
+                        return !jsonResponse.getBoolean("error");
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+                return false;
+            }
+
+            @Override
+            protected void onPostExecute(Boolean success) {
+                progressDialog.dismiss();
+                if (success) {
+                    Toast.makeText(DetalheVagaActivity.this, "Candidatura realizada com sucesso!", Toast.LENGTH_SHORT).show();
+                    btnCandidatar.setEnabled(false);
+                    btnCandidatar.setText("Já candidatado");
+                } else {
+                    Toast.makeText(DetalheVagaActivity.this, "Erro ao realizar candidatura", Toast.LENGTH_SHORT).show();
+                }
+            }
+        }.execute();
+    }
+
+    private void irParaPerguntas() {
+        if (vaga == null) return;
+
+        Intent intent = new Intent(this, CandidatarSeActivity.class);
+        intent.putExtra("vaga_id", vaga.getVaga_id());
+        intent.putExtra("vaga_titulo", vaga.getTitulo());
+        startActivity(intent);
+    }
 
     private void exibirDetalhesVaga() {
         if (vaga != null) {
-            textTituloDetalhe.setText(vaga.getTitulo());
-            textDescricaoDetalhe.setText(vaga.getDescricao());
             textTituloDetalhe.setText(vaga.getTitulo());
             textDescricaoDetalhe.setText(vaga.getDescricao());
             textLocalizacaoDetalhe.setText("Localização: " + vaga.getLocalizacao());
@@ -122,14 +241,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
             if (textBeneficiosDetalhe != null) textBeneficiosDetalhe.setText(vaga.getBeneficios());
             if (textRamoDetalhe != null) textRamoDetalhe.setText(vaga.getRamo());
 
-            // Habilidades desejáveis (chips)
             chipGroupHabilidadesDetalhe.removeAllViews();
-
-
-            Log.d("DetalheVagaActivity", "Habilidades (String): " + vaga.getHabilidadesDesejaveisStr());
-            Log.d("DetalheVagaActivity", "Habilidades (Lista): " + vaga.getHabilidadesDesejaveis());
-
-
             List<String> habilidadesList = vaga.getHabilidadesDesejaveis();
             if (habilidadesList != null && !habilidadesList.isEmpty()) {
                 for (String habilidade : habilidadesList) {
@@ -138,15 +250,9 @@ public class DetalheVagaActivity extends AppCompatActivity {
                     chip.setCheckable(false);
                     chipGroupHabilidadesDetalhe.addView(chip);
                 }
-            } else {
-                Log.e("DetalheVagaActivity", "Lista de habilidades vazia ou nula!");
             }
-        } else {
-            textTituloDetalhe.setText("Erro ao carregar os dados");
-            textDescricaoDetalhe.setText("Tente novamente mais tarde.");
         }
     }
-
 
     private void mostrarDialogoConfirmacao() {
         new AlertDialog.Builder(this)
@@ -173,7 +279,6 @@ public class DetalheVagaActivity extends AppCompatActivity {
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("POST");
                     connection.setDoOutput(true);
-                    connection.setDoInput(true);
 
                     OutputStream os = connection.getOutputStream();
                     BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));

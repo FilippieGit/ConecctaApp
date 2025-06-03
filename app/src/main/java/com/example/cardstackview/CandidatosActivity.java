@@ -1,6 +1,9 @@
 package com.example.cardstackview;
 
+import android.app.ProgressDialog;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -8,57 +11,162 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.json.JSONException;
+
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class CandidatosActivity extends AppCompatActivity {
     private RecyclerView recyclerViewCandidatos;
     private CandidatoAdapter adapter;
     private List<Usuario> candidatosList = new ArrayList<>();
     private int vagaId;
+    private ProgressDialog progressDialog;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.candidatos_layout); // Usando o nome do seu layout
+        setContentView(R.layout.candidatos_layout);
 
-        // Configura a toolbar
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        // Obtém o ID da vaga
         vagaId = getIntent().getIntExtra("vaga_id", 0);
         setTitle("Candidatos - Vaga #" + vagaId);
 
-        // Configura o RecyclerView
         recyclerViewCandidatos = findViewById(R.id.recyclerViewCandidatos);
-        adapter = new CandidatoAdapter(candidatosList);
+        adapter = new CandidatoAdapter(candidatosList, this::onCandidatoClick);
         recyclerViewCandidatos.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCandidatos.setAdapter(adapter);
 
-        // Busca os candidatos (dados mockados)
-        buscarCandidatosMockados();
+        progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Carregando candidatos...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        buscarCandidatos();
     }
 
-    private void buscarCandidatosMockados() {
-        // Limpa a lista atual
-        candidatosList.clear();
+    private void buscarCandidatos() {
+        new Thread(() -> {
+            try {
+                String urlCompleta = Api.URL_LISTAR_CANDIDATURAS + "&vaga_id=" + vagaId;
+                Log.d("API_REQUEST", "URL: " + urlCompleta);
 
-        // Adiciona candidatos de exemplo
-        candidatosList.add(new Usuario(1, "João Silva", "joao@email.com", "Desenvolvedor Android"));
-        candidatosList.add(new Usuario(2, "Maria Souza", "maria@email.com", "Desenvolvedor Front-end"));
-        candidatosList.add(new Usuario(3, "Carlos Oliveira", "carlos@email.com", "Analista de Dados"));
-        candidatosList.add(new Usuario(4, "Ana Santos", "ana@email.com", "UX Designer"));
-        candidatosList.add(new Usuario(5, "Pedro Costa", "pedro@email.com", "Product Manager"));
+                URL url = new URL(urlCompleta);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("GET");
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
 
-        // Notifica o adapter que os dados mudaram
-        adapter.notifyDataSetChanged();
+                int responseCode = connection.getResponseCode();
+                if (responseCode == HttpURLConnection.HTTP_OK) {
+                    BufferedReader in = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream()));
+                    StringBuilder response = new StringBuilder();
+                    String line;
+                    while ((line = in.readLine()) != null) {
+                        response.append(line);
+                    }
+                    in.close();
 
-        // Mostra mensagem informando que são dados de exemplo
-        Toast.makeText(this, "Exibindo dados de exemplo temporariamente", Toast.LENGTH_LONG).show();
+                    Log.d("API_RESPONSE", "Resposta: " + response.toString());
+
+                    JSONObject jsonResponse = new JSONObject(response.toString());
+                    if (!jsonResponse.getBoolean("error")) {
+                        JSONArray candidatosArray = jsonResponse.getJSONArray("candidatos");
+
+                        runOnUiThread(() -> {
+                            candidatosList.clear();
+                            try {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
+                                for (int i = 0; i < candidatosArray.length(); i++) {
+                                    JSONObject candidatoJson = candidatosArray.getJSONObject(i);
+
+                                    // Trate a data corretamente
+                                    Date dataCandidatura = dateFormat.parse(candidatoJson.getString("data_candidatura"));
+
+                                    Usuario usuario = new Usuario(
+                                            candidatoJson.getLong("id"),
+                                            candidatoJson.getString("nome"),
+                                            candidatoJson.getString("email"),
+                                            candidatoJson.optString("cargo", ""),
+                                            candidatoJson.getString("status"),
+                                            new Date(candidatoJson.optLong("data_candidatura", System.currentTimeMillis())),
+                                            candidatoJson.optString("telefone", ""),
+                                            candidatoJson.optString("descricao", ""),
+                                            candidatoJson.optString("experiencia_profissional", ""),
+                                            candidatoJson.optString("formacao_academica", ""),
+                                            candidatoJson.optString("certificados", ""),
+                                            candidatoJson.optString("username", ""),  // Novo campo
+                                            candidatoJson.optString("genero", ""),    // Novo campo
+                                            candidatoJson.optString("idade", "")      // Novo campo
+                                    );
+                                    candidatosList.add(usuario);
+                                }
+                                adapter.notifyDataSetChanged();
+                            } catch (JSONException e) {
+                                Log.e("JSON_ERROR", "Erro ao processar JSON", e);
+                                Toast.makeText(CandidatosActivity.this,
+                                        "Erro ao processar dados dos candidatos",
+                                        Toast.LENGTH_SHORT).show();
+                            } catch (ParseException e) {
+                                Log.e("DATE_ERROR", "Erro ao parsear data", e);
+                            } finally {
+                                progressDialog.dismiss();
+                            }
+                        });
+                    } else {
+                        throw new Exception(jsonResponse.getString("message"));
+                    }
+                } else {
+                    throw new Exception("Código de erro HTTP: " + responseCode);
+                }
+            } catch (Exception e) {
+                Log.e("NETWORK_ERROR", "Erro na requisição", e);
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    Toast.makeText(CandidatosActivity.this,
+                            "Erro ao carregar candidatos: " + e.getMessage(),
+                            Toast.LENGTH_LONG).show();
+                });
+            }
+        }).start();
+    }
+
+    private void onCandidatoClick(Usuario usuario) {
+        // Criar uma Intent para abrir a PerfilActivity
+        Intent intent = new Intent(CandidatosActivity.this, PerfilActivity.class);
+
+        // Passar os dados do candidato como extras
+        intent.putExtra("id", usuario.getId());
+        intent.putExtra("nome", usuario.getNome());
+        intent.putExtra("email", usuario.getEmail());
+        intent.putExtra("setor", usuario.getCargo());
+        intent.putExtra("telefone", usuario.getTelefone());
+        intent.putExtra("descricao", usuario.getDescricao());
+        intent.putExtra("experiencia", usuario.getExperienciaProfissional());
+        intent.putExtra("formacao", usuario.getFormacaoAcademica());
+        intent.putExtra("certificados", usuario.getCertificados());
+
+        // Iniciar a atividade
+        startActivity(intent);
     }
 
     @Override

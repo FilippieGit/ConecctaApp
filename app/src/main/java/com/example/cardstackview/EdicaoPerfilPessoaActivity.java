@@ -142,7 +142,7 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
         okhttp3.RequestBody body = formBuilder.build();
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url("http://10.67.96.144/update/update.php") // <- Substituir pelo seu endpoint
+                .url(Api.URL_UPDATE_USER) // <- Substituir pelo seu endpoint
                 .post(body)
                 .build();
 

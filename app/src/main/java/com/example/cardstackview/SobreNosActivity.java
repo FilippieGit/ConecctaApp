@@ -78,7 +78,7 @@ public class SobreNosActivity extends AppCompatActivity {
 
     // Função para redirecionar para login
     private void goToLoginCandidato() {
-        Intent intent = new Intent(SobreNosActivity.this, LoginPessoaFisica.class);
+        Intent intent = new Intent(SobreNosActivity.this, LoginActivity.class);
         startActivity(intent);
         finish();
     }

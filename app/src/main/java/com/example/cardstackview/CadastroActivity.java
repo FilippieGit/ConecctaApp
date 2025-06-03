@@ -1,8 +1,10 @@
 package com.example.cardstackview;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
@@ -39,6 +41,12 @@ public class CadastroActivity extends AppCompatActivity {
         EditText edtCPF = findViewById(R.id.edtCPF);
         EditText edtSenha = findViewById(R.id.edtSenha);
         Button btnCadastrar = findViewById(R.id.btnCadastrar);
+        ImageView btnVoltar = findViewById(R.id.imgVoltarCadastro);
+
+        btnVoltar.setOnClickListener(v -> {
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+        });
 
         btnCadastrar.setOnClickListener(v -> {
             String email = edtEmail.getText().toString().trim();
@@ -52,56 +60,21 @@ public class CadastroActivity extends AppCompatActivity {
                 return;
             }
 
-            // Consulta no Firestore para verificar se o CPF já existe
+            if (senha.length() < 6) {
+                Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            // Verifica se CPF já existe
             db.collection("users")
                     .whereEqualTo("CPF", CPF)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
-                                // CPF já cadastrado
-                                Toast.makeText(this, "CPF já cadastrado. Não é possível concluir o cadastro.", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, "CPF já cadastrado", Toast.LENGTH_LONG).show();
                             } else {
-                                // CPF livre, pode criar usuário
-                                mAuth.createUserWithEmailAndPassword(email, senha)
-                                        .addOnCompleteListener(authTask -> {
-                                            if (authTask.isSuccessful()) {
-                                                FirebaseUser user = mAuth.getCurrentUser();
-                                                if (user != null) {
-
-                                                    Map<String, Object> userMap = new HashMap<>();
-                                                    userMap.put("CPF", CPF);
-                                                    userMap.put("email", email);
-                                                    userMap.put("nome", nome);
-                                                    userMap.put("cidade", cidade);
-                                                    userMap.put("tipo", "Física");
-
-// >>> adicione estas 3 linhas:
-                                                    userMap.put("certificados", new ArrayList<String>());
-                                                    userMap.put("experiencias", new ArrayList<String>());
-                                                    userMap.put("formacoes", new ArrayList<String>());
-
-                                                    db.collection("users").document(user.getUid())
-                                                            .set(userMap)
-                                                            .addOnSuccessListener(unused -> {
-                                                                user.sendEmailVerification()
-                                                                        .addOnCompleteListener(verifyTask -> {
-                                                                            if (verifyTask.isSuccessful()) {
-                                                                                Toast.makeText(this, "Cadastro realizado! Verifique seu e-mail.", Toast.LENGTH_LONG).show();
-                                                                                finish(); // Fecha a tela de cadastro
-                                                                            } else {
-                                                                                Toast.makeText(this, "Erro ao enviar verificação: " + verifyTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                                                            }
-                                                                        });
-                                                            })
-                                                            .addOnFailureListener(e -> {
-                                                                Toast.makeText(this, "Erro ao salvar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                                                            });
-                                                }
-                                            } else {
-                                                Toast.makeText(this, "Erro: " + authTask.getException().getMessage(), Toast.LENGTH_LONG).show();
-                                            }
-                                        });
+                                criarUsuario(email, senha, nome, cidade, CPF, "Física");
                             }
                         } else {
                             Toast.makeText(this, "Erro ao verificar CPF: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
@@ -109,12 +82,50 @@ public class CadastroActivity extends AppCompatActivity {
                     });
         });
 
-
-
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+    }
+
+    private void criarUsuario(String email, String senha, String nome, String cidade, String documento, String tipo) {
+        mAuth.createUserWithEmailAndPassword(email, senha)
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        FirebaseUser user = mAuth.getCurrentUser();
+                        if (user != null) {
+                            Map<String, Object> userData = new HashMap<>();
+                            userData.put("email", email);
+                            userData.put("nome", nome);
+                            userData.put("cidade", cidade);
+                            userData.put("tipo", tipo);
+                            userData.put("CPF", documento);
+                            userData.put("certificados", new ArrayList<String>());
+                            userData.put("experiencias", new ArrayList<String>());
+                            userData.put("formacoes", new ArrayList<String>());
+                            userData.put("dataCadastro", System.currentTimeMillis());
+
+                            db.collection("users").document(user.getUid())
+                                    .set(userData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        user.sendEmailVerification()
+                                                .addOnCompleteListener(verifyTask -> {
+                                                    if (verifyTask.isSuccessful()) {
+                                                        Toast.makeText(this, "Cadastro realizado! Verifique seu e-mail.", Toast.LENGTH_LONG).show();
+                                                        finish();
+                                                    } else {
+                                                        Toast.makeText(this, "Erro ao enviar verificação: " + verifyTask.getException().getMessage(), Toast.LENGTH_LONG).show();
+                                                    }
+                                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(this, "Erro ao salvar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                                    });
+                        }
+                    } else {
+                        Toast.makeText(this, "Erro no cadastro: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    }
+                });
     }
 }

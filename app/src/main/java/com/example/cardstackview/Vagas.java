@@ -225,6 +225,10 @@ public class Vagas implements Serializable {
         return new ArrayList<>();
     }
 
+    public String getVagaIdAsString() {
+        return String.valueOf(vaga_id);
+    }
+
     public String getHabilidadesDesejaveisStr() {
         return habilidadesDesejaveisStr;
     }

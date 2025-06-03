@@ -2,20 +2,24 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
-//import com.bumptech.glide.Glide; // Para carregar a imagem de perfil
+import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -23,64 +27,184 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
-
 public class PerfilActivity extends AppCompatActivity {
 
     // Componentes da interface
-    ImageView imgPerfilPbtnVoltar;
-    Button btnPEditarPerfil;
-    TextView perfilNome, perfilidade,perfilgenero , perfilEmail, perfilusername, perfilTelefone, perfilDescricao, perfilSetor, perfilExpProfissional, perfilFormAcademica, perfilCertificados;
-    ImageView imageViewPerfil;
+    private ImageView imgPerfilPbtnVoltar;
+    private Button btnPEditarPerfil, btnPCompartilharPerfil;
+    private ImageView imageViewPerfil;
+    private TextView perfilNome, perfilEmail, perfilTelefone, perfilDescricao, perfilSetor;
+    private TextView perfilExpProfissional, perfilFormAcademica, perfilCertificados;
+    private TextView username, generouser, idadeuser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.perfil_pessoa_layout);
 
-        // Referências para os elementos da UI
-        imgPerfilPbtnVoltar = findViewById(R.id.imgPerfilPbtnVoltar);
-        btnPEditarPerfil = findViewById(R.id.btnPEditarPerfil);
-        perfilNome = findViewById(R.id.perfilNome);
-        perfilEmail = findViewById(R.id.perfilEmail);
-        perfilTelefone = findViewById(R.id.perfilTelefone);
-        perfilDescricao = findViewById(R.id.perfilDescricao);
-        perfilSetor = findViewById(R.id.perfilSetor);
-        perfilExpProfissional = findViewById(R.id.perfilExpProfissional);
-        perfilFormAcademica = findViewById(R.id.perfilFormAcademica);
-        perfilCertificados = findViewById(R.id.perfilCertificados);
-        perfilusername = findViewById(R.id.username);
-        perfilgenero = findViewById(R.id.generouser);
-        perfilidade = findViewById(R.id.idadeuser);
-        imageViewPerfil = findViewById(R.id.imgPerfilCandidato); // A imagem de perfil
+        // Configurar Lottie (se houver animações)
+        configurarLottie();
 
-        // Função de voltar para a tela principal
-        imgPerfilPbtnVoltar.setOnClickListener(view -> {
-            startActivity(new Intent(getApplicationContext(), MainActivity.class));
-            finish(); // Apenas volta para a tela anterior
-        });
+        // Inicializar views
+        initializeViews();
 
-        // Função de editar perfil
-        btnPEditarPerfil.setOnClickListener(view -> {
-            startActivity(new Intent(getApplicationContext(), EdicaoPerfilPessoaActivity.class));
-            finish();
-        });
+        // Configurar botão de voltar
+        imgPerfilPbtnVoltar.setOnClickListener(v -> finish());
 
-        // Carregar os dados do usuário após o login
-        carregarDadosUsuario();
+        // Configurar botão de compartilhar
+        btnPCompartilharPerfil.setOnClickListener(v -> compartilharPerfil());
+
+        // Determinar se é visualização do próprio perfil ou de empresa
+        boolean isProprioPerfil = !getIntent().hasExtra("nome");
+
+        if (isProprioPerfil) {
+            // Modo próprio perfil
+            carregarDadosUsuario();
+            btnPEditarPerfil.setOnClickListener(v ->
+                    startActivity(new Intent(PerfilActivity.this, EdicaoPerfilPessoaActivity.class))
+            );
+        } else {
+            // Modo empresa visualizando candidato
+            loadCandidateData();
+        }
+
+        // Configurar layout dos botões
+        configurarBotoes(isProprioPerfil);
     }
 
-    // Função para carregar os dados do usuário após o login
+    private void configurarLottie() {
+        try {
+            // Configura todas as animações Lottie
+            LottieAnimationView lottieTwitter = findViewById(R.id.lottieTwitter);
+            LottieAnimationView lottieLinkedin = findViewById(R.id.lottieLinkedin);
+            LottieAnimationView lottieWhatsapp = findViewById(R.id.lottieWhatsapp);
+
+            if (lottieTwitter != null) {
+                lottieTwitter.enableMergePathsForKitKatAndAbove(true);
+            }
+            if (lottieLinkedin != null) {
+                lottieLinkedin.enableMergePathsForKitKatAndAbove(true);
+            }
+            if (lottieWhatsapp != null) {
+                lottieWhatsapp.enableMergePathsForKitKatAndAbove(true);
+            }
+        } catch (Exception e) {
+            Log.e("PerfilActivity", "Erro ao configurar Lottie", e);
+        }
+    }
+
+    private void initializeViews() {
+        try {
+            imgPerfilPbtnVoltar = findViewById(R.id.imgPerfilPbtnVoltar);
+            btnPEditarPerfil = findViewById(R.id.btnPEditarPerfil);
+            btnPCompartilharPerfil = findViewById(R.id.btnPCompartilharPerfil);
+            imageViewPerfil = findViewById(R.id.imgPerfilCandidato);
+
+            perfilNome = findViewById(R.id.perfilNome);
+            perfilEmail = findViewById(R.id.perfilEmail);
+            perfilTelefone = findViewById(R.id.perfilTelefone);
+            perfilDescricao = findViewById(R.id.perfilDescricao);
+            perfilSetor = findViewById(R.id.perfilSetor);
+            perfilExpProfissional = findViewById(R.id.perfilExpProfissional);
+            perfilFormAcademica = findViewById(R.id.perfilFormAcademica);
+            perfilCertificados = findViewById(R.id.perfilCertificados);
+            username = findViewById(R.id.username);
+            generouser = findViewById(R.id.generouser);
+            idadeuser = findViewById(R.id.idadeuser);
+        } catch (Exception e) {
+            Log.e("PerfilActivity", "Erro ao inicializar views", e);
+            Toast.makeText(this, "Erro ao carregar interface", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void loadCandidateData() {
+        try {
+            Intent intent = getIntent();
+            setTextSafe(perfilNome, intent.getStringExtra("nome"));
+            setTextSafe(perfilEmail, intent.getStringExtra("email"));
+            setTextSafe(perfilSetor, intent.getStringExtra("setor"));
+            setTextSafe(perfilTelefone, intent.getStringExtra("telefone"));
+            setTextSafe(perfilDescricao, intent.getStringExtra("descricao"));
+            setTextSafe(perfilExpProfissional, intent.getStringExtra("experiencia"));
+            setTextSafe(perfilFormAcademica, intent.getStringExtra("formacao"));
+            setTextSafe(perfilCertificados, intent.getStringExtra("certificados"));
+            setTextSafe(username, intent.getStringExtra("username"));
+            setTextSafe(generouser, intent.getStringExtra("genero"));
+            setTextSafe(idadeuser, intent.getStringExtra("idade"));
+        } catch (Exception e) {
+            Log.e("PerfilActivity", "Erro ao carregar dados do candidato", e);
+            Toast.makeText(this, "Erro ao carregar dados", Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setTextSafe(TextView textView, String text) {
+        if (textView != null) {
+            textView.setText(text != null && !text.isEmpty() ? text : "Não informado");
+        }
+    }
+
+    private void configurarBotoes(boolean isProprioPerfil) {
+        if (btnPEditarPerfil == null || btnPCompartilharPerfil == null) {
+            Log.e("PerfilActivity", "Botões não inicializados");
+            return;
+        }
+
+        try {
+            LinearLayout.LayoutParams paramsCompartilhar =
+                    new LinearLayout.LayoutParams(
+                            0,
+                            LinearLayout.LayoutParams.WRAP_CONTENT,
+                            isProprioPerfil ? 0.5f : 1f);
+
+            btnPCompartilharPerfil.setLayoutParams(paramsCompartilhar);
+
+            if (isProprioPerfil) {
+                btnPEditarPerfil.setVisibility(View.VISIBLE);
+                LinearLayout.LayoutParams paramsEditar =
+                        new LinearLayout.LayoutParams(
+                                0,
+                                LinearLayout.LayoutParams.WRAP_CONTENT,
+                                0.5f);
+                btnPEditarPerfil.setLayoutParams(paramsEditar);
+            } else {
+                btnPEditarPerfil.setVisibility(View.GONE);
+            }
+        } catch (Exception e) {
+            Log.e("PerfilActivity", "Erro ao configurar botões", e);
+        }
+    }
+
+    private void compartilharPerfil() {
+        try {
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setType("text/plain");
+
+            String shareMessage = "Confira o perfil de " + perfilNome.getText().toString() +
+                    " no Coneccta: " + "\n\n" +
+                    "Nome: " + perfilNome.getText().toString() + "\n" +
+                    "Setor: " + perfilSetor.getText().toString() + "\n" +
+                    "Experiência: " + perfilExpProfissional.getText().toString();
+
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareMessage);
+            startActivity(Intent.createChooser(shareIntent, "Compartilhar perfil via"));
+        } catch (Exception e) {
+            Log.e("PerfilActivity", "Erro ao compartilhar perfil", e);
+            Toast.makeText(this, "Erro ao compartilhar", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private void carregarDadosUsuario() {
-        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid(); // Pegando o user_id do Firebase
-        String url = "http://10.67.96.144/CRUD_user/getUser.php?id=" + userId;  // Alteração aqui para usar o parâmetro 'id'
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            Toast.makeText(this, "Usuário não autenticado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
+
+        String userId = user.getUid();
+        String url = Api.URL_GET_USER + userId;
 
         OkHttpClient client = new OkHttpClient();
-
         Request request = new Request.Builder()
                 .url(url)
                 .build();
@@ -88,64 +212,50 @@ public class PerfilActivity extends AppCompatActivity {
         client.newCall(request).enqueue(new Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                e.printStackTrace();
-                runOnUiThread(() -> {
-                    Toast.makeText(getApplicationContext(), "Erro na conexão: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                });
+                runOnUiThread(() ->
+                        Toast.makeText(PerfilActivity.this,
+                                "Erro na conexão: " + e.getMessage(),
+                                Toast.LENGTH_LONG).show());
             }
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
                 if (!response.isSuccessful()) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(getApplicationContext(), "Falha ao buscar dados do usuário", Toast.LENGTH_LONG).show();
-                    });
+                    runOnUiThread(() ->
+                            Toast.makeText(PerfilActivity.this,
+                                    "Falha ao buscar dados do usuário",
+                                    Toast.LENGTH_LONG).show());
                     return;
                 }
 
-                String jsonData = response.body().string();
+                try {
+                    String jsonData = response.body().string();
+                    JSONObject json = new JSONObject(jsonData);
 
-                runOnUiThread(() -> {
-                    try {
-                        JSONObject json = new JSONObject(jsonData);
-
-                        // Preenche os campos com os dados do usuário
-                        String nome = json.optString("nome", "");
-                        String email = json.optString("email", "");
-                        String telefone = json.optString("telefone", "");
-                        String descricao = json.optString("descricao", "");
-                        String setor = json.optString("setor", "");
-                        String experiencia = json.optString("experiencia_profissional", "");
-                        String formacao = json.optString("formacao_academica", "");
-                        String certificados = json.optString("certificados", "");
-                        String username = json.optString("nome", "");
-                        String genero = json.optString("genero", "");
-                        String idade = json.optString("idade", "");
-                        String imagemPerfil = json.optString("imagem_perfil", "");
-
-                        // Atualizando os campos de UI com os dados
-                        perfilNome.setText(nome);
-                        perfilEmail.setText(email);
-                        perfilTelefone.setText(telefone);
-                        perfilDescricao.setText(descricao);
-                        perfilSetor.setText(setor);
-                        perfilExpProfissional.setText(experiencia);
-                        perfilFormAcademica.setText(formacao);
-                        perfilCertificados.setText(certificados);
-                        perfilusername.setText(username);
-                        perfilgenero.setText(genero);
-                        perfilidade.setText(idade);
-
-                        // Se a URL da imagem de perfil não estiver vazia, carregue a imagem
-
-
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        Toast.makeText(getApplicationContext(), "Erro ao processar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
-                    }
-                });
+                    runOnUiThread(() -> {
+                        try {
+                            setTextSafe(perfilNome, json.optString("nome"));
+                            setTextSafe(perfilEmail, json.optString("email"));
+                            setTextSafe(perfilTelefone, json.optString("telefone"));
+                            setTextSafe(perfilDescricao, json.optString("descricao"));
+                            setTextSafe(perfilSetor, json.optString("setor"));
+                            setTextSafe(perfilExpProfissional, json.optString("experiencia_profissional"));
+                            setTextSafe(perfilFormAcademica, json.optString("formacao_academica"));
+                            setTextSafe(perfilCertificados, json.optString("certificados"));
+                            setTextSafe(username, json.optString("username"));
+                            setTextSafe(generouser, json.optString("genero"));
+                            setTextSafe(idadeuser, json.optString("idade"));
+                        } catch (Exception e) {
+                            Log.e("PerfilActivity", "Erro ao processar resposta", e);
+                        }
+                    });
+                } catch (JSONException | IOException e) {
+                    runOnUiThread(() ->
+                            Toast.makeText(PerfilActivity.this,
+                                    "Erro ao processar dados: " + e.getMessage(),
+                                    Toast.LENGTH_LONG).show());
+                }
             }
         });
-
     }
 }

@@ -102,35 +102,38 @@
 
         </com.google.android.material.card.MaterialCardView>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="5dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:orientation="horizontal"
+            android:weightSum="1">
 
             <Button
                 android:id="@+id/btnPEditarPerfil"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="185dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
+                android:layout_weight="0.5"
                 android:text="Editar perfil"
                 android:textSize="12sp"
                 android:textColor="@color/cinza"
                 android:textStyle="bold"
-                app:cornerRadius="4dp" />
-
+                app:cornerRadius="4dp"
+                android:visibility="gone"/>
 
             <Button
                 android:id="@+id/btnPCompartilharPerfil"
                 style="?attr/materialButtonOutlinedStyle"
-                android:layout_width="185dp"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
+                android:layout_weight="0.5"
                 android:text="Compartilhar perfil"
                 android:textSize="12sp"
                 android:textColor="@color/cinza"
                 android:textStyle="bold"
-                app:cornerRadius="4dp" />
-        </RelativeLayout>
+                app:cornerRadius="4dp"/>
+        </LinearLayout>
 
 
         <com.google.android.material.card.MaterialCardView
@@ -465,7 +468,6 @@
                         android:textSize="15sp"
                         android:textStyle="bold" />
 
-                    android:textSize="15sp"
                     <TextView
                         android:id="@+id/perfilEmail"
                         android:layout_width="wrap_content"
@@ -518,6 +520,7 @@
                     android:useDefaultMargins="true">
 
                     <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieTwitter"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         app:lottie_autoPlay="true"
@@ -525,6 +528,7 @@
                         app:lottie_rawRes="@raw/twitter" />
 
                     <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieLinkedin"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         app:lottie_autoPlay="true"
@@ -532,6 +536,7 @@
                         app:lottie_rawRes="@raw/linkedin" />
 
                     <com.airbnb.lottie.LottieAnimationView
+                        android:id="@+id/lottieWhatsapp"
                         android:layout_width="100dp"
                         android:layout_height="100dp"
                         app:lottie_autoPlay="true"
