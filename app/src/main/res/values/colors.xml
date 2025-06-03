@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="prim"
     <color name="azulprimary">#2a8ece</color>
     <color name="cinza">#839aa9</color>
     <color name="brancosecondary">#E8ECEE</color>
