@@ -6,6 +6,7 @@
         <item name="colorOnPrimary">@color/brancosecondary</item>
         <item name="colorSecondary">@color/verde</item>
         <item name="android:windowBackground">@color/brancosecondary</item>
+        <item name="android:statusBarColor">@color/azulprimary</item>
     </style>
 
     <style name="ToolbarTitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
