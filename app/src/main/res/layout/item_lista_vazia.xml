@@ -4,5 +4,6 @@
     android:layout_height="wrap_content"
     android:text="Nenhuma vaga disponível"
     android:gravity="center"
+    android:fontFamily="@font/chillax_regular"
     android:padding="16dp"
     android:textSize="18sp"/>
