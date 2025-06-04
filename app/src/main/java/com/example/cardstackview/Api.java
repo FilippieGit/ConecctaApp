@@ -10,7 +10,7 @@ import java.net.URL;
 
 public class Api {
     // IP base para todas as requisições
-    private static final String BASE_IP = "192.168.1.23"; // Altere apenas aqui para mudar todos os IPs
+    private static final String BASE_IP = "192.168.77.214"; // Altere apenas aqui para mudar todos os IPs
 
     // Endpoints principais
     public static final String BASE_URL = "http://" + BASE_IP + "/ConecctaAPI/v1/Api.php?apicall=";

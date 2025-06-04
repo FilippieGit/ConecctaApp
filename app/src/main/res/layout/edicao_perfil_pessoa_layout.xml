@@ -44,12 +44,22 @@
                 android:orientation="vertical"
                 android:padding="15dp">
 
-                <de.hdodenhof.circleimageview.CircleImageView
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center"
-                    android:src="@drawable/coffee" />
+                <!-- Foto com botão de editar -->
+                <FrameLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center">
 
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="150dp"
+                        android:layout_height="150dp"
+                        android:src="@drawable/coffee" />
+
+
+                </FrameLayout>
+
+                <!-- Nome + animação -->
                 <LinearLayout
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -80,6 +90,7 @@
 
                 </LinearLayout>
 
+                <!-- Área de atuação -->
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
@@ -101,7 +112,10 @@
 
             </LinearLayout>
 
+
         </com.google.android.material.card.MaterialCardView>
+
+
 
         <TextView
             android:id="@+id/descricao"
@@ -342,6 +356,8 @@
                 android:layout_height="wrap_content" />
 
         </com.google.android.material.textfield.TextInputLayout>
+
+
         <Button
             android:id="@+id/btnSalvarPerfil"
             android:layout_width="match_parent"
@@ -349,6 +365,12 @@
             android:text="Salvar Perfil"
             android:layout_margin="16dp"/>
 
+        <Button
+            android:id="@+id/btnEditPhoto"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="editar foto"
+            android:layout_margin="16dp"/>
 
     </LinearLayout>
 
