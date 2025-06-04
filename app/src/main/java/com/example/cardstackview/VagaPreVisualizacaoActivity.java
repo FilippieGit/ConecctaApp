@@ -44,10 +44,20 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
     private ImageButton btnEditar;
     private Vagas vaga;
 
+    private long userId; // Adicione esta variável
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vaga_pre_visualizacao_layout);
+
+        // Obter o ID do usuário
+        userId = getIntent().getLongExtra("USER_ID", -1);
+        if (userId == -1) {
+            Toast.makeText(this, "Erro: Usuário não identificado", Toast.LENGTH_SHORT).show();
+            finish();
+            return;
+        }
 
         vincularComponentes();
         configurarListeners();
@@ -124,10 +134,9 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         params.put("beneficios", vaga.getBeneficios());
         params.put("nivel_experiencia", vaga.getNivel_experiencia());
         params.put("habilidades_desejaveis", vaga.getHabilidadesDesejaveisStr() != null ? vaga.getHabilidadesDesejaveisStr() : "");
-
         params.put("ramo", vaga.getRamo());
         params.put("vinculo", vaga.getVinculo());
-        params.put("id_empresa", String.valueOf(vaga.getEmpresa_id()));
+        params.put("id_usuario", String.valueOf(userId)); // Enviar o ID do usuário logado
 
         new PublicarVagaTask(progressDialog).execute(params);
     }

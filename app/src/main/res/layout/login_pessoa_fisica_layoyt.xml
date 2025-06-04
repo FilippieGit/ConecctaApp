@@ -11,16 +11,16 @@
 
     <ImageView
         android:id="@+id/imgLoginPbtnVoltar"
-        android:layout_width="30dp"
+        android:layout_width="wrap_content"
         android:layout_height="30dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginTop="30dp"
-        android:src="@drawable/baseline_arrow_back" />
+        android:layout_marginTop="30dp" />
 
     <LinearLayout
 
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="30dp"
         android:layout_marginRight="30dp"
         android:orientation="vertical">
@@ -92,15 +92,6 @@
                 android:textSize="20sp" />
 
         </com.google.android.material.textfield.TextInputLayout>
-
-        <CheckBox
-            android:id="@+id/checkEmpresa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/cinza"
-            android:fontFamily="@font/chillax_medium"
-            android:text="Login como Empresa"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPessoaLoginEntrar"

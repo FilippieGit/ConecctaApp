@@ -62,11 +62,19 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     }
 
     private void carregarVagas() {
+        // Obtenha o ID do usuário logado (passado da LoginActivity)
+        long userId = requireActivity().getIntent().getLongExtra("USER_ID", -1);
+        if (userId == -1) {
+            Toast.makeText(requireContext(), "Erro: ID do usuário não encontrado", Toast.LENGTH_LONG).show();
+            return;
+        }
+
         new AsyncTask<Void, Void, String>() {
             @Override
             protected String doInBackground(Void... voids) {
                 try {
-                    URL url = new URL(Api.URL_GET_VAGAS);
+                    // Modifique a URL para incluir o parâmetro do usuário
+                    URL url = new URL(Api.URL_GET_VAGAS + "?id_usuario=" + userId);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                     connection.setRequestMethod("GET");
                     connection.setConnectTimeout(8000);
@@ -137,6 +145,7 @@ public class ModeloTelaPrincipalFragment extends Fragment {
                                     vagaJson.optString("local_vagas", "Não informado"),
                                     vagaJson.optString("salario_vagas", "Não informado"),
                                     vagaJson.optString("requisitos_vagas", "Não informado"),
+                                    vagaJson.optLong("id_usuario", -1), // Adicionado id_usuario
                                     vagaJson.optString("nivel_experiencia", "Não informado"),
                                     vagaJson.optString("tipo_contrato", "Não informado"),
                                     vagaJson.optString("area_atuacao", "Não informado"),
@@ -145,7 +154,7 @@ public class ModeloTelaPrincipalFragment extends Fragment {
                                     vagaJson.optString("ramo_vagas", "Não informado"),
                                     vagaJson.optInt("id_empresa"),
                                     vagaJson.optString("nome_empresa", "Empresa não informada"),
-                                    vagaJson.optString("habilidades_desejaveis", "")  // ← Corrigido: pega do JSON
+                                    vagaJson.optString("habilidades_desejaveis", "")
                             );
 
 

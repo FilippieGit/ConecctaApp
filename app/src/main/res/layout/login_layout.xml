@@ -8,10 +8,8 @@
     android:background="@color/brancosecondary"
     android:orientation="vertical">
 
-
-
     <LinearLayout
-    android:layout_marginTop="25dp"
+    android:layout_marginTop="35dp"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="30dp"
@@ -86,21 +84,13 @@
 
         </com.google.android.material.textfield.TextInputLayout>
 
-        <CheckBox
-            android:id="@+id/checkEmpresa"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:textColor="@color/cinza"
-            android:fontFamily="@font/chillax_medium"
-            android:text="Login como Empresa"/>
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/btnPessoaLoginEntrar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
-            android:layout_marginTop="5dp"
+            android:layout_marginTop="10dp"
             android:layout_marginEnd="20dp"
             android:layout_marginStart="20dp"
             android:backgroundTint="@color/azulprimary"

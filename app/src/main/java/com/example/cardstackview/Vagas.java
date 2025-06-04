@@ -26,6 +26,9 @@ public class Vagas implements Serializable {
     @SerializedName("requisitos_vagas")
     private String requisitos;
 
+    @SerializedName("id_usuario")
+    private long id_usuario; // Campo adicionado
+
     @SerializedName("nivel_experiencia")
     private String nivel_experiencia;
 
@@ -51,11 +54,11 @@ public class Vagas implements Serializable {
     private String nome_empresa;
 
     @SerializedName("habilidades_desejaveis")
-    private String habilidadesDesejaveisStr; // String recebida do JSON
+    private String habilidadesDesejaveisStr;
 
-    // Construtor completo (usando String para habilidadesDesejaveis)
+    // Construtor completo
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
-                 String salario, String requisitos, String nivel_experiencia,
+                 String salario, String requisitos, long id_usuario, String nivel_experiencia,
                  String tipo_contrato, String area_atuacao, String beneficios,
                  String vinculo, String ramo, int empresa_id, String nome_empresa,
                  String habilidadesDesejaveisStr) {
@@ -65,6 +68,7 @@ public class Vagas implements Serializable {
         this.localizacao = localizacao;
         this.salario = salario;
         this.requisitos = requisitos;
+        this.id_usuario = id_usuario;
         this.nivel_experiencia = nivel_experiencia;
         this.tipo_contrato = tipo_contrato;
         this.area_atuacao = area_atuacao;
@@ -76,30 +80,55 @@ public class Vagas implements Serializable {
         this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
     }
 
-    // Construtor para criação de novas vagas
-    public Vagas(String titulo, String descricao, String localizacao, String salario,
-                 String requisitos, String nivel_experiencia, String tipo_contrato,
-                 String area_atuacao, String beneficios, String vinculo, String ramo,
-                 int empresa_id, String habilidadesDesejaveisStr) {
-        this(0, titulo, descricao, localizacao, salario, requisitos, nivel_experiencia,
+    public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
+                 String salario, String requisitos, String nivel_experiencia,
+                 String tipo_contrato, String area_atuacao, String beneficios,
+                 String vinculo, String ramo, int empresa_id,
+                 String nome_empresa, String habilidadesDesejaveisStr) {
+        this(vaga_id, titulo, descricao, localizacao, salario, requisitos, 0L, nivel_experiencia,
                 tipo_contrato, area_atuacao, beneficios, vinculo, ramo, empresa_id,
-                null, habilidadesDesejaveisStr);
+                nome_empresa, habilidadesDesejaveisStr);
     }
+
 
     // Construtor para visualização (sem habilidadesDesejaveis)
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
                  String salario, String requisitos, String nivel_experiencia,
                  String tipo_contrato, String area_atuacao, String beneficios,
                  String vinculo, String ramo, int empresa_id, String nome_empresa) {
-        this(vaga_id, titulo, descricao, localizacao, salario, requisitos, nivel_experiencia,
+        this(vaga_id, titulo, descricao, localizacao, salario, requisitos, 0, nivel_experiencia,
                 tipo_contrato, area_atuacao, beneficios, vinculo, ramo, empresa_id,
                 nome_empresa, null);
     }
 
+    // Construtor usado na pré-visualização
+    public Vagas(String titulo, String descricao, String localizacao, String salario,
+                 String requisitos, String nivel_experiencia, String tipo_contrato,
+                 String area_atuacao, String beneficios, String vinculo, String ramo,
+                 long id_usuario, String habilidadesDesejaveisStr) {
+        this.vaga_id = 0; // ou -1, já que é uma vaga temporária
+        this.titulo = titulo;
+        this.descricao = descricao;
+        this.localizacao = localizacao;
+        this.salario = salario;
+        this.requisitos = requisitos;
+        this.nivel_experiencia = nivel_experiencia;
+        this.tipo_contrato = tipo_contrato;
+        this.area_atuacao = area_atuacao;
+        this.beneficios = beneficios;
+        this.vinculo = vinculo;
+        this.ramo = ramo;
+        this.id_usuario = id_usuario;
+        this.empresa_id = 0; // opcional, você pode mudar se quiser
+        this.nome_empresa = ""; // opcional, pode ajustar depois
+        this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
+    }
+
+
     // Construtor vazio
     public Vagas() {}
 
-    // Getters e Setters (mantidos iguais)
+    // Getters e Setters
     public int getVaga_id() {
         return vaga_id;
     }
@@ -146,6 +175,14 @@ public class Vagas implements Serializable {
 
     public void setRequisitos(String requisitos) {
         this.requisitos = requisitos;
+    }
+
+    public long getId_usuario() {
+        return id_usuario;
+    }
+
+    public void setId_usuario(long id_usuario) {
+        this.id_usuario = id_usuario;
     }
 
     public String getNivel_experiencia() {
@@ -212,7 +249,6 @@ public class Vagas implements Serializable {
         this.nome_empresa = nome_empresa;
     }
 
-    // Getter que converte a String em List<String>
     public List<String> getHabilidadesDesejaveis() {
         if (habilidadesDesejaveisStr != null && !habilidadesDesejaveisStr.trim().isEmpty()) {
             String[] arr = habilidadesDesejaveisStr.split(",");
@@ -238,7 +274,6 @@ public class Vagas implements Serializable {
         this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
     }
 
-    // Método para formatar salário (opcional)
     public String getSalarioFormatado() {
         try {
             double valor = Double.parseDouble(salario.replaceAll("[^\\d.]", ""));
@@ -255,6 +290,7 @@ public class Vagas implements Serializable {
                 ", empresa='" + nome_empresa + '\'' +
                 ", localizacao='" + localizacao + '\'' +
                 ", salario='" + salario + '\'' +
+                ", id_usuario=" + id_usuario +
                 '}';
     }
 }

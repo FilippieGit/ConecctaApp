@@ -9,12 +9,14 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Ocorreu um erro inesperado"
+        android:fontFamily="@font/chillax_regular"
         android:textSize="18sp"/>
 
     <Button
+        android:fontFamily="@font/chillax_semibold"
         android:id="@+id/btnRetry"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Tentar novamente"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 </LinearLayout>
