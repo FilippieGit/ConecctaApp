@@ -35,6 +35,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private MaterialToolbar idTopAppBar;
@@ -57,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     private static final int CODE_POST_REQUEST = 1025;
     private static final int REQUEST_CODE_FAVORITOS = 100;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(2);
+    private ExecutorService executor;
     private VagaDatabaseHelper dbHelper;
 
     @Override
@@ -66,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(binding.getRoot());
+
+        // Inicializa o executor
+        executor = AppExecutor.getExecutor();
 
         dbHelper = new VagaDatabaseHelper(this);
         progressBar = findViewById(R.id.progressBar);
@@ -93,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 if (pos >= 0 && pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
 
-                    executor.execute(() -> {
+                    AppExecutor.getExecutor().execute(() -> {
                         if (direction == Direction.Right) {
                             processarLike(vaga);
                         }
@@ -265,9 +270,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void preloadImages(List<Vagas> batch) {
-        executor.execute(() -> {
-            // Implemente o pré-carregamento de imagens aqui se necessário
-        });
+        try {
+            AppExecutor.getExecutor().execute(() -> {
+                // Implemente o pré-carregamento de imagens aqui se necessário
+                for (Vagas vaga : batch) {
+                    // Simulação de pré-carregamento
+                    Log.d("Preload", "Pré-carregando dados para vaga: " + vaga.getVaga_id());
+                }
+            });
+        } catch (RejectedExecutionException e) {
+            Log.e("MainActivity", "Erro ao executar pré-carregamento", e);
+        }
     }
 
     private void buscarVagas() {
@@ -275,7 +288,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void registrarInteresse(Vagas vaga) {
-        executor.execute(() -> {
+        AppExecutor.getExecutor().execute(() -> {
             HashMap<String, String> params = new HashMap<>();
             params.put("vaga_id", String.valueOf(vaga.getVaga_id()));
             params.put("usuario_id", "1");
@@ -458,9 +471,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        executor.shutdown();
+        // Não desligamos o executor aqui porque é compartilhado (singleton)
         if (dbHelper != null) {
             dbHelper.close();
+        }
+    }
+
+    public static class AppExecutor {
+        private static ExecutorService instance;
+
+        public static synchronized ExecutorService getExecutor() {
+            if (instance == null || instance.isShutdown() || instance.isTerminated()) {
+                instance = Executors.newFixedThreadPool(2);
+            }
+            return instance;
+        }
+
+        public static void shutdown() {
+            if (instance != null) {
+                instance.shutdownNow();
+                instance = null;
+            }
         }
     }
 }

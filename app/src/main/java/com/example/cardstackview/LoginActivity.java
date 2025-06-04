@@ -3,6 +3,7 @@ package com.example.cardstackview;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
@@ -28,25 +29,23 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText txtEmail, txtSenha;
     private Button btnEntrar, btnCriarConta, btnEsqSenha;
     private FirebaseAuth mAuth;
-    private String tipoUsuario = "Física";
+    private FirebaseFirestore db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
 
-        FirebaseApp.initializeApp(this); // IMPORTANTE: garante que o Firebase esteja iniciado
-        mAuth = FirebaseAuth.getInstance(); // Inicializa FirebaseAuth
+        FirebaseApp.initializeApp(this);
+        mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
-        // Views
+        // Inicializar views
         txtEmail = findViewById(R.id.txtPessoaLoginEmail);
         txtSenha = findViewById(R.id.txtPessoaLoginSenha);
         btnEntrar = findViewById(R.id.btnPessoaLoginEntrar);
         btnCriarConta = findViewById(R.id.btnPessoaLoginCriarConta);
         btnEsqSenha = findViewById(R.id.btnPessoaLoginEsqSenha);
-
-        tipoUsuario = getIntent().getStringExtra("tipoUsuario");
-        if (tipoUsuario == null) tipoUsuario = "Física";
 
         btnEntrar.setOnClickListener(v -> {
             if (isNetworkAvailable()) {
@@ -57,10 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btnCriarConta.setOnClickListener(v -> {
-            Intent intent = tipoUsuario.equals("Jurídico")
-                    ? new Intent(this, CadPJuridicaActivity.class)
-                    : new Intent(this, CadastroActivity.class);
-            startActivity(intent);
+            startActivity(new Intent(this, CadastroActivity.class));
             finish();
         });
 
@@ -89,6 +85,11 @@ public class LoginActivity extends AppCompatActivity {
             return;
         }
 
+        if (!android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+            Toast.makeText(this, "Formato de e-mail inválido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Autenticando...");
         dialog.setCancelable(false);
@@ -99,11 +100,15 @@ public class LoginActivity extends AppCompatActivity {
                     dialog.dismiss();
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null && user.isEmailVerified()) {
-                            checkUserType(user);
-                        } else {
-                            Toast.makeText(this, "Verifique seu e-mail antes de entrar", Toast.LENGTH_LONG).show();
-                            mAuth.signOut();
+                        if (user != null) {
+                            if (user.isEmailVerified()) {
+                                verificarTipoUsuario(user);
+                            } else {
+                                Toast.makeText(this,
+                                        "Verifique seu e-mail antes de entrar. Verifique sua caixa de spam também.",
+                                        Toast.LENGTH_LONG).show();
+                                mAuth.signOut();
+                            }
                         }
                     } else {
                         handleLoginError(task.getException());
@@ -111,19 +116,24 @@ public class LoginActivity extends AppCompatActivity {
                 });
     }
 
-    private void checkUserType(FirebaseUser user) {
-        Log.d("LoginDebug", "Tipo de usuário esperado: " + tipoUsuario);
-        FirebaseFirestore.getInstance().collection("users")
-                .document(user.getUid())
+    private void verificarTipoUsuario(FirebaseUser user) {
+        db.collection("users").document(user.getUid())
                 .get()
-                .addOnSuccessListener(document -> {
-                    if (document.exists()) {
-                        String userType = document.getString("tipo");
-                        Log.d("LoginDebug", "Tipo encontrado no Firestore: " + userType);
-                        if (tipoUsuario.equalsIgnoreCase(userType)) {
-                            redirectUser(user);
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String tipoUsuario = documentSnapshot.getString("tipo");
+
+                        if (tipoUsuario != null) {
+                            tipoUsuario = tipoUsuario.trim();
+                            Log.d("LoginDebug", "Tipo de usuário encontrado: " + tipoUsuario);
+
+                            // Salvar tipo do usuário nas preferências
+                            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                            prefs.edit().putString("user_type", tipoUsuario).apply();
+
+                            redirecionarUsuario(user, tipoUsuario);
                         } else {
-                            Toast.makeText(this, "Tipo de conta incorreto para este login", Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Tipo de usuário não definido", Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
                     } else {
@@ -132,17 +142,25 @@ public class LoginActivity extends AppCompatActivity {
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Erro ao acessar dados do usuário", Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Erro ao verificar tipo de usuário", Toast.LENGTH_LONG).show();
                     Log.e("Firestore", "Erro ao buscar tipo do usuário", e);
                     mAuth.signOut();
                 });
     }
 
-    private void redirectUser(FirebaseUser user) {
-        Intent intent = tipoUsuario.equals("Jurídica")
-                ? new Intent(this, TelaEmpresaActivity.class)
-                : new Intent(this, MainActivity.class);
+    private void redirecionarUsuario(FirebaseUser user, String tipoUsuario) {
+        Intent intent;
+
+        if (tipoUsuario.equalsIgnoreCase("Jurídica")) {
+            intent = new Intent(this, TelaEmpresaActivity.class);
+        } else {
+            intent = new Intent(this, MainActivity.class);
+        }
+
         intent.putExtra("user_id", user.getUid());
+        intent.putExtra("user_email", user.getEmail());
+        intent.putExtra("user_type", tipoUsuario);
+
         startActivity(intent);
         finish();
     }
@@ -169,7 +187,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onStart();
         FirebaseUser user = mAuth.getCurrentUser();
         if (user != null && user.isEmailVerified()) {
-            checkUserType(user);
+            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+            String savedUserType = prefs.getString("user_type", null);
+
+            if (savedUserType != null) {
+                redirecionarUsuario(user, savedUserType);
+            } else {
+                verificarTipoUsuario(user);
+            }
         }
     }
 }
