@@ -17,7 +17,8 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
 
-        <!-- Activities com tema consistente -->
+
+    <!-- Activities com tema consistente -->
         <activity
             android:name=".SplashActivity"
             android:exported="true"
@@ -30,8 +31,7 @@
 
         <activity
             android:name=".LoginActivity"
-            android:exported="true"
-            android:theme="@style/Theme.CardStackView"/>
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"

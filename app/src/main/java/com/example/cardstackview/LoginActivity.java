@@ -1,157 +1,175 @@
 package com.example.cardstackview;
 
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.ImageView;
 import android.widget.Toast;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.FirebaseNetworkException;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
+import com.google.firebase.auth.FirebaseAuthInvalidUserException;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private Button btnEntrar, btnCriarConta, btnEsqSenha;
     private TextInputEditText txtEmail, txtSenha;
-    private CheckBox checkEmpresa;
+    private Button btnEntrar, btnCriarConta, btnEsqSenha;
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
+    private String tipoUsuario = "Física";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.login_pessoa_fisica_layoyt);
+        setContentView(R.layout.login_layout);
 
-        mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
+        FirebaseApp.initializeApp(this); // IMPORTANTE: garante que o Firebase esteja iniciado
+        mAuth = FirebaseAuth.getInstance(); // Inicializa FirebaseAuth
 
-        // Inicializa views
+        // Views
+        txtEmail = findViewById(R.id.txtPessoaLoginEmail);
+        txtSenha = findViewById(R.id.txtPessoaLoginSenha);
         btnEntrar = findViewById(R.id.btnPessoaLoginEntrar);
         btnCriarConta = findViewById(R.id.btnPessoaLoginCriarConta);
         btnEsqSenha = findViewById(R.id.btnPessoaLoginEsqSenha);
-        txtEmail = findViewById(R.id.txtPessoaLoginEmail);
-        txtSenha = findViewById(R.id.txtPessoaLoginSenha);
-        checkEmpresa = findViewById(R.id.checkEmpresa);
 
-        btnEntrar.setOnClickListener(v -> fazerLogin());
+        tipoUsuario = getIntent().getStringExtra("tipoUsuario");
+        if (tipoUsuario == null) tipoUsuario = "Física";
 
-        btnCriarConta.setOnClickListener(v -> {
-            startActivity(new Intent(this, SelecaoActivity.class));
-            finish();
+        btnEntrar.setOnClickListener(v -> {
+            if (isNetworkAvailable()) {
+                fazerLogin();
+            } else {
+                Toast.makeText(this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
+            }
         });
 
+        btnCriarConta.setOnClickListener(v -> {
+            Intent intent = tipoUsuario.equals("Jurídico")
+                    ? new Intent(this, CadPJuridicaActivity.class)
+                    : new Intent(this, CadastroActivity.class);
+            startActivity(intent);
+            finish();
+        });
 
         btnEsqSenha.setOnClickListener(v -> {
             startActivity(new Intent(this, RecSenhaActivity.class));
         });
     }
 
+    private boolean isNetworkAvailable() {
+        try {
+            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+            NetworkInfo netInfo = cm.getActiveNetworkInfo();
+            return netInfo != null && netInfo.isConnected();
+        } catch (Exception e) {
+            Log.e("Login", "Erro ao verificar conexão", e);
+            return false;
+        }
+    }
+
     private void fazerLogin() {
         String email = txtEmail.getText().toString().trim();
-        String password = txtSenha.getText().toString().trim();
-        boolean loginComoEmpresa = checkEmpresa.isChecked(); // Checkbox marcada = login como empresa
+        String senha = txtSenha.getText().toString().trim();
 
-        if (email.isEmpty() || password.isEmpty()) {
+        if (email.isEmpty() || senha.isEmpty()) {
             Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        if (password.length() < 6) {
-            Toast.makeText(this, "A senha deve ter pelo menos 6 caracteres", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Autenticando...");
+        dialog.setCancelable(false);
+        dialog.show();
 
-        mAuth.signInWithEmailAndPassword(email, password)
+        mAuth.signInWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(task -> {
+                    dialog.dismiss();
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
-                        if (user != null) {
-                            verificarTipoUsuario(user, loginComoEmpresa);
+                        if (user != null && user.isEmailVerified()) {
+                            checkUserType(user);
+                        } else {
+                            Toast.makeText(this, "Verifique seu e-mail antes de entrar", Toast.LENGTH_LONG).show();
+                            mAuth.signOut();
                         }
                     } else {
-                        Toast.makeText(this, "Falha no login: " +
-                                task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                        handleLoginError(task.getException());
                     }
                 });
     }
 
-    private void verificarTipoUsuario(FirebaseUser user, boolean loginComoEmpresa) {
-        if (!user.isEmailVerified()) {
-            Toast.makeText(this, "Por favor, verifique seu e-mail antes de fazer login",
-                    Toast.LENGTH_LONG).show();
-            mAuth.signOut();
-            return;
-        }
-
-        db.collection("users").document(user.getUid())
+    private void checkUserType(FirebaseUser user) {
+        Log.d("LoginDebug", "Tipo de usuário esperado: " + tipoUsuario);
+        FirebaseFirestore.getInstance().collection("users")
+                .document(user.getUid())
                 .get()
-                .addOnSuccessListener(documentSnapshot -> {
-                    if (documentSnapshot.exists()) {
-                        String tipoUsuario = documentSnapshot.getString("tipo");
-
-                        // Adicione este log para depuração
-                        System.out.println("Tipo de usuário no banco: " + tipoUsuario);
-                        System.out.println("Checkbox marcada? " + loginComoEmpresa);
-
-                        if (tipoUsuario == null) {
-                            Toast.makeText(this, "Tipo de usuário não definido", Toast.LENGTH_LONG).show();
-                            mAuth.signOut();
-                            return;
-                        }
-
-                        // Verificação simplificada e mais clara
-                        boolean tipoCorreto =
-                                (loginComoEmpresa && tipoUsuario.equals("Jurídica")) ||
-                                        (!loginComoEmpresa && tipoUsuario.equals("Física"));
-
-                        if (tipoCorreto) {
-                            redirecionarParaTelaCorreta(user, loginComoEmpresa);
+                .addOnSuccessListener(document -> {
+                    if (document.exists()) {
+                        String userType = document.getString("tipo");
+                        Log.d("LoginDebug", "Tipo encontrado no Firestore: " + userType);
+                        if (tipoUsuario.equalsIgnoreCase(userType)) {
+                            redirectUser(user);
                         } else {
-                            String mensagemErro = loginComoEmpresa ?
-                                    "Você tentou fazer login como empresa, mas esta conta é de candidato" :
-                                    "Você tentou fazer login como candidato, mas esta conta é de empresa";
-
-                            Toast.makeText(this, mensagemErro, Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Tipo de conta incorreto para este login", Toast.LENGTH_LONG).show();
                             mAuth.signOut();
                         }
                     } else {
-                        Toast.makeText(this, "Dados do usuário não encontrados",
-                                Toast.LENGTH_LONG).show();
+                        Toast.makeText(this, "Dados do usuário não encontrados", Toast.LENGTH_LONG).show();
                         mAuth.signOut();
                     }
                 })
                 .addOnFailureListener(e -> {
-                    Toast.makeText(this, "Erro ao verificar tipo de usuário: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Erro ao acessar dados do usuário", Toast.LENGTH_LONG).show();
+                    Log.e("Firestore", "Erro ao buscar tipo do usuário", e);
                     mAuth.signOut();
                 });
     }
 
-    private void redirecionarParaTelaCorreta(FirebaseUser user, boolean isEmpresa) {
-        System.out.println("Redirecionando para: " + (isEmpresa ? "TelaEmpresaActivity" : "MainActivity"));
-
-        Toast.makeText(this, "Login realizado com sucesso!", Toast.LENGTH_SHORT).show();
-
-        Intent intent;
-        if (isEmpresa) {
-            intent = new Intent(this, TelaEmpresaActivity.class);
-            intent.putExtra("empresa_id", user.getUid());
-        } else {
-            intent = new Intent(this, MainActivity.class);
-            intent.putExtra("usuario_id", user.getUid());
-        }
-
+    private void redirectUser(FirebaseUser user) {
+        Intent intent = tipoUsuario.equals("Jurídica")
+                ? new Intent(this, TelaEmpresaActivity.class)
+                : new Intent(this, MainActivity.class);
+        intent.putExtra("user_id", user.getUid());
         startActivity(intent);
         finish();
+    }
+
+    private void handleLoginError(Exception e) {
+        String mensagem = "Erro ao fazer login";
+
+        if (e instanceof FirebaseAuthInvalidUserException) {
+            mensagem = "Usuário não encontrado";
+        } else if (e instanceof FirebaseAuthInvalidCredentialsException) {
+            mensagem = "Senha incorreta";
+        } else if (e instanceof FirebaseNetworkException) {
+            mensagem = "Erro de rede. Verifique sua conexão.";
+        } else if (e != null) {
+            mensagem = "Erro: " + e.getLocalizedMessage();
+            Log.e("LoginError", "Erro detalhado", e);
+        }
+
+        Toast.makeText(this, mensagem, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null && user.isEmailVerified()) {
+            checkUserType(user);
+        }
     }
 }
