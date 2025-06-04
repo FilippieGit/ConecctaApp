@@ -54,6 +54,7 @@
                         android:id="@+id/textNomeFeedback"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/chillax_regular"
                         android:hint="Digite seu nome completo" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -76,6 +77,7 @@
                         android:id="@+id/TextEmailFeedback"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/chillax_regular"
                         android:hint="Digite seu e-mail" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -98,6 +100,7 @@
                         android:id="@+id/TextTelFeedback"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:fontFamily="@font/chillax_regular"
                         android:hint="Digite seu telefone" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -109,17 +112,18 @@
                     android:paddingStart="30dp"
                     android:paddingEnd="30dp"
                     app:boxBackgroundMode="outline"
-                    app:boxCornerRadiusBottomEnd="50dp"
-                    app:boxCornerRadiusBottomStart="50dp"
-                    app:boxCornerRadiusTopEnd="50dp"
-                    app:boxCornerRadiusTopStart="50dp"
+                    app:boxCornerRadiusBottomEnd="30dp"
+                    app:boxCornerRadiusBottomStart="30dp"
+                    app:boxCornerRadiusTopEnd="30dp"
+                    app:boxCornerRadiusTopStart="30dp"
                     app:boxStrokeColor="@color/preto"
                     app:endIconMode="clear_text">
 
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/textfeedback"
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="120dp"
+                        android:fontFamily="@font/chillax_regular"
                         android:hint="Escreva seu FeedBack" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -130,6 +134,7 @@
                     android:layout_marginStart="75dp"
                     android:layout_marginTop="25dp"
                     android:layout_marginEnd="75dp"
+                    android:fontFamily="@font/chillax_semibold"
                     android:text="Enviar"
                     app:cornerRadius="50dp" />
 
