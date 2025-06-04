@@ -9,6 +9,7 @@ import android.view.WindowManager;
 
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
@@ -34,6 +35,7 @@ public class TelaEmpresaActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigation_view);
         topAppBar = findViewById(R.id.topAppBar);
         bottomNavigationView = findViewById(R.id.bottomNavigation);
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             Window window = getWindow();

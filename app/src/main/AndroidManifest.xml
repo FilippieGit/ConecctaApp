@@ -21,12 +21,7 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.CardStackView">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.CardStackView"/>
 
         <activity
             android:name=".LoginActivity"
@@ -128,8 +123,13 @@
 
         <activity
             android:name=".TelaEmpresaActivity"
-            android:exported="false"
-            android:theme="@style/Theme.CardStackView"/>
+            android:exported="true"
+            android:theme="@style/Theme.CardStackView">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".SobreNosActivity"
