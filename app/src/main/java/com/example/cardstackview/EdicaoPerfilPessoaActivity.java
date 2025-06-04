@@ -1,7 +1,11 @@
 package com.example.cardstackview;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
 import android.os.Bundle;
+import android.util.Base64;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -11,16 +15,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,6 +46,14 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
     private EditText edtDescricao, edtTelefone, edtEmail, edtSetor;
 
+    // Botão de editar foto agora é um Button comum (conforme XML)
+    private Button btnEditPhoto;
+
+
+    // Para armazenar o Base64 da imagem selecionada
+    private String imagemPerfilBase64 = null;
+
+    private static final int REQUEST_CODE_PICK_IMAGE = 1001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,36 +63,87 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
 
         // 1) Init Firebase
         mAuth = FirebaseAuth.getInstance();
-        db    = FirebaseFirestore.getInstance();
-        uid   = mAuth.getCurrentUser().getUid();
+        db = FirebaseFirestore.getInstance();
+        uid = mAuth.getCurrentUser().getUid();
 
-        // 2) Bind views
-        layoutCertificados    = findViewById(R.id.layoutCertificados);
-        layoutExperiencias    = findViewById(R.id.layoutExperiencias);
-        layoutFormacoes       = findViewById(R.id.layoutFormacoes);
+        // 2) Bind das views
+        layoutCertificados = findViewById(R.id.layoutCertificados);
+        layoutExperiencias = findViewById(R.id.layoutExperiencias);
+        layoutFormacoes = findViewById(R.id.layoutFormacoes);
 
-        btnAddCertificado     = findViewById(R.id.btnAddCertificado);
-        btnAddExperiencia     = findViewById(R.id.btnAddExperiencia);
-        btnAddFormacao        = findViewById(R.id.btnAddFormacao);
-        btnSalvarPerfil       = findViewById(R.id.btnSalvarPerfil);
+        btnAddCertificado = findViewById(R.id.btnAddCertificado);
+        btnAddExperiencia = findViewById(R.id.btnAddExperiencia);
+        btnAddFormacao = findViewById(R.id.btnAddFormacao);
+        btnSalvarPerfil = findViewById(R.id.btnSalvarPerfil);
         imgVoltarPerfilPessoa = findViewById(R.id.imgVoltarPerfilPessoa);
 
-        // 3) Listeners
+        edtDescricao = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.textField))
+                .getEditText();
+        edtTelefone = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilTelefone))
+                .getEditText();
+        edtEmail = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilEmail))
+                .getEditText();
+        edtSetor = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilArea))
+                .getEditText();
+
+        // Bind do ImageView circular e do botão "editar foto" (agora Button)
+
+        btnEditPhoto = findViewById(R.id.btnEditPhoto);
+
+        // 3) Listeners dos botões existentes
         btnAddCertificado.setOnClickListener(v -> mostrarDialogCertificado());
         btnAddExperiencia.setOnClickListener(v -> mostrarDialogExperiencia());
         btnAddFormacao.setOnClickListener(v -> mostrarDialogFormacao());
         btnSalvarPerfil.setOnClickListener(v -> saveProfile());
         imgVoltarPerfilPessoa.setOnClickListener(v -> finish());
 
-        // 4) Load existing data
+        // 4) Listener do botão de editar foto: abre seletor de PNG
+        btnEditPhoto.setOnClickListener(v -> {
+            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/png"); // apenas PNG
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            startActivityForResult(
+                    Intent.createChooser(intent, "Selecione um arquivo PNG"),
+                    REQUEST_CODE_PICK_IMAGE
+            );
+        });
 
-        edtDescricao = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.textField)).getEditText();
-        edtTelefone  = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilTelefone)).getEditText();
-        edtEmail     = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilEmail)).getEditText();
-        edtSetor     = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilArea)).getEditText();
+        // Se quiser carregar dados existentes (incluindo imagem), chame loadProfile() aqui:
+        // loadProfile();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == REQUEST_CODE_PICK_IMAGE && resultCode == RESULT_OK && data != null) {
+            Uri imageUri = data.getData();
+            if (imageUri != null) {
+                try {
+                    // 1) Pegar InputStream da URI
+                    InputStream is = getContentResolver().openInputStream(imageUri);
+                    // 2) Converter para Bitmap
+                    Bitmap bitmap = BitmapFactory.decodeStream(is);
+                    is.close();
+
+                    // 3) Converter Bitmap para Base64 (PNG)
+                    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte[] byteArray = baos.toByteArray();
+                    String base64Image = Base64.encodeToString(byteArray, Base64.DEFAULT);
+
+                    // 4) Guardar Base64 em variável membro
+                    this.imagemPerfilBase64 = base64Image;
+
+                    // 5) Exibir a imagem no CircleImageView
 
 
-
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Erro ao ler imagem: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }
     }
 
     private void loadProfile() {
@@ -88,15 +152,22 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) return;
+
+                    // Se você armazenou o caminho da imagem em Firestore, poderia usar Glide/Picasso para carregar:
+                    // String caminhoImagem = doc.getString("imagem_perfil");
+                    // if (caminhoImagem != null) {
+                    //     Glide.with(this).load(caminhoImagem).into(profileImage);
+                    // }
+
                     List<String> certs = (List<String>) doc.get("certificados");
-                    List<String> exps  = (List<String>) doc.get("experiencias");
+                    List<String> exps = (List<String>) doc.get("experiencias");
                     List<String> forms = (List<String>) doc.get("formacoes");
-                    if (certs  != null) for (String s : certs) adicionarItem(layoutCertificados, s);
-                    if (exps   != null) for (String s : exps) adicionarItem(layoutExperiencias, s);
-                    if (forms  != null) for (String s : forms) adicionarItem(layoutFormacoes, s);
+                    if (certs != null) for (String s : certs) adicionarItem(layoutCertificados, s);
+                    if (exps != null) for (String s : exps) adicionarItem(layoutExperiencias, s);
+                    if (forms != null) for (String s : forms) adicionarItem(layoutFormacoes, s);
                 })
                 .addOnFailureListener(e ->
-                        Toast.makeText(this, "Erro ao carregar perfil: "+e.getMessage(),
+                        Toast.makeText(this, "Erro ao carregar perfil: " + e.getMessage(),
                                 Toast.LENGTH_LONG).show()
                 );
     }
@@ -123,7 +194,7 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
             forms.add(tv.getText().toString());
         }
 
-        // Mapa com os dados
+        // Mapa com os dados textuais
         Map<String, String> dados = new HashMap<>();
         dados.put("uid", uid);
         dados.put("telefone", edtTelefone.getText().toString());
@@ -136,31 +207,41 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
         // Envio via POST
         OkHttpClient client = new OkHttpClient();
         okhttp3.FormBody.Builder formBuilder = new okhttp3.FormBody.Builder();
+
+        // Adiciona campos textuais
         for (Map.Entry<String, String> entry : dados.entrySet()) {
             formBuilder.add(entry.getKey(), entry.getValue());
         }
 
+        // Adiciona o Base64 da imagem, se houver sido selecionada
+        if (imagemPerfilBase64 != null) {
+            formBuilder.add("imagem_perfil", imagemPerfilBase64);
+        }
+
         okhttp3.RequestBody body = formBuilder.build();
         okhttp3.Request request = new okhttp3.Request.Builder()
-                .url(Api.URL_UPDATE_USER) // <- Substituir pelo seu endpoint
+                .url(Api.URL_UPDATE_USER) // seu endpoint PHP
                 .post(body)
                 .build();
 
         client.newCall(request).enqueue(new okhttp3.Callback() {
             @Override
             public void onFailure(Call call, IOException e) {
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                runOnUiThread(() ->
+                        Toast.makeText(getApplicationContext(), "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show()
+                );
             }
 
             @Override
             public void onResponse(Call call, okhttp3.Response response) throws IOException {
-                runOnUiThread(() -> Toast.makeText(getApplicationContext(), "Perfil atualizado!", Toast.LENGTH_SHORT).show());
-                startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
-                finish();
+                runOnUiThread(() -> {
+                    Toast.makeText(getApplicationContext(), "Perfil atualizado!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(getApplicationContext(), PerfilActivity.class));
+                    finish();
+                });
             }
         });
     }
-
 
     private void mostrarDialogCertificado() {
         View view = getLayoutInflater().inflate(R.layout.dialog_adicionar_certificado_layout, null);
@@ -174,7 +255,9 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
                 .create();
 
         btnSalvar.setOnClickListener(v -> {
-            String texto = nome.getText().toString() + " - " + instituicao.getText().toString() + " (" + ano.getText().toString() + ")";
+            String texto = nome.getText().toString()
+                    + " - " + instituicao.getText().toString()
+                    + " (" + ano.getText().toString() + ")";
             adicionarItem(layoutCertificados, texto);
             dialog.dismiss();
         });
@@ -196,7 +279,11 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
                 .create();
 
         btnSalvar.setOnClickListener(v -> {
-            String texto = cargo.getText().toString() + " na " + empresa.getText().toString() + " (" + periodo.getText().toString() + ", " + local.getText().toString() + ")\n" + descricao.getText().toString();
+            String texto = cargo.getText().toString()
+                    + " na " + empresa.getText().toString()
+                    + " (" + periodo.getText().toString()
+                    + ", " + local.getText().toString() + ")\n"
+                    + descricao.getText().toString();
             adicionarItem(layoutExperiencias, texto);
             dialog.dismiss();
         });
@@ -218,9 +305,11 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
                 .create();
 
         btnSalvar.setOnClickListener(v -> {
-            String texto = curso.getText().toString() + " - " + instituicao.getText().toString() +
-                    " (" + anoInicio.getText().toString() + "–" + anoConclusao.getText().toString() + ")\n" +
-                    descricao.getText().toString();
+            String texto = curso.getText().toString()
+                    + " - " + instituicao.getText().toString()
+                    + " (" + anoInicio.getText().toString()
+                    + "–" + anoConclusao.getText().toString() + ")\n"
+                    + descricao.getText().toString();
             adicionarItem(layoutFormacoes, texto);
             dialog.dismiss();
         });
