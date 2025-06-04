@@ -45,8 +45,9 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
+                android:fontFamily="@font/chillax_bold"
                 android:text="Título da Vaga"
-                android:textColor="@color/preto"
+                android:textColor="@color/azulprimary"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 tools:text="Desenvolvedor Android" />
@@ -57,6 +58,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="4dp"
+                android:fontFamily="@font/chillax_regular"
                 android:ellipsize="end"
                 android:maxLines="1"
                 android:text="Localização ou breve descrição"

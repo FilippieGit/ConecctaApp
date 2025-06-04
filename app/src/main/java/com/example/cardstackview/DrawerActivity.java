@@ -1,6 +1,7 @@
 package com.example.cardstackview;
 
 import android.os.Bundle;
+import android.view.View;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -32,5 +33,6 @@ public class DrawerActivity extends AppCompatActivity {
         idDrawer.addDrawerListener(toggle);
 
         toggle.syncState();
+
     }
 }

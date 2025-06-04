@@ -4,7 +4,6 @@
     <style name="Base.Theme.CardStackView" parent="Theme.MaterialComponents.Light.NoActionBar">
         <!-- Cores principais -->
         <item name="colorPrimary">@color/azulprimary</item>
-        <item name="android:statusBarColor">@color/azulprimary</item>
         <item name="colorPrimaryVariant">@color/azulescuro</item>
         <item name="colorOnPrimary">@color/brancosecondary</item>
         <item name="colorSecondary">@color/verde</item>
@@ -17,7 +16,7 @@
 
         <!-- Status bar -->
         <item name="android:statusBarColor">@color/azulprimary</item>
-        <item name="android:windowLightStatusBar">true</item> <!-- Ícones escuros -->
+        <item name="android:windowLightStatusBar">false</item> <!-- Ícones escuros -->
 
         <!-- Fundo padrão -->
         <item name="android:windowBackground">@color/brancosecondary</item>
