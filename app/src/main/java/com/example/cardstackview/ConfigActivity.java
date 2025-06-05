@@ -1,7 +1,9 @@
 package com.example.cardstackview;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.widget.Toast;
@@ -21,7 +23,8 @@ public class ConfigActivity extends AppCompatActivity {
     MaterialToolbar idTopAppBar;
     DrawerLayout idDrawer;
     NavigationView idNavView;
-    private FirebaseAuth mAuth; // Adicione esta linha
+    private FirebaseAuth mAuth;
+    private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,6 +33,7 @@ public class ConfigActivity extends AppCompatActivity {
 
         // Inicializa o Firebase Auth
         mAuth = FirebaseAuth.getInstance();
+        sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE);
 
         // Inicializar os componentes
         idTopAppBar = findViewById(R.id.idConfigTopAppBar);
@@ -39,7 +43,6 @@ public class ConfigActivity extends AppCompatActivity {
         // Configura o botão de sair da conta
         MaterialButton btnSair = findViewById(R.id.btnSairContaConfig);
         btnSair.setOnClickListener(v -> fazerLogout());
-
 
         // Configuração do ActionBarDrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -85,13 +88,20 @@ public class ConfigActivity extends AppCompatActivity {
                 .setTitle("Sair da conta")
                 .setMessage("Tem certeza que deseja sair?")
                 .setPositiveButton("Sair", (dialog, which) -> {
+                    // Limpa as preferências compartilhadas
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.clear();
+                    editor.apply();
+
+                    // Faz logout do Firebase
                     mAuth.signOut();
+
                     Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show();
 
                     Intent intent = new Intent(this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                     startActivity(intent);
-                    finish();
+                    finishAffinity(); // Fecha todas as atividades
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
@@ -106,10 +116,9 @@ public class ConfigActivity extends AppCompatActivity {
         }
     }
 
-    // Função para redirecionar para a tela de Login de Candidato
     private void goToLoginCandidato() {
         Intent intent = new Intent(ConfigActivity.this, LoginActivity.class);
         startActivity(intent);
-        finish(); // Fecha a tela atual, se desejar
+        finish();
     }
 }
