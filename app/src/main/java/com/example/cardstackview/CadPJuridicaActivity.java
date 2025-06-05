@@ -30,18 +30,18 @@ public class CadPJuridicaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
-        setContentView(R.layout.cad_pjuridica_layout);
+        setContentView(R.layout.cad_p_fisica_layout);
 
         mAuth = FirebaseAuth.getInstance();
         db = FirebaseFirestore.getInstance();
 
-        EditText edtEmail = findViewById(R.id.edtLoginEmail);
-        EditText edtNome = findViewById(R.id.edtNomeEmpresa);
-        EditText edtWebsite = findViewById(R.id.edtWebsite);
-        EditText edtCNPJ = findViewById(R.id.edtcnpj);
-        EditText edtSenha = findViewById(R.id.edtLoginSenha);
-        Button btnCadastrar = findViewById(R.id.btnLoginEntrar);
-        ImageView btnVoltar = findViewById(R.id.imgEsqSenhabtnVoltar);
+        EditText edtEmail = findViewById(R.id.edtEmail);
+        EditText edtNome = findViewById(R.id.edtNome);
+        EditText edtCidade = findViewById(R.id.edtCidade);
+        EditText edtCPF = findViewById(R.id.edtCPF);
+        EditText edtSenha = findViewById(R.id.edtSenha);
+        Button btnCadastrar = findViewById(R.id.btnCadastrar);
+        ImageView btnVoltar = findViewById(R.id.imgVoltarCadastro);
 
         btnVoltar.setOnClickListener(v -> {
             startActivity(new Intent(this, LoginActivity.class));
@@ -52,10 +52,10 @@ public class CadPJuridicaActivity extends AppCompatActivity {
             String email = edtEmail.getText().toString().trim();
             String senha = edtSenha.getText().toString().trim();
             String nome = edtNome.getText().toString().trim();
-            String website = edtWebsite.getText().toString().trim();
-            String CNPJ = edtCNPJ.getText().toString().trim();
+            String cidade = edtCidade.getText().toString().trim();
+            String CPF = edtCPF.getText().toString().trim();
 
-            if (email.isEmpty() || senha.isEmpty() || nome.isEmpty() || website.isEmpty() || CNPJ.isEmpty()) {
+            if (email.isEmpty() || senha.isEmpty() || nome.isEmpty() || cidade.isEmpty() || CPF.isEmpty()) {
                 Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -65,19 +65,19 @@ public class CadPJuridicaActivity extends AppCompatActivity {
                 return;
             }
 
-            // Verifica se CNPJ já existe
+            // Verifica se CPF já existe
             db.collection("users")
-                    .whereEqualTo("CNPJ", CNPJ)
+                    .whereEqualTo("CPF", CPF)
                     .get()
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             if (!task.getResult().isEmpty()) {
-                                Toast.makeText(this, "CNPJ já cadastrado", Toast.LENGTH_LONG).show();
+                                Toast.makeText(this, "CPF já cadastrado", Toast.LENGTH_LONG).show();
                             } else {
-                                criarEmpresa(email, senha, nome, website, CNPJ, "Jurídica");
+                                criarUsuario(email, senha, nome, cidade, CPF, "Física");
                             }
                         } else {
-                            Toast.makeText(this, "Erro ao verificar CNPJ: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                            Toast.makeText(this, "Erro ao verificar CPF: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
                         }
                     });
         });
@@ -89,23 +89,33 @@ public class CadPJuridicaActivity extends AppCompatActivity {
         });
     }
 
-    private void criarEmpresa(String email, String senha, String nome, String website, String documento, String tipo) {
+    private void criarUsuario(String email, String senha, String nome, String cidade, String documento, String tipo) {
         mAuth.createUserWithEmailAndPassword(email, senha)
                 .addOnCompleteListener(task -> {
                     if (task.isSuccessful()) {
                         FirebaseUser user = mAuth.getCurrentUser();
                         if (user != null) {
-                            Map<String, Object> empresaData = new HashMap<>();
-                            empresaData.put("email", email);
-                            empresaData.put("nome", nome);
-                            empresaData.put("website", website);
-                            empresaData.put("CNPJ", documento);
-                            empresaData.put("tipo", tipo);
-                            empresaData.put("vagasPublicadas", new ArrayList<String>());
-                            empresaData.put("dataCadastro", System.currentTimeMillis());
+                            Map<String, Object> userData = new HashMap<>();
+                            userData.put("email", email);
+                            userData.put("nome", nome);
+                            userData.put("cidade", cidade);
+                            userData.put("tipo", tipo);
+                            userData.put("CPF", documento);
+
+                            // **Campos adicionados para que o documento de pessoa física
+                            // também tenha CNPJ e website (strings vazias) no Firestore**
+                            userData.put("CNPJ", "");
+                            userData.put("website", "");
+
+                            // Manter os arrays que já existiam
+                            userData.put("certificados", new ArrayList<String>());
+                            userData.put("experiencias", new ArrayList<String>());
+                            userData.put("formacoes", new ArrayList<String>());
+
+                            userData.put("dataCadastro", System.currentTimeMillis());
 
                             db.collection("users").document(user.getUid())
-                                    .set(empresaData)
+                                    .set(userData)
                                     .addOnSuccessListener(aVoid -> {
                                         user.sendEmailVerification()
                                                 .addOnCompleteListener(verifyTask -> {
