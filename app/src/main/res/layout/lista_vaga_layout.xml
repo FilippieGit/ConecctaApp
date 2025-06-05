@@ -18,11 +18,11 @@
         android:fitsSystemWindows="true">
 
         <!-- App Bar (include) -->
-        <include
+        <!--<include
             android:id="@+id/app_bar_main"
             layout="@layout/curriculos_app_bar_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content" />-->
 
         <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView

@@ -155,19 +155,26 @@ public class TelaEmpresaActivity extends AppCompatActivity {
 
     private void handleBottomNavigationItemSelected(int itemId) {
         Fragment selectedFragment = null;
+        String title = "";  // Novo: define o título a ser usado
 
         if (itemId == R.id.nav_favorite) {
             selectedFragment = new ModeloBancoTalentosFragment();
+            title = "Banco de Talentos";
         } else if (itemId == R.id.nav_home) {
             selectedFragment = new ModeloTelaPrincipalFragment();
+            title = "Tela Principal";
         } else if (itemId == R.id.nav_profile) {
-            selectedFragment = new ModeloCurrAleatFragment();
+            selectedFragment = new PerfilEmpresaActivity();
+            title = "Perfil da Empresa";
         }
 
         if (selectedFragment != null) {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_empresa, selectedFragment)
                     .commit();
+
+            // Atualiza o título da toolbar
+            setToolbarTitle(title);
         }
     }
 

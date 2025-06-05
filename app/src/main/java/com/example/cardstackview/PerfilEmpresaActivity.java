@@ -2,57 +2,49 @@ package com.example.cardstackview;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 
-import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.fragment.app.Fragment;
 
-public class PerfilEmpresaActivity extends AppCompatActivity {
+public class PerfilEmpresaActivity extends Fragment {
 
-    ImageView imgPerfilJbtnVoltar;
+    private ImageView imgPerfilJbtnVoltar;
+    private Button btnJEditarPerfil;
 
-    Button btnJEditarPerfil;
+    public PerfilEmpresaActivity() {
+        // Construtor vazio obrigatório
+    }
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
-        setContentView(R.layout.perfil_empresa_layout);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+    public View onCreateView(@NonNull LayoutInflater inflater,
+                             @Nullable ViewGroup container,
+                             @Nullable Bundle savedInstanceState) {
+
+        // Infla o layout XML
+        View view = inflater.inflate(R.layout.perfil_empresa_layout, container, false);
+
+        // Inicializa os componentes
+        imgPerfilJbtnVoltar = view.findViewById(R.id.imgPerfilJbtnVoltar);
+        btnJEditarPerfil = view.findViewById(R.id.btnJEditarPerfil);
+
+        // Função de voltar
+        imgPerfilJbtnVoltar.setOnClickListener(v -> {
+            requireActivity().onBackPressed(); // Volta para o fragment anterior
         });
 
-        //Função de voltar
-
-        imgPerfilJbtnVoltar = findViewById(R.id.imgPerfilJbtnVoltar);
-
-        imgPerfilJbtnVoltar.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startActivity(new Intent(getApplicationContext(), MainActivity.class));
-                finish(); // Apenas volta para a tela anterior
-            }
+        // Função de editar perfil
+        btnJEditarPerfil.setOnClickListener(v -> {
+            startActivity(new Intent(requireContext(), EdicaoPerfilEmpresaActivity.class));
+            requireActivity().finish(); // Encerra se desejar remover a tela atual da stack
         });
 
-        //Função de voltar
-
-        btnJEditarPerfil = findViewById(R.id.btnJEditarPerfil);
-
-        btnJEditarPerfil.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(getApplicationContext(), EdicaoPerfilEmpresaActivity.class));
-                finish();
-
-            }
-        });
+        return view;
     }
 }
