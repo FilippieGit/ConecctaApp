@@ -13,6 +13,12 @@
         android:orientation="vertical"
         android:fitsSystemWindows="true">
 
+        <!--<include
+            android:id="@+id/app_bar_main"
+            layout="@layout/telaprincipal_app_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />-->
+
         <com.google.android.material.appbar.MaterialToolbar
             android:id="@+id/topAppBar"
             android:layout_width="match_parent"
@@ -21,7 +27,7 @@
             app:navigationIcon="@drawable/baseline_menu"
             app:titleTextAppearance="@style/ToolbarTitleText"
             app:title="Tela principal"
-            app:titleTextColor="@color/brancosecondary" />
+            app:titleTextColor="@color/brancosecondary"/>
 
         <FrameLayout
             android:id="@+id/fragment_container_empresa"
