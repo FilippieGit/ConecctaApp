@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         });
 
         btnCriarConta.setOnClickListener(v -> {
-            startActivity(new Intent(this, CadastroActivity.class));
+            startActivity(new Intent(this, SelecaoActivity.class));
             finish();
         });
 
