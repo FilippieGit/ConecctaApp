@@ -13,7 +13,7 @@ public class Api {
 
 //private static final String BASE_IP = "192.168.1.9"; // Filippie
 //private static final String BASE_IP = "192.168.22.160"; // Lula
-    private static final String BASE_IP = "192.168.77.42"; // IPs aleatórios
+    private static final String BASE_IP = "192.168.123.42"; // IPs aleatórios
 
 
     // Endpoints principais

@@ -54,12 +54,8 @@
             super.onCreate(savedInstanceState);
             setContentView(R.layout.criar_vaga_layout);
 
-            // Obter o ID do usuário da intent ou de SharedPreferences
+            // Obter o ID do usuário da intent
             userId = getIntent().getLongExtra("USER_ID", -1);
-            // Ou, se estiver usando SharedPreferences:
-            // SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-            // userId = prefs.getLong("user_id", -1);
-
             if (userId == -1) {
                 Toast.makeText(this, "Erro: Usuário não identificado", Toast.LENGTH_SHORT).show();
                 finish();
@@ -189,13 +185,14 @@
             Vagas vaga = new Vagas(
                     titulo, descricao, localizacao, salario, requisitos,
                     nivel, contrato, area, beneficios, vinculo, ramo,
-                    userId, // Usando o userId como id_empresa
+                    userId, // Passando o userId como id_empresa (ou criar campo separado se necessário)
                     habilidadesStr
             );
 
             // Enviar para pré-visualização
             Intent intent = new Intent(this, VagaPreVisualizacaoActivity.class);
             intent.putExtra(Constants.EXTRA_VAGA, vaga);
+            intent.putExtra("USER_ID", userId); // Passando o userId novamente
             startActivity(intent);
         }
 

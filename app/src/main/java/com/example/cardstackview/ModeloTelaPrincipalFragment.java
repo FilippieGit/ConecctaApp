@@ -204,8 +204,19 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     }
 
     private void configurarListeners(View view) {
-        view.findViewById(R.id.idAFAB).setOnClickListener(v ->
-                startActivityForResult(new Intent(requireActivity(), CriarVagaActivity.class), REQUEST_CRIAR_VAGA));
+        view.findViewById(R.id.idAFAB).setOnClickListener(v -> {
+            // Obter o ID do usuário da activity pai
+            long userId = ((TelaEmpresaActivity) requireActivity()).getUserId();
+
+            if (userId == -1) {
+                Toast.makeText(requireContext(), "Erro: ID do usuário não encontrado", Toast.LENGTH_LONG).show();
+                return;
+            }
+
+            Intent intent = new Intent(requireActivity(), CriarVagaActivity.class);
+            intent.putExtra("USER_ID", userId);
+            startActivityForResult(intent, REQUEST_CRIAR_VAGA);
+        });
     }
 
     @Override

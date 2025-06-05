@@ -27,7 +27,7 @@ public class Vagas implements Serializable {
     private String requisitos;
 
     @SerializedName("id_usuario")
-    private long id_usuario; // Campo adicionado
+    private long id_usuario;
 
     @SerializedName("nivel_experiencia")
     private String nivel_experiencia;
@@ -56,6 +56,8 @@ public class Vagas implements Serializable {
     @SerializedName("habilidades_desejaveis")
     private String habilidadesDesejaveisStr;
 
+    // Construtores
+
     // Construtor completo
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
                  String salario, String requisitos, long id_usuario, String nivel_experiencia,
@@ -80,6 +82,7 @@ public class Vagas implements Serializable {
         this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
     }
 
+    // Construtor sem id_usuario (compatibilidade)
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
                  String salario, String requisitos, String nivel_experiencia,
                  String tipo_contrato, String area_atuacao, String beneficios,
@@ -89,7 +92,6 @@ public class Vagas implements Serializable {
                 tipo_contrato, area_atuacao, beneficios, vinculo, ramo, empresa_id,
                 nome_empresa, habilidadesDesejaveisStr);
     }
-
 
     // Construtor para visualização (sem habilidadesDesejaveis)
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
@@ -101,34 +103,20 @@ public class Vagas implements Serializable {
                 nome_empresa, null);
     }
 
-    // Construtor usado na pré-visualização
+    // Construtor simplificado para criação
     public Vagas(String titulo, String descricao, String localizacao, String salario,
                  String requisitos, String nivel_experiencia, String tipo_contrato,
                  String area_atuacao, String beneficios, String vinculo, String ramo,
                  long id_usuario, String habilidadesDesejaveisStr) {
-        this.vaga_id = 0; // ou -1, já que é uma vaga temporária
-        this.titulo = titulo;
-        this.descricao = descricao;
-        this.localizacao = localizacao;
-        this.salario = salario;
-        this.requisitos = requisitos;
-        this.nivel_experiencia = nivel_experiencia;
-        this.tipo_contrato = tipo_contrato;
-        this.area_atuacao = area_atuacao;
-        this.beneficios = beneficios;
-        this.vinculo = vinculo;
-        this.ramo = ramo;
-        this.id_usuario = id_usuario;
-        this.empresa_id = 0; // opcional, você pode mudar se quiser
-        this.nome_empresa = ""; // opcional, pode ajustar depois
-        this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
+        this(0, titulo, descricao, localizacao, salario, requisitos, id_usuario, nivel_experiencia,
+                tipo_contrato, area_atuacao, beneficios, vinculo, ramo, 0, "", habilidadesDesejaveisStr);
     }
-
 
     // Construtor vazio
     public Vagas() {}
 
     // Getters e Setters
+
     public int getVaga_id() {
         return vaga_id;
     }
@@ -286,11 +274,18 @@ public class Vagas implements Serializable {
     @Override
     public String toString() {
         return "Vaga{" +
-                "titulo='" + titulo + '\'' +
+                "id=" + vaga_id +
+                ", titulo='" + titulo + '\'' +
                 ", empresa='" + nome_empresa + '\'' +
                 ", localizacao='" + localizacao + '\'' +
                 ", salario='" + salario + '\'' +
                 ", id_usuario=" + id_usuario +
+                ", habilidades=" + habilidadesDesejaveisStr +
                 '}';
+    }
+
+    // Método adicional para verificar se a vaga pertence ao usuário
+    public boolean pertenceAoUsuario(long userId) {
+        return this.id_usuario == userId;
     }
 }

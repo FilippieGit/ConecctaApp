@@ -51,7 +51,7 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.vaga_pre_visualizacao_layout);
 
-        // Obter o ID do usuário
+        // Obter o ID do usuário da intent
         userId = getIntent().getLongExtra("USER_ID", -1);
         if (userId == -1) {
             Toast.makeText(this, "Erro: Usuário não identificado", Toast.LENGTH_SHORT).show();

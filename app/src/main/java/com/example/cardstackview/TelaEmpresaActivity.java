@@ -171,6 +171,10 @@ public class TelaEmpresaActivity extends AppCompatActivity {
         }
     }
 
+    public long getUserId() {
+        return getIntent().getLongExtra("USER_ID", -1);
+    }
+
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
