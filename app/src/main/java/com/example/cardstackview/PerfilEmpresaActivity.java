@@ -13,8 +13,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
 public class PerfilEmpresaActivity extends Fragment {
-
-    private ImageView imgPerfilJbtnVoltar;
     private Button btnJEditarPerfil;
 
     public PerfilEmpresaActivity() {
@@ -31,13 +29,7 @@ public class PerfilEmpresaActivity extends Fragment {
         View view = inflater.inflate(R.layout.perfil_empresa_layout, container, false);
 
         // Inicializa os componentes
-        imgPerfilJbtnVoltar = view.findViewById(R.id.imgPerfilJbtnVoltar);
         btnJEditarPerfil = view.findViewById(R.id.btnJEditarPerfil);
-
-        // Função de voltar
-        imgPerfilJbtnVoltar.setOnClickListener(v -> {
-            requireActivity().onBackPressed(); // Volta para o fragment anterior
-        });
 
         // Função de editar perfil
         btnJEditarPerfil.setOnClickListener(v -> {
