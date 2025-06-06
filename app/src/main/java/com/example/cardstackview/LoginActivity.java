@@ -211,7 +211,7 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
 
-        editor.putLong("user_id", userData.getLong("id"));
+        editor.putLong("user_id", userData.getLong("id")); // Garanta que está usando o nome correto do campo
         editor.putString("user_type", userData.getString("tipo"));
         editor.putString("nome", userData.optString("nome", ""));
         editor.putString("username", userData.optString("username", ""));

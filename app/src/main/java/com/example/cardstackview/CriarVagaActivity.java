@@ -55,7 +55,8 @@ public class CriarVagaActivity extends AppCompatActivity {
         setContentView(R.layout.criar_vaga_layout);
 
         // Obter o ID do usuário da intent
-        userId = getIntent().getLongExtra("USER_ID", -1);
+        userId = getIntent().getLongExtra("user_id", -1);
+
         if (userId == -1) {
             Toast.makeText(this, "Erro: Usuário não identificado", Toast.LENGTH_SHORT).show();
             finish();

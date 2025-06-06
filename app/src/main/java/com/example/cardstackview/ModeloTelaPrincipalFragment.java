@@ -54,7 +54,7 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         View view = inflater.inflate(R.layout.tela_principal_layout, container, false);
 
         SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
-        long userId = prefs.getLong("user_id", -1);
+        long userId = prefs.getLong("user_id", -1); // Deve ser o mesmo nome usado ao salvar
 
         if (userId == -1) {
             Toast.makeText(requireContext(), "Erro: ID do usuário não encontrado", Toast.LENGTH_LONG).show();
