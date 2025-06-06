@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-
     private final Context context;
     private final List<Vagas> listaVagas;
     private OnItemClickListener onItemClickListener;
@@ -43,30 +42,24 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<RecyclerView.Vi
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        if (getItemViewType(position) == VIEW_TYPE_EMPTY) {
-            return; // Não faz nada para o view holder vazio
-        }
-
-        // Cast seguro para ViewHolder
-        if (!(holder instanceof ViewHolder)) {
-            return;
-        }
+        if (getItemViewType(position) == VIEW_TYPE_EMPTY) return;
+        if (!(holder instanceof ViewHolder)) return;
 
         ViewHolder viewHolder = (ViewHolder) holder;
-
-        if (listaVagas == null || position < 0 || position >= listaVagas.size()) {
-            return;
-        }
-
         Vagas vaga = listaVagas.get(position);
-        if (vaga == null) {
-            return;
-        }
 
         // Configura título
         viewHolder.titulo.setText(vaga.getTitulo() != null ? vaga.getTitulo() : "Vaga sem título");
 
-        // Configura subtítulo
+        // Configura empresa
+        if (vaga.getNomeEmpresa() != null && !vaga.getNomeEmpresa().isEmpty()) {
+            viewHolder.empresa.setText(vaga.getNomeEmpresa());
+            viewHolder.empresa.setVisibility(View.VISIBLE);
+        } else {
+            viewHolder.empresa.setVisibility(View.GONE);
+        }
+
+        // Configura localização ou descrição
         String localizacao = vaga.getLocalizacao();
         String descricao = vaga.getDescricao();
 
@@ -78,9 +71,6 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<RecyclerView.Vi
         } else {
             viewHolder.subtitulo.setText("Sem informações adicionais");
         }
-
-        // Configura imagem
-        viewHolder.imagem.setImageResource(R.drawable.logo);
 
         // Configura clique
         viewHolder.itemView.setOnClickListener(v -> {
@@ -109,25 +99,21 @@ public class AdaptadorTelaPrincipal extends RecyclerView.Adapter<RecyclerView.Vi
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
-        TextView titulo, subtitulo;
+        TextView titulo, subtitulo, empresa;
         ImageView imagem;
 
         public ViewHolder(View itemView) {
             super(itemView);
             titulo = itemView.findViewById(R.id.textTituloItem);
             subtitulo = itemView.findViewById(R.id.textSubtituloItem);
+            empresa = itemView.findViewById(R.id.textEmpresa);
             imagem = itemView.findViewById(R.id.imageItemVaga);
-
-            if (titulo == null || subtitulo == null || imagem == null) {
-                throw new IllegalStateException("Views não encontradas no layout do item");
-            }
         }
     }
 
     public static class EmptyViewHolder extends RecyclerView.ViewHolder {
         public EmptyViewHolder(View itemView) {
             super(itemView);
-            // Configurações para a view vazia, se necessário
         }
     }
 }

@@ -347,23 +347,24 @@ public class MainActivity extends AppCompatActivity {
                                 beneficios = "Não informado";
                             }
 
-                            Vagas vaga = new Vagas(
-                                    vagaJson.optInt("id_vagas"),
-                                    vagaJson.optString("titulo_vagas", "Não informado"),
-                                    vagaJson.optString("descricao_vagas", "Não informado"),
-                                    vagaJson.optString("local_vagas", "Não informado"),
-                                    vagaJson.optString("salario_vagas", "Não informado"),
-                                    vagaJson.optString("requisitos_vagas", "Não informado"),
-                                    vagaJson.optString("nivel_experiencia", "Não informado"),
-                                    vagaJson.optString("tipo_contrato", "Não informado"),
-                                    vagaJson.optString("area_atuacao", "Não informado"),
-                                    vagaJson.optString("beneficios_vagas", "Não informado"),
-                                    vagaJson.optString("vinculo_vagas", "Não informado"),
-                                    vagaJson.optString("ramo_vagas", "Não informado"),
-                                    vagaJson.optInt("id_empresa"),
-                                    vagaJson.optString("nome_empresa", "Empresa não informada"),
-                                    null
-                            );
+                            Vagas vaga = new Vagas();
+                            vaga.setVaga_id(vagaJson.optInt("id_vagas"));
+                            vaga.setTitulo(vagaJson.optString("titulo_vagas", "Não informado"));
+                            vaga.setDescricao(vagaJson.optString("descricao_vagas", "Não informado"));
+                            vaga.setLocalizacao(vagaJson.optString("local_vagas", "Não informado"));
+                            vaga.setSalario(vagaJson.optString("salario_vagas", "Não informado"));
+                            vaga.setRequisitos(vagaJson.optString("requisitos_vagas", "Não informado"));
+                            vaga.setNivel_experiencia(vagaJson.optString("nivel_experiencia", "Não informado"));
+                            vaga.setTipo_contrato(vagaJson.optString("tipo_contrato", "Não informado"));
+                            vaga.setArea_atuacao(vagaJson.optString("area_atuacao", "Não informado"));
+                            vaga.setBeneficios(beneficios);
+                            vaga.setVinculo(vagaJson.optString("vinculo_vagas", "Não informado"));
+                            vaga.setRamo(vagaJson.optString("ramo_vagas", "Não informado"));
+                            vaga.setEmpresa_id(vagaJson.optInt("id_empresa"));
+                            vaga.setNome_empresa(vagaJson.optString("nome_empresa", "Empresa não informada"));
+                            vaga.setHabilidadesDesejaveisStr(null);
+                            vaga.setId_usuario(0); // Set default value or get from JSON if available
+
 
                             allVagas.add(vaga);
                         }

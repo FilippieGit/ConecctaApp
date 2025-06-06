@@ -57,8 +57,8 @@ public class Vagas implements Serializable {
     private String habilidadesDesejaveisStr;
 
     // Construtores
+    public Vagas() {}
 
-    // Construtor completo
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
                  String salario, String requisitos, long id_usuario, String nivel_experiencia,
                  String tipo_contrato, String area_atuacao, String beneficios,
@@ -82,41 +82,7 @@ public class Vagas implements Serializable {
         this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
     }
 
-    // Construtor sem id_usuario (compatibilidade)
-    public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
-                 String salario, String requisitos, String nivel_experiencia,
-                 String tipo_contrato, String area_atuacao, String beneficios,
-                 String vinculo, String ramo, int empresa_id,
-                 String nome_empresa, String habilidadesDesejaveisStr) {
-        this(vaga_id, titulo, descricao, localizacao, salario, requisitos, 0L, nivel_experiencia,
-                tipo_contrato, area_atuacao, beneficios, vinculo, ramo, empresa_id,
-                nome_empresa, habilidadesDesejaveisStr);
-    }
-
-    // Construtor para visualização (sem habilidadesDesejaveis)
-    public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
-                 String salario, String requisitos, String nivel_experiencia,
-                 String tipo_contrato, String area_atuacao, String beneficios,
-                 String vinculo, String ramo, int empresa_id, String nome_empresa) {
-        this(vaga_id, titulo, descricao, localizacao, salario, requisitos, 0, nivel_experiencia,
-                tipo_contrato, area_atuacao, beneficios, vinculo, ramo, empresa_id,
-                nome_empresa, null);
-    }
-
-    // Construtor simplificado para criação
-    public Vagas(String titulo, String descricao, String localizacao, String salario,
-                 String requisitos, String nivel_experiencia, String tipo_contrato,
-                 String area_atuacao, String beneficios, String vinculo, String ramo,
-                 long id_usuario, String habilidadesDesejaveisStr) {
-        this(0, titulo, descricao, localizacao, salario, requisitos, id_usuario, nivel_experiencia,
-                tipo_contrato, area_atuacao, beneficios, vinculo, ramo, 0, "", habilidadesDesejaveisStr);
-    }
-
-    // Construtor vazio
-    public Vagas() {}
-
     // Getters e Setters
-
     public int getVaga_id() {
         return vaga_id;
     }
@@ -233,10 +199,23 @@ public class Vagas implements Serializable {
         return nome_empresa != null ? nome_empresa : "Empresa não informada";
     }
 
+    public String getNomeEmpresa() {
+        return getNome_empresa();
+    }
+
     public void setNome_empresa(String nome_empresa) {
         this.nome_empresa = nome_empresa;
     }
 
+    public String getHabilidadesDesejaveisStr() {
+        return habilidadesDesejaveisStr;
+    }
+
+    public void setHabilidadesDesejaveisStr(String habilidadesDesejaveisStr) {
+        this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
+    }
+
+    // Métodos utilitários
     public List<String> getHabilidadesDesejaveis() {
         if (habilidadesDesejaveisStr != null && !habilidadesDesejaveisStr.trim().isEmpty()) {
             String[] arr = habilidadesDesejaveisStr.split(",");
@@ -249,17 +228,18 @@ public class Vagas implements Serializable {
         return new ArrayList<>();
     }
 
-    public String getVagaIdAsString() {
-        return String.valueOf(vaga_id);
-    }
-
-    public String getHabilidadesDesejaveisStr() {
-        return habilidadesDesejaveisStr;
-    }
-
-    public void setHabilidadesDesejaveisStr(String habilidadesDesejaveisStr) {
-        Log.d("Vagas", "Set habilidadesDesejaveisStr: " + habilidadesDesejaveisStr);
-        this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
+    public List<String> getBeneficiosLista() {
+        List<String> beneficiosList = new ArrayList<>();
+        if (beneficios != null && !beneficios.trim().isEmpty()) {
+            String[] beneficiosArray = beneficios.split(",");
+            for (String beneficio : beneficiosArray) {
+                String trimmed = beneficio.trim();
+                if (!trimmed.isEmpty()) {
+                    beneficiosList.add(trimmed);
+                }
+            }
+        }
+        return beneficiosList;
     }
 
     public String getSalarioFormatado() {
@@ -269,6 +249,28 @@ public class Vagas implements Serializable {
         } catch (NumberFormatException e) {
             return salario;
         }
+    }
+
+    public String getInfoResumida() {
+        return String.format("%s | %s | %s",
+                getLocalizacao(),
+                getVinculo(),
+                getSalarioFormatado());
+    }
+
+    public String getVagaIdAsString() {
+        return String.valueOf(vaga_id);
+    }
+
+    public boolean isCompleta() {
+        return titulo != null && !titulo.isEmpty() &&
+                descricao != null && !descricao.isEmpty() &&
+                localizacao != null && !localizacao.isEmpty() &&
+                salario != null && !salario.isEmpty();
+    }
+
+    public boolean pertenceAoUsuario(long userId) {
+        return this.id_usuario == userId;
     }
 
     @Override
@@ -282,10 +284,5 @@ public class Vagas implements Serializable {
                 ", id_usuario=" + id_usuario +
                 ", habilidades=" + habilidadesDesejaveisStr +
                 '}';
-    }
-
-    // Método adicional para verificar se a vaga pertence ao usuário
-    public boolean pertenceAoUsuario(long userId) {
-        return this.id_usuario == userId;
     }
 }

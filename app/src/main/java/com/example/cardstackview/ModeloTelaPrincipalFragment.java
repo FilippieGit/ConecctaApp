@@ -1,8 +1,10 @@
 package com.example.cardstackview;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -20,19 +22,23 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.material.appbar.MaterialToolbar;
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ModeloTelaPrincipalFragment extends Fragment {
     private List<Vagas> listaVagas = new ArrayList<>();
@@ -47,139 +53,113 @@ public class ModeloTelaPrincipalFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.tela_principal_layout, container, false);
 
+        SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        long userId = prefs.getLong("user_id", -1);
+
+        if (userId == -1) {
+            Toast.makeText(requireContext(), "Erro: ID do usuário não encontrado", Toast.LENGTH_LONG).show();
+            return view;
+        }
+
         inicializarComponentes(view);
         configurarWindowInsets(view);
         configurarRecyclerView(view);
         configurarListeners(view);
-        carregarVagas();
+
+        carregarVagas(userId);
 
         return view;
     }
 
     private void inicializarComponentes(View view) {
         recyclerView = view.findViewById(R.id.idRecLista);
-
     }
 
-    private void carregarVagas() {
-        // Obtenha o ID do usuário logado (passado da LoginActivity)
-        long userId = requireActivity().getIntent().getLongExtra("USER_ID", -1);
-        if (userId == -1) {
-            Toast.makeText(requireContext(), "Erro: ID do usuário não encontrado", Toast.LENGTH_LONG).show();
-            return;
+    private void carregarVagas(long userId) {
+        ProgressDialog progressDialog = new ProgressDialog(requireContext());
+        progressDialog.setMessage("Carregando vagas...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        Map<String, String> params = new HashMap<>();
+        params.put("user_id", String.valueOf(userId));
+
+        String url = Api.buildUrl(Api.URL_GET_VAGAS_BY_USER, params);
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                response -> {
+                    progressDialog.dismiss();
+                    processarResposta(response);
+                },
+                error -> {
+                    progressDialog.dismiss();
+                    tratarErroRequisicao(error);
+                }
+        );
+
+        stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                10000,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
+        requestQueue.add(stringRequest);
+    }
+
+    private void processarResposta(String response) {
+        try {
+            JSONObject jsonResponse = new JSONObject(response);
+            JSONArray vagasArray = jsonResponse.getJSONArray("vagas");
+
+            if (vagasArray.length() == 0) {
+                Toast.makeText(requireContext(), "Nenhuma vaga encontrada", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
+            listaVagas.clear();
+            for (int i = 0; i < vagasArray.length(); i++) {
+                JSONObject vagaJson = vagasArray.getJSONObject(i);
+                Vagas vaga = criarVagaFromJson(vagaJson);
+                listaVagas.add(vaga);
+            }
+
+            adapter.notifyDataSetChanged();
+        } catch (JSONException e) {
+            Log.e("API_ERROR", "Erro ao processar resposta", e);
+            Toast.makeText(requireContext(), "Erro ao processar dados", Toast.LENGTH_LONG).show();
+        }
+    }
+
+    private Vagas criarVagaFromJson(JSONObject vagaJson) throws JSONException {
+        Vagas vaga = new Vagas();
+        vaga.setVaga_id(vagaJson.optInt("id_vagas", 0));
+        vaga.setTitulo(vagaJson.optString("titulo_vagas", "Sem título"));
+        vaga.setDescricao(vagaJson.optString("descricao_vagas", "Sem descrição"));
+        vaga.setLocalizacao(vagaJson.optString("local_vagas", "Local não especificado"));
+        vaga.setSalario(vagaJson.optString("salario_vagas", "Não informado"));
+        vaga.setRequisitos(vagaJson.optString("requisitos_vagas", "Não informado"));
+        vaga.setVinculo(vagaJson.optString("vinculo_vagas", "Não informado"));
+        vaga.setBeneficios(vagaJson.optString("beneficios_vagas", "Não informado"));
+        vaga.setRamo(vagaJson.optString("ramo_vagas", "Não informado"));
+        vaga.setNivel_experiencia(vagaJson.optString("nivel_experiencia", "Não informado"));
+        vaga.setTipo_contrato(vagaJson.optString("tipo_contrato", "Não informado"));
+        vaga.setArea_atuacao(vagaJson.optString("area_atuacao", "Não informado"));
+        vaga.setHabilidadesDesejaveisStr(vagaJson.optString("habilidades_desejaveis", "Não informado"));
+        vaga.setId_usuario(vagaJson.optInt("id_usuario", 0));
+        vaga.setNome_empresa(vagaJson.optString("nome_empresa", "Empresa não informada"));
+        return vaga;
+    }
+
+    private void tratarErroRequisicao(com.android.volley.VolleyError error) {
+        String errorMsg = "Erro na conexão";
+
+        if (error.networkResponse != null) {
+            errorMsg += " (Status: " + error.networkResponse.statusCode + ")";
         }
 
-        new AsyncTask<Void, Void, String>() {
-            @Override
-            protected String doInBackground(Void... voids) {
-                try {
-                    // Modifique a URL para incluir o parâmetro do usuário
-                    URL url = new URL(Api.URL_GET_VAGAS + "?id_usuario=" + userId);
-                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                    connection.setRequestMethod("GET");
-                    connection.setConnectTimeout(8000);
-                    connection.setReadTimeout(8000);
-
-                    if (connection.getResponseCode() == HttpURLConnection.HTTP_OK) {
-                        BufferedReader reader = new BufferedReader(
-                                new InputStreamReader(connection.getInputStream()));
-                        StringBuilder response = new StringBuilder();
-                        String line;
-                        while ((line = reader.readLine()) != null) {
-                            response.append(line);
-                        }
-                        reader.close();
-                        return response.toString();
-                    }
-                    return "error:" + connection.getResponseCode();
-                } catch (Exception e) {
-                    return "exception:" + e.getMessage();
-                }
-            }
-
-            @Override
-            protected void onPostExecute(String s) {
-                System.out.println("Resultado recebido: " + s);
-
-                if (s == null) {
-                    Toast.makeText(requireContext(), "Erro: resposta nula da API", Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                if (s.startsWith("error:")) {
-                    Toast.makeText(requireContext(), "Erro HTTP: " + s.substring(6), Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                if (s.startsWith("exception:")) {
-                    Toast.makeText(requireContext(), "Exceção: " + s.substring(10), Toast.LENGTH_LONG).show();
-                    return;
-                }
-
-                try {
-                    JSONObject response = new JSONObject(s);
-                    System.out.println("JSON recebido: " + response.toString());
-
-                    if (response.has("error")) {
-                        if (response.getBoolean("error")) {
-                            String message = response.optString("message", "Erro desconhecido");
-                            Toast.makeText(requireContext(), message, Toast.LENGTH_LONG).show();
-                            return;
-                        }
-                    }
-
-                    if (response.has("vagas")) {
-                        JSONArray vagasArray = response.getJSONArray("vagas");
-                        System.out.println("Número de vagas: " + vagasArray.length());
-
-                        listaVagas.clear();
-
-                        for (int i = 0; i < vagasArray.length(); i++) {
-                            JSONObject vagaJson = vagasArray.getJSONObject(i);
-                            System.out.println("Vaga " + i + ": " + vagaJson.toString());
-
-                            Vagas vaga = new Vagas(
-                                    vagaJson.optInt("id_vagas"),
-                                    vagaJson.optString("titulo_vagas", "Não informado"),
-                                    vagaJson.optString("descricao_vagas", "Não informado"),
-                                    vagaJson.optString("local_vagas", "Não informado"),
-                                    vagaJson.optString("salario_vagas", "Não informado"),
-                                    vagaJson.optString("requisitos_vagas", "Não informado"),
-                                    vagaJson.optLong("id_usuario", -1), // Adicionado id_usuario
-                                    vagaJson.optString("nivel_experiencia", "Não informado"),
-                                    vagaJson.optString("tipo_contrato", "Não informado"),
-                                    vagaJson.optString("area_atuacao", "Não informado"),
-                                    vagaJson.optString("beneficios_vagas", "Não informado"),
-                                    vagaJson.optString("vinculo_vagas", "Não informado"),
-                                    vagaJson.optString("ramo_vagas", "Não informado"),
-                                    vagaJson.optInt("id_empresa"),
-                                    vagaJson.optString("nome_empresa", "Empresa não informada"),
-                                    vagaJson.optString("habilidades_desejaveis", "")
-                            );
-
-
-                            listaVagas.add(vaga);
-                        }
-
-                        // Verifica se o adapter foi inicializado
-                        if (adapter == null) {
-                            adapter = new AdaptadorTelaPrincipal(requireContext(), listaVagas);
-                            recyclerView.setAdapter(adapter);
-                        }
-
-                        adapter.notifyDataSetChanged();
-                        System.out.println("Total de vagas carregadas: " + listaVagas.size());
-                    } else {
-                        Toast.makeText(requireContext(), "Formato de resposta inválido", Toast.LENGTH_LONG).show();
-                    }
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    Toast.makeText(requireContext(),
-                            "Erro ao analisar JSON: " + e.getMessage() + "\nResposta: " + s,
-                            Toast.LENGTH_LONG).show();
-                }
-            }
-        }.execute();
+        Toast.makeText(requireContext(), errorMsg, Toast.LENGTH_LONG).show();
     }
 
     private void configurarWindowInsets(View view) {
@@ -198,30 +178,32 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         adapter.setOnItemClickListener(vaga -> {
             Intent intent = new Intent(requireActivity(), DetalheVagaActivity.class);
             intent.putExtra("vaga", vaga);
-            intent.putExtra("isPessoaJuridica", true);
             startActivityForResult(intent, REQUEST_DETALHES_VAGA);
         });
     }
 
     private void configurarListeners(View view) {
-        view.findViewById(R.id.idAFAB).setOnClickListener(v -> {
-            // Obter o ID do usuário da mesma forma que em carregarVagas()
-            long userId = requireActivity().getIntent().getLongExtra("USER_ID", -1);
+        FloatingActionButton fab = view.findViewById(R.id.idAFAB);
+        if (fab != null) {
+            fab.setOnClickListener(v -> {
+                SharedPreferences prefs = requireActivity().getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+                long userId = prefs.getLong("user_id", -1);
 
-            if (userId == -1) {
-                Toast.makeText(requireContext(), "Erro: ID do usuário não encontrado", Toast.LENGTH_LONG).show();
-                return;
-            }
-
-            Intent intent = new Intent(requireActivity(), CriarVagaActivity.class);
-            intent.putExtra("USER_ID", userId);
-            startActivityForResult(intent, REQUEST_CRIAR_VAGA);
-        });
+                if (userId != -1) {
+                    Intent intent = new Intent(requireActivity(), CriarVagaActivity.class);
+                    intent.putExtra("user_id", userId);
+                    startActivityForResult(intent, REQUEST_CRIAR_VAGA);
+                } else {
+                    Toast.makeText(requireContext(), "Erro ao identificar usuário", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (data == null) return;
 
         try {
@@ -249,19 +231,5 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         } catch (Exception e) {
             Toast.makeText(getContext(), "Erro: " + e.getMessage(), Toast.LENGTH_SHORT).show();
         }
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(),
-                new OnBackPressedCallback(true) {
-                    @Override
-                    public void handleOnBackPressed() {
-                        if (getActivity() != null) {
-                            getActivity().onBackPressed();
-                        }
-                    }
-                });
     }
 }

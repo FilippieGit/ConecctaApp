@@ -178,7 +178,8 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_VINCULO,
                 COLUMN_RAMO,
                 COLUMN_EMPRESA_ID,
-                COLUMN_NOME_EMPRESA
+                COLUMN_NOME_EMPRESA,
+                COLUMN_HABILIDADES
         };
 
         Cursor cursor = db.query(TABLE_VAGAS,
@@ -187,23 +188,27 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 try {
-                    Vagas vaga = new Vagas(
-                            getIntSafe(cursor, COLUMN_VAGA_ID),
-                            getStringSafe(cursor, COLUMN_TITULO),
-                            getStringSafe(cursor, COLUMN_DESCRICAO),
-                            getStringSafe(cursor, COLUMN_LOCALIZACAO),
-                            getStringSafe(cursor, COLUMN_SALARIO),
-                            getStringSafe(cursor, COLUMN_REQUISITOS),
-                            getStringSafe(cursor, COLUMN_NIVEL_EXPERIENCIA),
-                            getStringSafe(cursor, COLUMN_TIPO_CONTRATO),
-                            getStringSafe(cursor, COLUMN_AREA_ATUACAO),
-                            getStringSafe(cursor, COLUMN_BENEFICIOS),
-                            getStringSafe(cursor, COLUMN_VINCULO),
-                            getStringSafe(cursor, COLUMN_RAMO),
-                            getIntSafe(cursor, COLUMN_EMPRESA_ID),
-                            getStringSafe(cursor, COLUMN_NOME_EMPRESA),
-                            null
-                    );
+                    // Create a new Vagas object using empty constructor and setters
+                    Vagas vaga = new Vagas();
+                    vaga.setVaga_id(getIntSafe(cursor, COLUMN_VAGA_ID));
+                    vaga.setTitulo(getStringSafe(cursor, COLUMN_TITULO));
+                    vaga.setDescricao(getStringSafe(cursor, COLUMN_DESCRICAO));
+                    vaga.setLocalizacao(getStringSafe(cursor, COLUMN_LOCALIZACAO));
+                    vaga.setSalario(getStringSafe(cursor, COLUMN_SALARIO));
+                    vaga.setRequisitos(getStringSafe(cursor, COLUMN_REQUISITOS));
+                    vaga.setNivel_experiencia(getStringSafe(cursor, COLUMN_NIVEL_EXPERIENCIA));
+                    vaga.setTipo_contrato(getStringSafe(cursor, COLUMN_TIPO_CONTRATO));
+                    vaga.setArea_atuacao(getStringSafe(cursor, COLUMN_AREA_ATUACAO));
+                    vaga.setBeneficios(getStringSafe(cursor, COLUMN_BENEFICIOS));
+                    vaga.setVinculo(getStringSafe(cursor, COLUMN_VINCULO));
+                    vaga.setRamo(getStringSafe(cursor, COLUMN_RAMO));
+                    vaga.setEmpresa_id(getIntSafe(cursor, COLUMN_EMPRESA_ID));
+                    vaga.setNome_empresa(getStringSafe(cursor, COLUMN_NOME_EMPRESA));
+                    vaga.setHabilidadesDesejaveisStr(getStringSafe(cursor, COLUMN_HABILIDADES));
+
+                    // Set default values for missing fields
+                    vaga.setId_usuario(0); // You might want to store this in the database if needed
+
                     vagasList.add(vaga);
                 } catch (Exception e) {
                     Log.e("Database", "Erro ao ler vaga do banco de dados", e);
