@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCardSwiped(Direction direction) {
                 long now = System.currentTimeMillis();
                 if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                        layoutManager.getTopPosition() <= 0) {
+                        layoutManager.getTopPosition() >= vagasList.size()) {
                     return;
                 }
 
@@ -101,6 +101,8 @@ public class MainActivity extends AppCompatActivity {
                     AppExecutor.getExecutor().execute(() -> {
                         if (direction == Direction.Right) {
                             processarLike(vaga);
+                        } else if (direction == Direction.Left) {
+                            registrarInteresse(vaga); // Adicione esta linha para registrar rejeição
                         }
 
                         runOnUiThread(() -> {
@@ -123,10 +125,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            @Override public void onCardRewound() {}
-            @Override public void onCardCanceled() {}
-            @Override public void onCardAppeared(View view, int position) {}
-            @Override public void onCardDisappeared(View view, int position) {}
+            @Override
+            public void onCardRewound() {
+            }
+
+            @Override
+            public void onCardCanceled() {
+            }
+
+            @Override
+            public void onCardAppeared(View view, int position) {
+            }
+
+            @Override
+            public void onCardDisappeared(View view, int position) {
+            }
         };
 
         layoutManager = new CardStackLayoutManager(this, cardStackListener);
@@ -142,70 +155,82 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnDown = findViewById(R.id.btnDown);
 
         btnLike.setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                    vagasList.isEmpty() || layoutManager.getTopPosition() <= 0) {
-                return;
+            if (canSwipe()) {
+                // Feedback visual
+                v.animate().scaleX(0.8f).scaleY(0.8f).setDuration(100)
+                        .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(100));
+                isSwiping = true;
+                lastSwipeTime = System.currentTimeMillis();
+
+                int pos = layoutManager.getTopPosition();
+                if (pos < vagasList.size()) {
+                    Vagas vaga = vagasList.get(pos);
+                    processarLike(vaga); // Processa o like antes do swipe
+                }
+
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Right)
+                        .setDuration(400)
+                        .build();
+                layoutManager.setSwipeAnimationSetting(setting);
+                binding.cardStack.swipe();
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSwiping = false;
+                }, 500);
             }
-
-            isSwiping = true;
-            lastSwipeTime = now;
-
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Right)
-                    .setDuration(400)
-                    .build();
-            layoutManager.setSwipeAnimationSetting(setting);
-            binding.cardStack.swipe();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isSwiping = false;
-            }, 500);
         });
 
         btnReject.setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                    vagasList.isEmpty() || layoutManager.getTopPosition() <= 0) {
-                return;
+            if (canSwipe()) {
+                isSwiping = true;
+                lastSwipeTime = System.currentTimeMillis();
+
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Left)
+                        .setDuration(400)
+                        .build();
+                layoutManager.setSwipeAnimationSetting(setting);
+                binding.cardStack.swipe();
+
+                int pos = layoutManager.getTopPosition();
+                if (pos < vagasList.size()) {
+                    Vagas vaga = vagasList.get(pos);
+                    registrarInteresse(vaga); // Registra o interesse (rejeição)
+                }
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSwiping = false;
+                }, 500);
             }
-
-            isSwiping = true;
-            lastSwipeTime = now;
-
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Left)
-                    .setDuration(400)
-                    .build();
-            layoutManager.setSwipeAnimationSetting(setting);
-            binding.cardStack.swipe();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isSwiping = false;
-            }, 500);
         });
 
         btnDown.setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                    vagasList.isEmpty() || layoutManager.getTopPosition() <= 0) {
-                return;
+            if (canSwipe()) {
+                isSwiping = true;
+                lastSwipeTime = System.currentTimeMillis();
+
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Bottom)
+                        .setDuration(400)
+                        .build();
+                layoutManager.setSwipeAnimationSetting(setting);
+                binding.cardStack.swipe();
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSwiping = false;
+                    // Para o botão de baixo, não processamos nada adicional
+                }, 500);
             }
-
-            isSwiping = true;
-            lastSwipeTime = now;
-
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Bottom)
-                    .setDuration(400)
-                    .build();
-            layoutManager.setSwipeAnimationSetting(setting);
-            binding.cardStack.swipe();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isSwiping = false;
-            }, 500);
         });
+    }
+
+    private boolean canSwipe() {
+        long now = System.currentTimeMillis();
+        return !isSwiping &&
+                now - lastSwipeTime >= MIN_SWIPE_INTERVAL &&
+                !vagasList.isEmpty() &&
+                layoutManager.getTopPosition() < vagasList.size();
     }
 
     private void processarLike(Vagas vaga) {
