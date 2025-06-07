@@ -41,11 +41,11 @@ public class TelaEmpresaActivity extends AppCompatActivity {
         if (navigationView != null) {
             if (isEmpresa) {
                 // Empresa: esconde itens que só fazem sentido para candidatos
-                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idVagasItemMenu).setVisible(false);
                 navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
             } else {
                 // Candidato: esconde itens que só fazem sentido para empresas
-                navigationView.getMenu().findItem(R.id.idVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
                 navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
             }
         }
