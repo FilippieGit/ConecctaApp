@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Usuario {
     private long id;
+    private long idCandidatura; // Novo campo para armazenar o ID da candidatura
     private String nome;
     private String email;
     private String cargo;
@@ -19,6 +20,8 @@ public class Usuario {
     private String username;
     private String genero;
     private String idade;
+    private String motivoRejeicao; // Novo campo para armazenar motivo de rejeição
+    private long recrutadorId; // Novo campo para armazenar quem alterou o status
 
     // Construtor completo
     public Usuario(long id, String nome, String email, String cargo, String status,
@@ -41,12 +44,51 @@ public class Usuario {
         this.idade = idade;
     }
 
+    // Construtor a partir de JSONObject
+    public Usuario(JSONObject json) throws Exception {
+        this.id = json.getLong("id");
+        this.idCandidatura = json.optLong("id_candidatura", 0);
+        this.nome = json.getString("nome");
+        this.email = json.getString("email");
+        this.cargo = json.optString("cargo", "");
+        this.status = json.getString("status");
+
+        // Tratamento da data de candidatura
+        if (json.has("data_candidatura") && !json.isNull("data_candidatura")) {
+            String dataStr = json.getString("data_candidatura");
+            // Implemente o parse da data conforme seu formato
+            // this.dataCandidatura = ...;
+        } else {
+            this.dataCandidatura = new Date(json.optLong("data_candidatura", System.currentTimeMillis()));
+        }
+
+        this.telefone = json.optString("telefone", "");
+        this.descricao = json.optString("descricao", "");
+        this.experienciaProfissional = json.optString("experiencia_profissional", "");
+        this.formacaoAcademica = json.optString("formacao_academica", "");
+        this.certificados = json.optString("certificados", "");
+        this.username = json.optString("username", "");
+        this.genero = json.optString("genero", "");
+        this.idade = json.optString("idade", "");
+        this.motivoRejeicao = json.optString("motivo_rejeicao", null);
+        this.recrutadorId = json.optLong("recrutador_id", 0);
+    }
+
+    // Getters e Setters
     public long getId() {
         return id;
     }
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getIdCandidatura() {
+        return idCandidatura;
+    }
+
+    public void setIdCandidatura(long idCandidatura) {
+        this.idCandidatura = idCandidatura;
     }
 
     public String getNome() {
@@ -151,5 +193,54 @@ public class Usuario {
 
     public void setIdade(String idade) {
         this.idade = idade;
+    }
+
+    public String getMotivoRejeicao() {
+        return motivoRejeicao;
+    }
+
+    public void setMotivoRejeicao(String motivoRejeicao) {
+        this.motivoRejeicao = motivoRejeicao;
+    }
+
+    public long getRecrutadorId() {
+        return recrutadorId;
+    }
+
+    public void setRecrutadorId(long recrutadorId) {
+        this.recrutadorId = recrutadorId;
+    }
+
+    // Método para converter para JSON
+    public JSONObject toJson() throws Exception {
+        JSONObject json = new JSONObject();
+        json.put("id", id);
+        json.put("id_candidatura", idCandidatura);
+        json.put("nome", nome);
+        json.put("email", email);
+        json.put("cargo", cargo);
+        json.put("status", status);
+        json.put("data_candidatura", dataCandidatura != null ? dataCandidatura.getTime() : null);
+        json.put("telefone", telefone);
+        json.put("descricao", descricao);
+        json.put("experiencia_profissional", experienciaProfissional);
+        json.put("formacao_academica", formacaoAcademica);
+        json.put("certificados", certificados);
+        json.put("username", username);
+        json.put("genero", genero);
+        json.put("idade", idade);
+        json.put("motivo_rejeicao", motivoRejeicao);
+        json.put("recrutador_id", recrutadorId);
+        return json;
+    }
+
+    // Método para verificar se está aprovado
+    public boolean isAprovado() {
+        return "aprovada".equalsIgnoreCase(status);
+    }
+
+    // Método para verificar se está rejeitado
+    public boolean isRejeitado() {
+        return "rejeitada".equalsIgnoreCase(status);
     }
 }
