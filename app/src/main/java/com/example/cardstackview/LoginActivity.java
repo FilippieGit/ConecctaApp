@@ -45,6 +45,12 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Verificação de logout deve vir ANTES do setContentView
+        if (getIntent().getBooleanExtra("FORCE_LOGOUT", false)) {
+            cleanAllAuthData();
+        }
+
         setContentView(R.layout.login_layout);
 
         FirebaseApp.initializeApp(this);
@@ -60,20 +66,16 @@ public class LoginActivity extends AppCompatActivity {
 
         btnEntrar.setOnClickListener(v -> {
             if (isNetworkAvailable()) {
-                // Substitua a verificação direta por esta chamada assíncrona
-                Api.checkApiReachability(this, new Api.ApiReachabilityCallback() {
-                    @Override
-                    public void onResult(boolean isReachable) {
-                        runOnUiThread(() -> {
-                            if (isReachable) {
-                                fazerLogin();
-                            } else {
-                                Toast.makeText(LoginActivity.this,
-                                        "Servidor indisponível. Tente novamente mais tarde.",
-                                        Toast.LENGTH_LONG).show();
-                            }
-                        });
-                    }
+                Api.checkApiReachability(this, isReachable -> {
+                    runOnUiThread(() -> {
+                        if (isReachable) {
+                            fazerLogin();
+                        } else {
+                            Toast.makeText(LoginActivity.this,
+                                    "Servidor indisponível. Tente novamente mais tarde.",
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    });
                 });
             } else {
                 Toast.makeText(this, "Sem conexão com a internet", Toast.LENGTH_LONG).show();
@@ -93,24 +95,78 @@ public class LoginActivity extends AppCompatActivity {
         verificarUsuarioLogado();
     }
 
-    private void verificarUsuarioLogado() {
-        FirebaseUser user = mAuth.getCurrentUser();
-        if (user != null && user.isEmailVerified()) {
-            buscarDadosUsuarioNoBanco(user.getUid(), user.getEmail());
+    private void cleanAllAuthData() {
+        // Limpa SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Remove apenas os dados de autenticação, mantendo outras configurações
+        editor.remove("manter_logado");
+        editor.remove("user_type");
+        editor.remove("firebase_uid");
+        editor.remove("user_email");
+        editor.remove("user_id");
+        editor.commit(); // Usamos commit() para execução imediata
+
+        // Faz logout do Firebase
+        FirebaseAuth.getInstance().signOut();
+
+        // Limpa qualquer cache local se necessário
+        try {
+            // Se estiver usando cache de imagens, por exemplo:
+            // ImageLoader.getInstance().clearMemoryCache();
+            // ImageLoader.getInstance().clearDiskCache();
+        } catch (Exception e) {
+            Log.e(TAG, "Error clearing caches", e);
         }
     }
+
+    private void verificarUsuarioLogado() {
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        boolean manterLogado = prefs.getBoolean("manter_logado", false);
+        String firebaseUid = prefs.getString("firebase_uid", null);
+
+        // Se não deve manter logado ou não tem UID, não redireciona
+        if (!manterLogado || firebaseUid == null) {
+            return;
+        }
+
+        // Verifica se há usuário autenticado no Firebase
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user == null || !user.getUid().equals(firebaseUid)) {
+            // Dados inconsistentes - faz limpeza
+            cleanAllAuthData();
+            return;
+        }
+
+        // Verifica se o e-mail está verificado
+        if (!user.isEmailVerified()) {
+            Toast.makeText(this, "Por favor, verifique seu e-mail antes de entrar", Toast.LENGTH_LONG).show();
+            cleanAllAuthData();
+            return;
+        }
+
+        // Se tudo estiver ok, redireciona
+        String userType = prefs.getString("user_type", "Física");
+        Intent intent = new Intent(this,
+                userType.equalsIgnoreCase("Jurídica") ?
+                        TelaEmpresaActivity.class : MainActivity.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+        finish();
+    }
+
 
     private boolean isNetworkAvailable() {
-        try {
-            ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-            NetworkInfo netInfo = cm.getActiveNetworkInfo();
-            return netInfo != null && netInfo.isConnected();
-        } catch (Exception e) {
-            Log.e(TAG, "Erro ao verificar conexão", e);
-            return false;
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        if (connectivityManager != null) {
+            NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+            return activeNetworkInfo != null && activeNetworkInfo.isConnected();
         }
+        return false;
     }
-
     private void fazerLogin() {
         String email = txtEmail.getText().toString().trim();
         String senha = txtSenha.getText().toString().trim();
@@ -157,9 +213,8 @@ public class LoginActivity extends AppCompatActivity {
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString("firebase_uid", user.getUid());
         editor.putString("user_email", user.getEmail());
+        editor.putBoolean("manter_logado", true); // Adicione esta linha
         editor.apply();
-
-        Log.d(TAG, "Dados básicos do usuário salvos: " + user.getUid() + ", " + user.getEmail());
     }
 
     private void buscarDadosUsuarioNoBanco(String firebaseUid, String email) {
@@ -226,10 +281,16 @@ public class LoginActivity extends AppCompatActivity {
         editor.putString("imagem_perfil", userData.optString("imagem_perfil", ""));
         editor.putString("CNPJ", userData.optString("CNPJ", ""));
         editor.putString("website", userData.optString("website", ""));
+        // Dados essenciais para login persistente
+        editor.putBoolean("manter_logado", true);
+        editor.putString("user_type", userData.getString("tipo"));
+        editor.putString("firebase_uid", mAuth.getCurrentUser().getUid());
 
+
+        // Outros dados do usuário...
         editor.apply();
 
-        Log.d(TAG, "Dados completos do usuário salvos: " + prefs.getAll().toString());
+        Log.d(TAG, "Dados salvos - Tipo: " + userData.getString("tipo"));
     }
 
     private void sincronizarUsuarioFirebase(String firebaseUid, String email) {

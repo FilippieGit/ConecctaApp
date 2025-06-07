@@ -6,82 +6,82 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 
-import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 public class SplashActivity extends AppCompatActivity {
 
     private FirebaseAuth mAuth;
-    private FirebaseFirestore db;
     private SharedPreferences sharedPreferences;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.splash_layout);
 
         mAuth = FirebaseAuth.getInstance();
-        db = FirebaseFirestore.getInstance();
-        sharedPreferences = getSharedPreferences("login_prefs", MODE_PRIVATE);
-
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+        sharedPreferences = getSharedPreferences("user_prefs", MODE_PRIVATE);
 
         new Handler().postDelayed(this::verificarUsuarioLogado, 1000);
     }
 
     private void verificarUsuarioLogado() {
-        // Verifica se há um token salvo nas preferências
-        boolean manterLogado = sharedPreferences.getBoolean("manter_logado", false);
-
+        // 1. Verifica primeiro o Firebase Auth (fonte mais confiável)
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if (currentUser != null && currentUser.isEmailVerified() && manterLogado) {
-            // Usuário logado e marcou "manter conectado" - verificar tipo
-            db.collection("users").document(currentUser.getUid())
-                    .get()
-                    .addOnSuccessListener(documentSnapshot -> {
-                        if (documentSnapshot.exists()) {
-                            String tipo = documentSnapshot.getString("tipo");
-                            Log.d("SplashDebug", "Tipo do usuário: " + tipo); // Adicione esta linha
-                            if (tipo != null) {
-                                tipo = tipo.trim();
-                                boolean isEmpresa = tipo.equalsIgnoreCase("Jurídica");
-                                Log.d("SplashDebug", "isEmpresa: " + isEmpresa); // E esta linha
-                                redirecionarUsuario(currentUser, isEmpresa);
-                            } else {
-                                irParaLogin();
-                            }
-                        } else {
-                            irParaLogin();
-                        }
-                    })
-                    .addOnFailureListener(e -> irParaLogin());
+
+        // 2. Verifica as preferências compartilhadas
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        boolean manterLogado = prefs.getBoolean("manter_logado", false);
+        String firebaseUid = prefs.getString("firebase_uid", null);
+
+        // Lógica de decisão:
+        if (currentUser != null) {
+            // Usuário está autenticado no Firebase
+            if (manterLogado && firebaseUid != null && firebaseUid.equals(currentUser.getUid())) {
+                // Tudo consistente - prossegue para a próxima tela
+                String userType = prefs.getString("user_type", "Física");
+                redirecionarUsuario(userType.equalsIgnoreCase("Jurídica"), currentUser.getUid());
+            } else {
+                // Dados inconsistentes - faz logout completo
+                fazerLogoutCompleto();
+                irParaLogin();
+            }
         } else {
-            // Usuário não logado ou não marcou "manter conectado" - vai para login
+            // Não há usuário no Firebase Auth
+            if (manterLogado) {
+                // Estado inconsistente - limpa os dados
+                limparDadosLogin();
+            }
             irParaLogin();
         }
     }
 
-    private void redirecionarUsuario(FirebaseUser user, boolean isEmpresa) {
-        Intent intent;
-        if (isEmpresa) {
-            intent = new Intent(this, TelaEmpresaActivity.class);
-            intent.putExtra("empresa_id", user.getUid());
-        } else {
-            intent = new Intent(this, MainActivity.class);
-            intent.putExtra("usuario_id", user.getUid());
-        }
+    private void fazerLogoutCompleto() {
+        // 1. Faz logout do Firebase
+        mAuth.signOut();
+
+        // 2. Limpa os dados locais
+        limparDadosLogin();
+    }
+
+    private void limparDadosLogin() {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.remove("manter_logado");
+        editor.remove("user_type");
+        editor.remove("firebase_uid");
+        editor.remove("user_email");
+        editor.remove("user_id");
+        editor.apply();
+    }
+
+    private void redirecionarUsuario(boolean isEmpresa, String userId) {
+        Intent intent = isEmpresa ?
+                new Intent(this, TelaEmpresaActivity.class) :
+                new Intent(this, MainActivity.class);
+
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
         startActivity(intent);
         finish();
     }

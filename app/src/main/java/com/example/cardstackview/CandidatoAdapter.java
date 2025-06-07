@@ -64,28 +64,32 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
 
         // Configuração dos botões
         holder.btnAceitar.setOnClickListener(v -> {
-            if (statusChangeListener != null) {
-                statusChangeListener.onStatusChanged(position, "aprovada", null);
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION && statusChangeListener != null) {
+                statusChangeListener.onStatusChanged(adapterPosition, "aprovada", null);
             }
         });
 
         holder.btnRecusar.setOnClickListener(v -> {
-            // Mostrar diálogo para inserir motivo
-            AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-            builder.setTitle("Motivo da recusa");
+            int adapterPosition = holder.getAdapterPosition();
+            if (adapterPosition != RecyclerView.NO_POSITION) {
+                // Mostrar diálogo para inserir motivo
+                AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
+                builder.setTitle("Motivo da recusa");
 
-            final EditText input = new EditText(holder.itemView.getContext());
-            builder.setView(input);
+                final EditText input = new EditText(holder.itemView.getContext());
+                builder.setView(input);
 
-            builder.setPositiveButton("Confirmar", (dialog, which) -> {
-                String motivo = input.getText().toString();
-                if (statusChangeListener != null) {
-                    statusChangeListener.onStatusChanged(position, "rejeitada", motivo);
-                }
-            });
+                builder.setPositiveButton("Confirmar", (dialog, which) -> {
+                    String motivo = input.getText().toString();
+                    if (statusChangeListener != null) {
+                        statusChangeListener.onStatusChanged(adapterPosition, "rejeitada", motivo);
+                    }
+                });
 
-            builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
-            builder.show();
+                builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
+                builder.show();
+            }
         });
 
         // Atualiza a visibilidade dos botões com base no status atual

@@ -26,22 +26,23 @@
             android:name=".SplashActivity"
             android:exported="true"
             android:theme="@style/Theme.CardStackView">
-        </activity>
-
-        <activity
-            android:name=".LoginActivity"
-            android:exported="true" />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="true"
-            android:launchMode="singleTop"
-            android:theme="@style/Theme.CardStackView">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".LoginActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:clearTaskOnLaunch="true"/>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="true"
+            android:launchMode="singleTop"
+            android:theme="@style/Theme.CardStackView"/>
 
         <activity
             android:name=".CandidatarSeActivity"
@@ -115,10 +116,6 @@
             android:exported="false"
             android:theme="@style/Theme.CardStackView"/>
 
-        <activity
-            android:name=".PerfilEmpresaActivity"
-            android:exported="false"
-            android:theme="@style/Theme.CardStackView"/>
 
         <activity
             android:name=".EdicaoPerfilPessoaActivity"

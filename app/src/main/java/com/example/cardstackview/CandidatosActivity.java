@@ -26,6 +26,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -78,6 +79,13 @@ public class CandidatosActivity extends AppCompatActivity {
 
 
     private void atualizarStatusCandidato(int position, String novoStatus, String motivo) {
+        if (position < 0 || position >= candidatosList.size()) {
+            Toast.makeText(this, "Posição inválida", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+
+
         Usuario candidato = candidatosList.get(position);
         ProgressDialog dialog = new ProgressDialog(this);
         dialog.setMessage("Atualizando status...");
@@ -86,36 +94,36 @@ public class CandidatosActivity extends AppCompatActivity {
 
         new Thread(() -> {
             try {
-                // Obter o ID do usuário logado (recrutador)
                 SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                int recrutadorId = prefs.getInt("user_id", 0);
+                long recrutadorId = prefs.getLong("user_id", 0);
 
-                // Construir os parâmetros
                 Map<String, String> params = new HashMap<>();
-                params.put("apicall", "atualizarStatusCandidaturaVaga");
-                params.put("candidatura_id", String.valueOf(candidato.getId()));
+                params.put("apicall", "atualizarStatusCandidatura"); // Nome correto do endpoint
+                params.put("candidatura_id", String.valueOf(candidato.getIdCandidatura()));
                 params.put("novo_status", novoStatus);
                 params.put("vaga_id", String.valueOf(vagaId));
                 params.put("recrutador_id", String.valueOf(recrutadorId));
+
                 if (motivo != null && !motivo.isEmpty()) {
                     params.put("motivo", motivo);
                 }
 
-                // Configurar a conexão
-                URL url = new URL(Api.BASE_URL);
+                // Alteração importante aqui - usar o endpoint correto
+                Log.d("API_DEBUG", "URL: " + Api.URL_ATUALIZAR_STATUS_CANDIDATURA);
+                Log.d("API_DEBUG", "Params: " + params.toString());
+                URL url = new URL(Api.URL_ATUALIZAR_STATUS_CANDIDATURA);
+
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
                 connection.setDoOutput(true);
 
-                // Escrever os parâmetros
                 OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
                 writer.write(getPostDataString(params));
                 writer.flush();
                 writer.close();
                 os.close();
 
-                // Processar a resposta
                 int responseCode = connection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -129,8 +137,11 @@ public class CandidatosActivity extends AppCompatActivity {
                     JSONObject jsonResponse = new JSONObject(response.toString());
                     if (!jsonResponse.getBoolean("error")) {
                         runOnUiThread(() -> {
-                            // Atualizar o status localmente
                             candidato.setStatus(novoStatus);
+                            if (novoStatus.equals("rejeitada")) {
+                                candidato.setMotivoRejeicao(motivo);
+                            }
+                            candidato.setRecrutadorId(recrutadorId);
                             adapter.notifyItemChanged(position);
 
                             Toast.makeText(CandidatosActivity.this,
@@ -145,6 +156,7 @@ public class CandidatosActivity extends AppCompatActivity {
                 }
             } catch (Exception e) {
                 runOnUiThread(() -> {
+                    Log.e("API_ERROR", "Erro ao atualizar status", e);
                     Toast.makeText(CandidatosActivity.this,
                             "Erro ao atualizar status: " + e.getMessage(),
                             Toast.LENGTH_LONG).show();
@@ -179,7 +191,6 @@ public class CandidatosActivity extends AppCompatActivity {
             try {
                 String urlCompleta = Api.URL_LISTAR_CANDIDATURAS + "&vaga_id=" + vagaId;
                 Log.d("API_REQUEST", "URL: " + urlCompleta);
-
                 URL url = new URL(urlCompleta);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -197,8 +208,6 @@ public class CandidatosActivity extends AppCompatActivity {
                     }
                     in.close();
 
-                    Log.d("API_RESPONSE", "Resposta: " + response.toString());
-
                     JSONObject jsonResponse = new JSONObject(response.toString());
                     if (!jsonResponse.getBoolean("error")) {
                         JSONArray candidatosArray = jsonResponse.getJSONArray("candidatos");
@@ -206,6 +215,8 @@ public class CandidatosActivity extends AppCompatActivity {
                         runOnUiThread(() -> {
                             candidatosList.clear();
                             try {
+                                SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault());
+
                                 for (int i = 0; i < candidatosArray.length(); i++) {
                                     JSONObject candidatoJson = candidatosArray.getJSONObject(i);
 
@@ -215,24 +226,25 @@ public class CandidatosActivity extends AppCompatActivity {
                                             candidatoJson.getString("email"),
                                             candidatoJson.optString("cargo", ""),
                                             candidatoJson.getString("status"),
-                                            new Date(candidatoJson.optLong("data_candidatura", System.currentTimeMillis())),
+                                            dateFormat.parse(candidatoJson.getString("data_candidatura")),
                                             candidatoJson.optString("telefone", ""),
                                             candidatoJson.optString("descricao", ""),
                                             candidatoJson.optString("experiencia_profissional", ""),
                                             candidatoJson.optString("formacao_academica", ""),
                                             candidatoJson.optString("certificados", ""),
-                                            candidatoJson.optString("username", ""),  // Novo campo
-                                            candidatoJson.optString("genero", ""),    // Novo campo
-                                            candidatoJson.optString("idade", "")      // Novo campo
+                                            candidatoJson.optString("username", ""),
+                                            candidatoJson.optString("genero", ""),
+                                            candidatoJson.optString("idade", "")
                                     );
-                                    // Defina o ID da candidatura
                                     usuario.setIdCandidatura(candidatoJson.getLong("id_candidatura"));
+                                    usuario.setMotivoRejeicao(candidatoJson.optString("motivo_rejeicao", null));
+                                    usuario.setRecrutadorId(candidatoJson.optLong("recrutador_id", 0));
 
                                     candidatosList.add(usuario);
                                 }
                                 adapter.notifyDataSetChanged();
-                            } catch (JSONException e) {
-                                Log.e("JSON_ERROR", "Erro ao processar JSON", e);
+                            } catch (Exception e) {
+                                Log.e("PARSE_ERROR", "Erro ao processar resposta", e);
                                 Toast.makeText(CandidatosActivity.this,
                                         "Erro ao processar dados dos candidatos",
                                         Toast.LENGTH_SHORT).show();

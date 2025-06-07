@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.widget.Toast;
 
@@ -13,6 +14,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.navigation.NavigationView;
@@ -33,7 +35,7 @@ public class ConfigActivity extends AppCompatActivity {
 
         // Inicializa o Firebase Auth
         mAuth = FirebaseAuth.getInstance();
-        sharedPreferences = getSharedPreferences("login_prefs", Context.MODE_PRIVATE);
+        sharedPreferences = getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
 
         // Inicializar os componentes
         idTopAppBar = findViewById(R.id.idConfigTopAppBar);
@@ -83,25 +85,37 @@ public class ConfigActivity extends AppCompatActivity {
         });
     }
 
+    public static void limparDadosLogin(Context context) {
+        SharedPreferences prefs = context.getSharedPreferences("user_prefs", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        // Remove todos os dados relacionados ao login
+        editor.remove("manter_logado");
+        editor.remove("user_type");
+        editor.remove("firebase_uid");
+        editor.remove("user_email");
+        editor.remove("user_id");
+        editor.remove("nome");
+        editor.remove("username");
+        // Adicione aqui qualquer outro campo relacionado ao usuário
+
+        // Commit as alterações imediatamente
+        editor.commit(); // Usamos commit() em vez de apply() para garantir execução imediata
+    }
+
     private void fazerLogout() {
         new AlertDialog.Builder(this)
                 .setTitle("Sair da conta")
                 .setMessage("Tem certeza que deseja sair?")
                 .setPositiveButton("Sair", (dialog, which) -> {
-                    // Limpa as preferências compartilhadas
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                    editor.clear();
-                    editor.apply();
-
-                    // Faz logout do Firebase
-                    mAuth.signOut();
-
-                    Toast.makeText(this, "Você saiu da conta", Toast.LENGTH_SHORT).show();
-
+                    // Cria intent com flag de logout
                     Intent intent = new Intent(this, LoginActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    intent.putExtra("FORCE_LOGOUT", true);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+
+                    // Inicia a LoginActivity e finaliza todas as outras
                     startActivity(intent);
-                    finishAffinity(); // Fecha todas as atividades
+                    finishAffinity();
                 })
                 .setNegativeButton("Cancelar", null)
                 .show();
