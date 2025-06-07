@@ -1,6 +1,7 @@
 package com.example.cardstackview;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -29,6 +30,25 @@ public class TelaEmpresaActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tela_empresa);
+
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userType = prefs.getString("user_type", "Física"); // Default: candidato
+        boolean isEmpresa = userType.equalsIgnoreCase("Jurídica");
+
+        navigationView = findViewById(R.id.navigation_view);
+
+        // Filtra itens do menu de acordo com o tipo de usuário
+        if (navigationView != null) {
+            if (isEmpresa) {
+                // Empresa: esconde itens que só fazem sentido para candidatos
+                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+            } else {
+                // Candidato: esconde itens que só fazem sentido para empresas
+                navigationView.getMenu().findItem(R.id.idVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+            }
+        }
 
         // Inicializa componentes com os IDs do XML
         drawerLayout = findViewById(R.id.drawer_layout);
@@ -149,6 +169,8 @@ public class TelaEmpresaActivity extends AppCompatActivity {
             startActivity(new Intent(this, FeedbackActivity.class));
         } else if (itemId == R.id.idSobreItemMenu) {
             startActivity(new Intent(this, SobreNosActivity.class));
+        } else if (itemId == R.id.idCriarVagasItemMenu) {
+            startActivity(new Intent(this, CriarVagaActivity.class));
         }
         drawerLayout.closeDrawer(GravityCompat.START);
     }

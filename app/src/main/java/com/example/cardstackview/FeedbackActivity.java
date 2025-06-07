@@ -57,6 +57,8 @@ public class FeedbackActivity extends AppCompatActivity {
                 Toast.makeText(FeedbackActivity.this, "Você já está em Ajuda/Feedback", Toast.LENGTH_SHORT).show();
             } else if (id == R.id.idSobreItemMenu) {
                 startActivity(new Intent(FeedbackActivity.this, SobreNosActivity.class));
+            } else if (id == R.id.idCriarVagasItemMenu) {
+                startActivity(new Intent(this, CriarVagaActivity.class));
             }
 
             idDrawer.closeDrawers();

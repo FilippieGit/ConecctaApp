@@ -52,7 +52,7 @@ public class ModeloBancoTalentosFragment extends Fragment {
         });
 
         // Inicialização dos componentes
-        idTopAppBar = view.findViewById(R.id.idBancoTopAppBar);
+        //idTopAppBar = view.findViewById(R.id.idBancoTopAppBar);
         idDrawer = view.findViewById(R.id.idDrawer);
         idNavView = view.findViewById(R.id.idNavView);
 
@@ -83,6 +83,9 @@ public class ModeloBancoTalentosFragment extends Fragment {
                 startActivity(intent);
             } else if (id == R.id.idSobreItemMenu) {
                 Intent intent = new Intent(getActivity(), SobreNosActivity.class);
+                startActivity(intent);
+            } else if (id == R.id.idCriarVagasItemMenu) {
+                Intent intent = new Intent(getActivity(), CriarVagaActivity.class);
                 startActivity(intent);
             }
 

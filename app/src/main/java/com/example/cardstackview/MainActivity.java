@@ -1,6 +1,7 @@
 package com.example.cardstackview;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentPosition = 0;
     private static final int BATCH_SIZE = 10;
     private boolean isLoading = false;
+    private NavigationView navigationView;
     private boolean isSwiping = false;
     private long lastSwipeTime = 0;
     private static final long MIN_SWIPE_INTERVAL = 500; // 0.5 segundos entre swipes
@@ -79,6 +81,25 @@ public class MainActivity extends AppCompatActivity {
         setupCardStackView();
         setupNavigation();
         buscarVagas();
+
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userType = prefs.getString("user_type", "Física"); // Default: candidato
+        boolean isEmpresa = userType.equalsIgnoreCase("Jurídica");
+
+        navigationView = findViewById(R.id.navigation_view);
+
+        // Filtra itens do menu de acordo com o tipo de usuário
+        if (navigationView != null) {
+            if (isEmpresa) {
+                // Empresa: esconde itens que só fazem sentido para candidatos
+                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+            } else {
+                // Candidato: esconde itens que só fazem sentido para empresas
+                navigationView.getMenu().findItem(R.id.idVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+            }
+        }
     }
 
     private void setupCardStackView() {
@@ -474,6 +495,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, FeedbackActivity.class));
             } else if (id == R.id.idSobreItemMenu) {
                 startActivity(new Intent(this, SobreNosActivity.class));
+            } else if (id == R.id.idCriarVagasItemMenu) {
+                startActivity(new Intent(this, CriarVagaActivity.class));
             }
 
             idDrawer.closeDrawers();
