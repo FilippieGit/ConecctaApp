@@ -15,6 +15,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.airbnb.lottie.LottieAnimationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -41,32 +42,28 @@ public class PerfilActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.perfil_pessoa_layout);
 
-        // Configurar Lottie (se houver animações)
         configurarLottie();
-
-        // Inicializar views
         initializeViews();
 
-        // Configurar botão de compartilhar
+        // ⚠️ Adicione esta linha para configurar a seta:
+        configurarSetaVoltarParaEmpresa();
+
         btnPCompartilharPerfil.setOnClickListener(v -> compartilharPerfil());
 
-        // Determinar se é visualização do próprio perfil ou de empresa
         boolean isProprioPerfil = !getIntent().hasExtra("nome");
 
         if (isProprioPerfil) {
-            // Modo próprio perfil
             carregarDadosUsuario();
             btnPEditarPerfil.setOnClickListener(v ->
                     startActivity(new Intent(PerfilActivity.this, EdicaoPerfilPessoaActivity.class))
             );
         } else {
-            // Modo empresa visualizando candidato
             loadCandidateData();
         }
 
-        // Configurar layout dos botões
         configurarBotoes(isProprioPerfil);
     }
+
 
     private void configurarLottie() {
         try {
@@ -88,6 +85,27 @@ public class PerfilActivity extends AppCompatActivity {
             Log.e("PerfilActivity", "Erro ao configurar Lottie", e);
         }
     }
+
+    private void configurarSetaVoltarParaEmpresa() {
+        ImageView btnVoltar = findViewById(R.id.imgPerfilPessoabtnVoltar);
+        if (btnVoltar == null) return;
+
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseFirestore.getInstance().collection("users")
+                .document(userId)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String tipo = documentSnapshot.getString("tipo");
+                        if ("Jurídica".equalsIgnoreCase(tipo)) {
+                            btnVoltar.setVisibility(View.VISIBLE);
+                            btnVoltar.setOnClickListener(v -> finish());
+                        }
+                    }
+                })
+                .addOnFailureListener(e -> Log.e("PerfilActivity", "Erro ao buscar tipo de usuário", e));
+    }
+
 
     private void initializeViews() {
         try {

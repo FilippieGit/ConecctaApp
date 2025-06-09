@@ -16,6 +16,15 @@
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
+    <Button
+        android:id="@+id/btnNotificarAprovados"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Notificar Aprovados"
+        android:layout_margin="8dp"
+        android:backgroundTint="@color/verde"
+        android:textColor="@color/brancosecondary"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewCandidatos"
         android:layout_width="match_parent"

@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class Api {
     // IP base para todas as requisições
-    private static final String BASE_IP = "192.168.1.9"; // Filippie
+    //private static final String BASE_IP = "192.168.1.9"; // Filippie
     //private static final String BASE_IP = "192.168.22.160"; // Lula
-    //private static final String BASE_IP = "10.67.97.83"; // IPs aleatórios
+    private static final String BASE_IP = "26.205.58.94"; // IPs aleatórios
 
     // Endpoints principais
     public static final String BASE_URL = "http://" + BASE_IP + "/ConecctaAPI/v1/";
@@ -23,6 +23,7 @@ public class Api {
     public static final String SYNC_API_URL = "http://" + BASE_IP + "/sync/";
 
     // Endpoints de autenticação e usuário
+    public static final String URL_NOTIFICAR_APROVADOS = BASE_URL + "api.php?apicall=notificarTodosAprovados";
     public static final String URL_LOGAR_USUARIO = BASE_URL + "Api.php?apicall=logarUsuario";
     public static final String URL_GET_USER_DATA = BASE_URL + "get_user_id.php";
     public static final String URL_SYNC_USER = SYNC_API_URL + "sync.php";
@@ -49,8 +50,9 @@ public class Api {
     public static final String URL_REGISTRAR_INTERESSE = BASE_URL + "Api.php?apicall=registrarinteresse";
 
     // Configurações de timeout
-    public static final int CONNECT_TIMEOUT = 15000; // 15 segundos
-    public static final int READ_TIMEOUT = 10000;    // 10 segundos
+// Em Api.java, atualize os valores de timeout
+    public static final int CONNECT_TIMEOUT = 30000; // Aumentado para 30 segundos
+    public static final int READ_TIMEOUT = 30000;    // Aumentado para 30 segundos
 
     // Método para verificar conexão com a internet
     public static boolean isURLReachable(Context context) {
