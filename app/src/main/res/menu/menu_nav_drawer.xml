@@ -10,7 +10,11 @@
         android:checkable="true"
         android:icon="@drawable/searchimg"
         android:title="Encontrar vagas" />
-
+    <item
+        android:id="@+id/idCriarVagasItemMenu"
+        android:checkable="true"
+        android:icon="@drawable/baseline_add_circle_outline"
+        android:title="Criar vagas" />
     <item
         android:id="@+id/idConfigItemMenu"
         android:checkable="true"

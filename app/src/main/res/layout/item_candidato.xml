@@ -13,7 +13,6 @@
         android:textSize="18sp"
         android:textStyle="bold" />
 
-
     <TextView
         android:id="@+id/tvEmailCandidato"
         android:layout_width="match_parent"
@@ -49,5 +48,31 @@
             android:textSize="14sp"
             android:textColor="@color/cinza"
             android:gravity="end" />
+    </LinearLayout>
+
+    <!-- Adicione este novo LinearLayout para os botões -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:orientation="horizontal"
+        android:gravity="end">
+
+        <Button
+            android:id="@+id/btnRecusar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Recusar"
+            android:backgroundTint="@color/vermelho"
+            android:textColor="@color/brancosecondary"
+            android:layout_marginEnd="8dp"/>
+
+        <Button
+            android:id="@+id/btnAceitar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aceitar"
+            android:backgroundTint="@color/verde"
+            android:textColor="@color/brancosecondary"/>
     </LinearLayout>
 </LinearLayout>

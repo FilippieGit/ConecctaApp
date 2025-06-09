@@ -3,6 +3,7 @@ package com.example.cardstackview;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
@@ -53,7 +54,11 @@ public class DetalheVagaActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         inicializarComponentes();
 
-        boolean isPessoaJuridica = getIntent().getBooleanExtra("isPessoaJuridica", false);
+        // Obter o tipo do usuário das SharedPreferences
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userType = prefs.getString("user_type", "Física");
+        boolean isPessoaJuridica = userType.equalsIgnoreCase("Jurídica");
+
         vaga = (Vagas) getIntent().getSerializableExtra("vaga");
         if (vaga == null) {
             Toast.makeText(this, "Erro: Dados da vaga não encontrados", Toast.LENGTH_SHORT).show();
@@ -61,12 +66,14 @@ public class DetalheVagaActivity extends AppCompatActivity {
             return;
         }
 
-        // Configurar visibilidade dos botões
-        if (isPessoaJuridica && vaga != null) {
+        // Configurar visibilidade dos botões baseado no tipo de usuário
+        if (isPessoaJuridica) {
+            // Usuário é empresa - mostrar botão de ver candidatos e ocultar botão de candidatura
             btnVerCandidatos.setVisibility(View.VISIBLE);
             btnExcluir.setVisibility(View.VISIBLE);
             btnCandidatar.setVisibility(View.GONE);
         } else {
+            // Usuário é candidato - mostrar botão de candidatura e ocultar botões de empresa
             btnVerCandidatos.setVisibility(View.GONE);
             btnExcluir.setVisibility(View.GONE);
             btnCandidatar.setVisibility(View.VISIBLE);
@@ -91,11 +98,9 @@ public class DetalheVagaActivity extends AppCompatActivity {
             startActivity(intent);
         });
 
-        // Configurar listeners dos novos botões
         btnCandidatar.setOnClickListener(v -> {
             if (vaga != null) {
                 Intent intent = new Intent(DetalheVagaActivity.this, CandidatarSeActivity.class);
-                // Converter para String explicitamente
                 intent.putExtra("vaga_id", String.valueOf(vaga.getVaga_id()));
                 intent.putExtra("vaga_titulo", vaga.getTitulo());
                 startActivity(intent);

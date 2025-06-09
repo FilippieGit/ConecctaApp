@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.cardview.widget.CardView
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,64 +10,78 @@
     android:clickable="true"
     android:focusable="true"
     android:foreground="?android:attr/selectableItemBackground"
-    card_view:cardCornerRadius="16dp"
-    card_view:cardElevation="4dp">
+    app:cardCornerRadius="16dp"
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
+        android:orientation="vertical"
         android:padding="16dp">
 
-        <!-- Imagem da empresa -->
-        <ImageView
-            android:id="@+id/imageItemVaga"
-            android:layout_width="64dp"
-            android:layout_height="64dp"
-            android:layout_marginEnd="16dp"
-            android:contentDescription="Logo da empresa"
-            android:scaleType="centerCrop"
-            android:src="@drawable/logo"
-            tools:src="@drawable/logo" />
-
-        <!-- Informações da vaga -->
         <LinearLayout
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
 
-            <!-- Título da vaga -->
-            <TextView
-                android:id="@+id/textTituloItem"
-                android:layout_width="match_parent"
+            <!-- Imagem da empresa -->
+            <ImageView
+                android:id="@+id/imageItemVaga"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:layout_marginEnd="16dp"
+                android:contentDescription="Logo da empresa"
+                android:scaleType="centerCrop"
+                android:src="@drawable/logo"
+                tools:src="@drawable/logo" />
+
+            <!-- Informações da vaga -->
+            <LinearLayout
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:fontFamily="@font/chillax_bold"
-                android:text="Título da Vaga"
-                android:textColor="@color/azulprimary"
-                android:textSize="16sp"
-                android:textStyle="bold"
-                tools:text="Desenvolvedor Android" />
+                android:layout_weight="1"
+                android:orientation="vertical">
 
-            <!-- Localização ou breve descrição -->
-            <TextView
-                android:id="@+id/textSubtituloItem"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="4dp"
-                android:fontFamily="@font/chillax_regular"
-                android:ellipsize="end"
-                android:maxLines="1"
-                android:text="Localização ou breve descrição"
-                android:textColor="@color/cinza"
-                android:textSize="14sp"
-                tools:text="São Paulo - SP" />
+                <!-- Título da vaga -->
+                <TextView
+                    android:id="@+id/textTituloItem"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Título da Vaga"
+                    android:textColor="@color/azulprimary"
+                    android:textSize="16sp"
+                    android:textStyle="bold"
+                    tools:text="Desenvolvedor Android" />
 
+                <!-- Nome da empresa -->
+                <TextView
+                    android:id="@+id/textEmpresa"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:ellipsize="end"
+                    android:maxLines="1"
+                    android:text="Nome da Empresa"
+                    android:textColor="@color/cinza"
+                    android:textSize="14sp"
+                    tools:text="Minha Empresa Ltda" />
+            </LinearLayout>
         </LinearLayout>
 
+        <!-- Localização ou breve descrição -->
+        <TextView
+            android:id="@+id/textSubtituloItem"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="Localização ou breve descrição"
+            android:textColor="@color/cinza"
+            android:textSize="14sp"
+            tools:text="São Paulo - SP | CLT | R$ 5.000,00" />
     </LinearLayout>
-
 </androidx.cardview.widget.CardView>

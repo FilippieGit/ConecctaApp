@@ -30,7 +30,6 @@ import okhttp3.Response;
 public class PerfilActivity extends AppCompatActivity {
 
     // Componentes da interface
-    private ImageView imgPerfilPbtnVoltar;
     private Button btnPEditarPerfil, btnPCompartilharPerfil;
     private ImageView imageViewPerfil;
     private TextView perfilNome, perfilEmail, perfilTelefone, perfilDescricao, perfilSetor;
@@ -47,9 +46,6 @@ public class PerfilActivity extends AppCompatActivity {
 
         // Inicializar views
         initializeViews();
-
-        // Configurar botão de voltar
-        imgPerfilPbtnVoltar.setOnClickListener(v -> finish());
 
         // Configurar botão de compartilhar
         btnPCompartilharPerfil.setOnClickListener(v -> compartilharPerfil());
@@ -95,7 +91,6 @@ public class PerfilActivity extends AppCompatActivity {
 
     private void initializeViews() {
         try {
-            imgPerfilPbtnVoltar = findViewById(R.id.imgPerfilPbtnVoltar);
             btnPEditarPerfil = findViewById(R.id.btnPEditarPerfil);
             btnPCompartilharPerfil = findViewById(R.id.btnPCompartilharPerfil);
             imageViewPerfil = findViewById(R.id.imgPerfilCandidato);

@@ -1,6 +1,7 @@
 package com.example.cardstackview;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -51,6 +52,7 @@ public class MainActivity extends AppCompatActivity {
     private int currentPosition = 0;
     private static final int BATCH_SIZE = 10;
     private boolean isLoading = false;
+    private NavigationView navigationView;
     private boolean isSwiping = false;
     private long lastSwipeTime = 0;
     private static final long MIN_SWIPE_INTERVAL = 500; // 0.5 segundos entre swipes
@@ -79,6 +81,25 @@ public class MainActivity extends AppCompatActivity {
         setupCardStackView();
         setupNavigation();
         buscarVagas();
+
+        SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+        String userType = prefs.getString("user_type", "Física"); // Default: candidato
+        boolean isEmpresa = userType.equalsIgnoreCase("Jurídica");
+
+        navigationView = findViewById(R.id.navigation_view);
+
+        // Filtra itens do menu de acordo com o tipo de usuário
+        if (navigationView != null) {
+            if (isEmpresa) {
+                // Empresa: esconde itens que só fazem sentido para candidatos
+                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+            } else {
+                // Candidato: esconde itens que só fazem sentido para empresas
+                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+            }
+        }
     }
 
     private void setupCardStackView() {
@@ -87,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             public void onCardSwiped(Direction direction) {
                 long now = System.currentTimeMillis();
                 if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                        layoutManager.getTopPosition() <= 0) {
+                        layoutManager.getTopPosition() >= vagasList.size()) {
                     return;
                 }
 
@@ -101,6 +122,8 @@ public class MainActivity extends AppCompatActivity {
                     AppExecutor.getExecutor().execute(() -> {
                         if (direction == Direction.Right) {
                             processarLike(vaga);
+                        } else if (direction == Direction.Left) {
+                            registrarInteresse(vaga); // Adicione esta linha para registrar rejeição
                         }
 
                         runOnUiThread(() -> {
@@ -123,10 +146,21 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            @Override public void onCardRewound() {}
-            @Override public void onCardCanceled() {}
-            @Override public void onCardAppeared(View view, int position) {}
-            @Override public void onCardDisappeared(View view, int position) {}
+            @Override
+            public void onCardRewound() {
+            }
+
+            @Override
+            public void onCardCanceled() {
+            }
+
+            @Override
+            public void onCardAppeared(View view, int position) {
+            }
+
+            @Override
+            public void onCardDisappeared(View view, int position) {
+            }
         };
 
         layoutManager = new CardStackLayoutManager(this, cardStackListener);
@@ -142,70 +176,82 @@ public class MainActivity extends AppCompatActivity {
         ImageButton btnDown = findViewById(R.id.btnDown);
 
         btnLike.setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                    vagasList.isEmpty() || layoutManager.getTopPosition() <= 0) {
-                return;
+            if (canSwipe()) {
+                // Feedback visual
+                v.animate().scaleX(0.8f).scaleY(0.8f).setDuration(100)
+                        .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(100));
+                isSwiping = true;
+                lastSwipeTime = System.currentTimeMillis();
+
+                int pos = layoutManager.getTopPosition();
+                if (pos < vagasList.size()) {
+                    Vagas vaga = vagasList.get(pos);
+                    processarLike(vaga); // Processa o like antes do swipe
+                }
+
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Right)
+                        .setDuration(400)
+                        .build();
+                layoutManager.setSwipeAnimationSetting(setting);
+                binding.cardStack.swipe();
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSwiping = false;
+                }, 500);
             }
-
-            isSwiping = true;
-            lastSwipeTime = now;
-
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Right)
-                    .setDuration(400)
-                    .build();
-            layoutManager.setSwipeAnimationSetting(setting);
-            binding.cardStack.swipe();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isSwiping = false;
-            }, 500);
         });
 
         btnReject.setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                    vagasList.isEmpty() || layoutManager.getTopPosition() <= 0) {
-                return;
+            if (canSwipe()) {
+                isSwiping = true;
+                lastSwipeTime = System.currentTimeMillis();
+
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Left)
+                        .setDuration(400)
+                        .build();
+                layoutManager.setSwipeAnimationSetting(setting);
+                binding.cardStack.swipe();
+
+                int pos = layoutManager.getTopPosition();
+                if (pos < vagasList.size()) {
+                    Vagas vaga = vagasList.get(pos);
+                    registrarInteresse(vaga); // Registra o interesse (rejeição)
+                }
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSwiping = false;
+                }, 500);
             }
-
-            isSwiping = true;
-            lastSwipeTime = now;
-
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Left)
-                    .setDuration(400)
-                    .build();
-            layoutManager.setSwipeAnimationSetting(setting);
-            binding.cardStack.swipe();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isSwiping = false;
-            }, 500);
         });
 
         btnDown.setOnClickListener(v -> {
-            long now = System.currentTimeMillis();
-            if (isSwiping || now - lastSwipeTime < MIN_SWIPE_INTERVAL ||
-                    vagasList.isEmpty() || layoutManager.getTopPosition() <= 0) {
-                return;
+            if (canSwipe()) {
+                isSwiping = true;
+                lastSwipeTime = System.currentTimeMillis();
+
+                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
+                        .setDirection(Direction.Bottom)
+                        .setDuration(400)
+                        .build();
+                layoutManager.setSwipeAnimationSetting(setting);
+                binding.cardStack.swipe();
+
+                new Handler(Looper.getMainLooper()).postDelayed(() -> {
+                    isSwiping = false;
+                    // Para o botão de baixo, não processamos nada adicional
+                }, 500);
             }
-
-            isSwiping = true;
-            lastSwipeTime = now;
-
-            SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                    .setDirection(Direction.Bottom)
-                    .setDuration(400)
-                    .build();
-            layoutManager.setSwipeAnimationSetting(setting);
-            binding.cardStack.swipe();
-
-            new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                isSwiping = false;
-            }, 500);
         });
+    }
+
+    private boolean canSwipe() {
+        long now = System.currentTimeMillis();
+        return !isSwiping &&
+                now - lastSwipeTime >= MIN_SWIPE_INTERVAL &&
+                !vagasList.isEmpty() &&
+                layoutManager.getTopPosition() < vagasList.size();
     }
 
     private void processarLike(Vagas vaga) {
@@ -347,23 +393,24 @@ public class MainActivity extends AppCompatActivity {
                                 beneficios = "Não informado";
                             }
 
-                            Vagas vaga = new Vagas(
-                                    vagaJson.optInt("id_vagas"),
-                                    vagaJson.optString("titulo_vagas", "Não informado"),
-                                    vagaJson.optString("descricao_vagas", "Não informado"),
-                                    vagaJson.optString("local_vagas", "Não informado"),
-                                    vagaJson.optString("salario_vagas", "Não informado"),
-                                    vagaJson.optString("requisitos_vagas", "Não informado"),
-                                    vagaJson.optString("nivel_experiencia", "Não informado"),
-                                    vagaJson.optString("tipo_contrato", "Não informado"),
-                                    vagaJson.optString("area_atuacao", "Não informado"),
-                                    vagaJson.optString("beneficios_vagas", "Não informado"),
-                                    vagaJson.optString("vinculo_vagas", "Não informado"),
-                                    vagaJson.optString("ramo_vagas", "Não informado"),
-                                    vagaJson.optInt("id_empresa"),
-                                    vagaJson.optString("nome_empresa", "Empresa não informada"),
-                                    null
-                            );
+                            Vagas vaga = new Vagas();
+                            vaga.setVaga_id(vagaJson.optInt("id_vagas"));
+                            vaga.setTitulo(vagaJson.optString("titulo_vagas", "Não informado"));
+                            vaga.setDescricao(vagaJson.optString("descricao_vagas", "Não informado"));
+                            vaga.setLocalizacao(vagaJson.optString("local_vagas", "Não informado"));
+                            vaga.setSalario(vagaJson.optString("salario_vagas", "Não informado"));
+                            vaga.setRequisitos(vagaJson.optString("requisitos_vagas", "Não informado"));
+                            vaga.setNivel_experiencia(vagaJson.optString("nivel_experiencia", "Não informado"));
+                            vaga.setTipo_contrato(vagaJson.optString("tipo_contrato", "Não informado"));
+                            vaga.setArea_atuacao(vagaJson.optString("area_atuacao", "Não informado"));
+                            vaga.setBeneficios(beneficios);
+                            vaga.setVinculo(vagaJson.optString("vinculo_vagas", "Não informado"));
+                            vaga.setRamo(vagaJson.optString("ramo_vagas", "Não informado"));
+                            vaga.setEmpresa_id(vagaJson.optInt("id_empresa"));
+                            vaga.setNome_empresa(vagaJson.optString("nome_empresa", "Empresa não informada"));
+                            vaga.setHabilidadesDesejaveisStr(null);
+                            vaga.setId_usuario(0); // Set default value or get from JSON if available
+
 
                             allVagas.add(vaga);
                         }
@@ -448,6 +495,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(new Intent(this, FeedbackActivity.class));
             } else if (id == R.id.idSobreItemMenu) {
                 startActivity(new Intent(this, SobreNosActivity.class));
+            } else if (id == R.id.idCriarVagasItemMenu) {
+                startActivity(new Intent(this, CriarVagaActivity.class));
             }
 
             idDrawer.closeDrawers();

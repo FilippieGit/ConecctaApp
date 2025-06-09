@@ -1,9 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="Nenhuma vaga disponível"
-    android:gravity="center"
-    android:fontFamily="@font/chillax_regular"
-    android:padding="16dp"
-    android:textSize="18sp"/>
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:src="@drawable/baseline_playlist_remove"
+        android:contentDescription="Lista vazia" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Nenhuma vaga cadastrada"
+        android:textSize="16sp"
+        android:textColor="@color/cinza" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Clique no botão abaixo para criar sua primeira vaga"
+        android:textSize="14sp"
+        android:textColor="@color/cinza" />
+</LinearLayout>

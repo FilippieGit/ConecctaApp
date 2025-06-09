@@ -25,15 +25,22 @@
         <activity
             android:name=".SplashActivity"
             android:exported="true"
-            android:theme="@style/Theme.CardStackView"/>
+            android:theme="@style/Theme.CardStackView">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <activity
             android:name=".LoginActivity"
-            android:exported="true" />
+            android:launchMode="singleTask"
+            android:noHistory="true"
+            android:clearTaskOnLaunch="true"/>
 
         <activity
             android:name=".MainActivity"
-            android:exported="false"
+            android:exported="true"
             android:launchMode="singleTop"
             android:theme="@style/Theme.CardStackView"/>
 
@@ -109,10 +116,6 @@
             android:exported="false"
             android:theme="@style/Theme.CardStackView"/>
 
-        <activity
-            android:name=".PerfilEmpresaActivity"
-            android:exported="false"
-            android:theme="@style/Theme.CardStackView"/>
 
         <activity
             android:name=".EdicaoPerfilPessoaActivity"
@@ -127,12 +130,7 @@
         <activity
             android:name=".TelaEmpresaActivity"
             android:exported="true"
-            android:theme="@style/Theme.CardStackView">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.CardStackView"/>
 
         <activity
             android:name=".SobreNosActivity"
