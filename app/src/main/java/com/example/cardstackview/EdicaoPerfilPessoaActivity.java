@@ -40,6 +40,8 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String uid;
 
+    private TextView perfilNome; //adiocionei essa parte CHAT
+
     private LinearLayout layoutCertificados, layoutExperiencias, layoutFormacoes;
     private Button btnAddCertificado, btnAddExperiencia, btnAddFormacao, btnSalvarPerfil;
     private ImageView imgVoltarPerfilPessoa;
@@ -71,6 +73,10 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
         layoutExperiencias = findViewById(R.id.layoutExperiencias);
         layoutFormacoes = findViewById(R.id.layoutFormacoes);
 
+
+        perfilNome = findViewById(R.id.perfilNome); // Tambem ADICIONEI ESSA PARTE CHAT
+
+
         btnAddCertificado = findViewById(R.id.btnAddCertificado);
         btnAddExperiencia = findViewById(R.id.btnAddExperiencia);
         btnAddFormacao = findViewById(R.id.btnAddFormacao);
@@ -86,9 +92,6 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
         edtSetor = ((com.google.android.material.textfield.TextInputLayout) findViewById(R.id.edicaoPerfilArea))
                 .getEditText();
 
-        // Bind do ImageView circular e do botão "editar foto" (agora Button)
-
-        btnEditPhoto = findViewById(R.id.btnEditPhoto);
 
         // 3) Listeners dos botões existentes
         btnAddCertificado.setOnClickListener(v -> mostrarDialogCertificado());
@@ -97,19 +100,13 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
         btnSalvarPerfil.setOnClickListener(v -> saveProfile());
         imgVoltarPerfilPessoa.setOnClickListener(v -> finish());
 
-        // 4) Listener do botão de editar foto: abre seletor de PNG
-        btnEditPhoto.setOnClickListener(v -> {
-            Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/png"); // apenas PNG
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            startActivityForResult(
-                    Intent.createChooser(intent, "Selecione um arquivo PNG"),
-                    REQUEST_CODE_PICK_IMAGE
-            );
-        });
+
 
         // Se quiser carregar dados existentes (incluindo imagem), chame loadProfile() aqui:
-        // loadProfile();
+        loadProfile();
+
+
+
     }
 
     @Override
@@ -147,17 +144,21 @@ public class EdicaoPerfilPessoaActivity extends AppCompatActivity {
     }
 
     private void loadProfile() {
+
+
+
+
         db.collection("users")
                 .document(uid)
                 .get()
                 .addOnSuccessListener(doc -> {
                     if (!doc.exists()) return;
 
-                    // Se você armazenou o caminho da imagem em Firestore, poderia usar Glide/Picasso para carregar:
-                    // String caminhoImagem = doc.getString("imagem_perfil");
-                    // if (caminhoImagem != null) {
-                    //     Glide.with(this).load(caminhoImagem).into(profileImage);
-                    // }
+
+
+
+                    String nomeSalvo = doc.getString("nome");
+                    perfilNome.setText(nomeSalvo != null ? nomeSalvo : "Não informado");
 
                     List<String> certs = (List<String>) doc.get("certificados");
                     List<String> exps = (List<String>) doc.get("experiencias");

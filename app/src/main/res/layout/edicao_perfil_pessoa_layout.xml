@@ -374,12 +374,7 @@
             android:fontFamily="@font/chillax_semibold"
             android:text="Salvar Perfil" />
 
-        <Button
-            android:id="@+id/btnEditPhoto"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="editar foto"
-            android:layout_margin="16dp"/>
+
 
     </LinearLayout>
 
