@@ -1,7 +1,8 @@
 plugins {
     alias(libs.plugins.android.application)
 
-    id 'com.google.gms.google-services' // Adiciona o plugin do Firebase aqui
+    id 'com.google.gms.google-services'
+    alias(libs.plugins.kotlin.android) // Adiciona o plugin do Firebase aqui
 }
 
 
@@ -16,6 +17,20 @@ android {
     viewBinding{
         enable = true
     }
+
+    packagingOptions {
+        resources {
+            excludes += [
+                    'META-INF/LICENSE',
+                    'META-INF/LICENSE.txt',
+                    'META-INF/LICENSE.md',
+                    'META-INF/NOTICE',
+                    'META-INF/NOTICE.txt',
+                    'META-INF/NOTICE.md'
+            ]
+        }
+    }
+
 
     defaultConfig {
         applicationId "com.example.cardstackview"
@@ -37,6 +52,9 @@ android {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
     }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
 }
 
 
@@ -54,10 +72,15 @@ dependencies {
     implementation libs.firebase.firestore
     implementation 'com.google.firebase:firebase-auth:21.0.5'
     implementation libs.firebase.firestore.v2403
+    implementation libs.core.ktx
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
     implementation 'com.google.firebase:firebase-auth:23.2.0'
+
+    implementation 'com.sun.mail:android-mail:1.6.7'
+    implementation 'com.sun.mail:android-activation:1.6.7'
+
 
     implementation 'com.google.firebase:firebase-auth:23.2.0' // ou a versão mais recente
     implementation 'com.google.firebase:firebase-database:21.0.0'

@@ -33,6 +33,7 @@ public class Api {
     public static final String URL_GET_USER = USER_API_URL + "getUser.php?id=";
     public static final String URL_UPDATE_USER = UPDATE_API_URL + "update.php";
 
+
     // Endpoints de vagas
     public static final String URL_GET_VAGAS = BASE_URL + "Api.php?apicall=getVagas";
     public static final String URL_GET_VAGAS_BY_USER = BASE_URL + "Api.php?apicall=getVagasByUserId";

@@ -2,8 +2,12 @@ package com.example.cardstackview;
 
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.InputType;
 import android.util.Log;
@@ -22,12 +26,16 @@ import org.json.JSONException;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.UnsupportedEncodingException;
+import java.net.ConnectException;
 import java.net.HttpURLConnection;
+import java.net.ProtocolException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -95,28 +103,291 @@ public class CandidatosActivity extends AppCompatActivity {
 
 
     private void notificarTodosAprovados() {
-        // Contar candidatos aprovados
-        int countAprovados = 0;
+        // Filtrar apenas candidatos aprovados
+        List<Usuario> aprovados = new ArrayList<>();
         for (Usuario candidato : candidatosList) {
             if (candidato.getStatus().equalsIgnoreCase("aprovada")) {
-                countAprovados++;
+                aprovados.add(candidato);
             }
         }
 
-        if (countAprovados == 0) {
+        if (aprovados.isEmpty()) {
             Toast.makeText(this, "Não há candidatos aprovados para notificar", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // Mostrar confirmação antes de enviar
+        // Criar diálogo para confirmar o envio
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Enviar emails para " + aprovados.size() + " aprovado(s)");
+        builder.setMessage("Deseja enviar emails de aprovação para todos os candidatos aprovados?");
+
+        builder.setPositiveButton("Enviar", (dialog, which) -> {
+            enviarEmailsAprovados(aprovados);
+        });
+
+        builder.setNegativeButton("Cancelar", null);
+        builder.show();
+    }
+
+    private void enviarEmailsAprovados(List<Usuario> aprovados) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Enviando emails...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        new Thread(() -> {
+            int emailsEnviados = 0;
+            int falhas = 0;
+            StringBuilder erros = new StringBuilder();
+
+            String assunto = "Parabéns! Você foi aprovado para a vaga #" + vagaId;
+            String corpo = "Prezado candidato,\n\n" +
+                    "É com grande satisfação que informamos que você foi aprovado no processo seletivo!\n\n" +
+                    "Em breve nossa equipe entrará em contato com os próximos passos.\n\n" +
+                    "Atenciosamente,\n" +
+                    "Equipe de Recrutamento";
+
+            // Defina seu email e senha do Gmail (ou outro SMTP)
+            String emailRemetente = "vagas.coneccta@gmail.com";
+            String senhaRemetente = "wxka yvsw luer kfgv";
+
+            EmailSender emailSender = new EmailSender(emailRemetente, senhaRemetente);
+
+            for (Usuario candidato : aprovados) {
+                try {
+                    emailSender.enviarEmail(candidato.getEmail(), assunto, corpo);
+                    emailsEnviados++;
+                } catch (Exception e) {
+                    falhas++;
+                    erros.append("• ").append(candidato.getEmail()).append(": ")
+                            .append(e.getMessage()).append("\n");
+                    Log.e("EMAIL_ERROR", "Erro ao enviar para " + candidato.getEmail(), e);
+                }
+            }
+
+            final int enviadosFinal = emailsEnviados;
+            final int falhasFinal = falhas;
+            final String errosFinal = erros.toString();
+            final Context context = this;
+
+            runOnUiThread(() -> {
+                progressDialog.dismiss();
+
+                String mensagemFinal = "Tentativa de envio concluída:\n\n" +
+                        "• Emails enviados: " + enviadosFinal + "\n" +
+                        "• Falhas: " + falhasFinal +
+                        (falhasFinal > 0 ? "\n\nErros encontrados:\n" + errosFinal : "");
+
+                if (falhasFinal > 0) {
+                    new AlertDialog.Builder(context)
+                            .setTitle("Relatório de Envio")
+                            .setMessage(mensagemFinal)
+                            .setPositiveButton("OK", null)
+                            .show();
+                } else {
+                    Toast.makeText(context, mensagemFinal, Toast.LENGTH_LONG).show();
+                }
+            });
+        }).start();
+    }
+
+
+
+
+
+
+
+    private void enviarEmailIndividual(String emailDestinatario, String assunto, String corpo) throws Exception {
+        Intent intent = new Intent(Intent.ACTION_SEND);
+        intent.setType("message/rfc822"); // Tipo para email
+        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{emailDestinatario});
+        intent.putExtra(Intent.EXTRA_SUBJECT, assunto);
+        intent.putExtra(Intent.EXTRA_TEXT, corpo);
+
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            runOnUiThread(() -> startActivity(Intent.createChooser(intent, "Enviar email usando:")));
+        } else {
+            runOnUiThread(() -> {
+                String mensagemErro = "Nenhum app de email instalado. Você pode:\n\n" +
+                        "1. Instalar um app de email como Gmail ou Outlook\n" +
+                        "2. Enviar manualmente para: " + emailDestinatario + "\n" +
+                        "Assunto: " + assunto + "\n\n" +
+                        "Corpo:\n" + corpo;
+
+                new AlertDialog.Builder(CandidatosActivity.this)
+                        .setTitle("Não foi possível enviar email")
+                        .setMessage(mensagemErro)
+                        .setPositiveButton("Copiar detalhes", (dialog, which) -> {
+                            ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+                            String clipText = "Para: " + emailDestinatario + "\n" +
+                                    "Assunto: " + assunto + "\n\n" +
+                                    corpo;
+                            ClipData clip = ClipData.newPlainText("Email de aprovação", clipText);
+                            clipboard.setPrimaryClip(clip);
+                            Toast.makeText(CandidatosActivity.this, "Detalhes copiados", Toast.LENGTH_SHORT).show();
+                        })
+                        .setNegativeButton("OK", null)
+                        .show();
+            });
+
+            throw new Exception("Nenhum app de email instalado");
+        }
+    }
+
+
+
+
+    private void enviarNotificacoesAprovados(String mensagem) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setMessage("Enviando notificações...");
+        progressDialog.setCancelable(false);
+        progressDialog.show();
+
+        new Thread(() -> {
+            HttpURLConnection connection = null;
+            try {
+                SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
+                long recrutadorId = prefs.getLong("user_id", 0);
+
+                // Configurar parâmetros
+                Map<String, String> params = new HashMap<>();
+                params.put("apicall", "notificarTodosAprovados");
+                params.put("vaga_id", String.valueOf(vagaId));
+                params.put("recrutador_id", String.valueOf(recrutadorId));
+                params.put("mensagem", mensagem);
+
+                Log.d(TAG, "Enviando para o servidor: " + params);
+
+                // Configurar conexão
+                URL url = new URL(Api.URL_NOTIFICAR_APROVADOS);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+                connection.setRequestProperty("Connection", "close"); // Evitar keep-alive
+
+                // Enviar dados
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                writer.write(getPostDataString(params));
+                writer.flush();
+                writer.close();
+                os.close();
+
+                // Verificar código de resposta
+                int responseCode = connection.getResponseCode();
+                Log.d(TAG, "Código de resposta: " + responseCode);
+
+                // Ler resposta mesmo em caso de erro
+                InputStream inputStream = connection.getInputStream();
+                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder response = new StringBuilder();
+                String line;
+
+                while ((line = in.readLine()) != null) {
+                    response.append(line);
+                }
+                in.close();
+
+                Log.d(TAG, "Resposta completa: " + response.toString());
+
+                if (response.length() == 0) {
+                    throw new Exception("Resposta vazia do servidor");
+                }
+
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                runOnUiThread(() -> {
+                    try {
+                        if (!jsonResponse.getBoolean("error")) {
+                            showResultDialog(jsonResponse);
+                        } else {
+                            Toast.makeText(CandidatosActivity.this,
+                                    "Erro: " + jsonResponse.getString("message"),
+                                    Toast.LENGTH_LONG).show();
+                        }
+                    } catch (JSONException e) {
+                        handleJsonError(e, response.toString());
+                    }
+                });
+
+            } catch (SocketTimeoutException e) {
+                handleNetworkError("Tempo de conexão esgotado", e);
+            } catch (ConnectException e) {
+                handleNetworkError("Não foi possível conectar ao servidor", e);
+            } catch (ProtocolException e) {
+                handleNetworkError("Erro de protocolo na conexão", e);
+            } catch (IOException e) {
+                handleNetworkError("Erro de comunicação com o servidor", e);
+            } catch (JSONException e) {
+                handleJsonError(e, "");
+            } catch (Exception e) {
+                handleGenericError(e);
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
+                runOnUiThread(progressDialog::dismiss);
+            }
+        }).start();
+    }
+
+    private void showResultDialog(JSONObject jsonResponse) throws JSONException {
+        int notificados = jsonResponse.getInt("notificados");
+        int emails = jsonResponse.getInt("emails_enviados");
+        int pushes = jsonResponse.getInt("notificacoes_enviadas");
+
+        String resultado = "Notificações enviadas com sucesso!\n\n";
+        resultado += "Candidatos notificados: " + notificados + "\n";
+        resultado += "E-mails enviados: " + emails + "\n";
+        resultado += "Notificações push: " + pushes;
+
+        if (jsonResponse.has("erros")) {
+            JSONArray erros = jsonResponse.getJSONArray("erros");
+            resultado += "\n\nErros (" + erros.length() + "):\n";
+            for (int i = 0; i < erros.length() && i < 3; i++) {
+                resultado += "• " + erros.getString(i) + "\n";
+            }
+            if (erros.length() > 3) {
+                resultado += "• ...e mais " + (erros.length() - 3) + " erros";
+            }
+        }
+
         new AlertDialog.Builder(this)
-                .setTitle("Notificar Candidatos Aprovados")
-                .setMessage("Você está prestes a enviar notificação para " + countAprovados + " candidato(s) aprovado(s). Deseja continuar?")
-                .setPositiveButton("Continuar", (dialog, which) -> {
-                    showMensagemDialog();
-                })
-                .setNegativeButton("Cancelar", null)
+                .setTitle("Resultado")
+                .setMessage(resultado)
+                .setPositiveButton("OK", null)
                 .show();
+    }
+
+    private void handleNetworkError(String message, Exception e) {
+        Log.e(TAG, message, e);
+        runOnUiThread(() -> {
+            Toast.makeText(CandidatosActivity.this,
+                    message + ". Verifique sua conexão e tente novamente.",
+                    Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void handleJsonError(JSONException e, String response) {
+        Log.e(TAG, "Erro ao processar JSON: " + e.getMessage(), e);
+        Log.e(TAG, "Resposta original: " + response);
+
+        runOnUiThread(() -> {
+            Toast.makeText(CandidatosActivity.this,
+                    "Erro no formato da resposta do servidor",
+                    Toast.LENGTH_LONG).show();
+        });
+    }
+
+    private void handleGenericError(Exception e) {
+        Log.e(TAG, "Erro inesperado: " + e.getMessage(), e);
+        runOnUiThread(() -> {
+            Toast.makeText(CandidatosActivity.this,
+                    "Erro: " + e.getMessage(),
+                    Toast.LENGTH_LONG).show();
+        });
     }
 
     private void showMensagemDialog() {
