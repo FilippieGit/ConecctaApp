@@ -12,7 +12,7 @@ import java.util.Map;
 
 public class Api {
     // IP base para todas as requisições
-    private static final String BASE_IP = "192.168.1.9"; // Filippie
+    private static final String BASE_IP = "10.67.97.126"; // Filippie
     //private static final String BASE_IP = "192.168.22.160"; // Lula
     //private static final String BASE_IP = "26.205.58.94"; // IPs aleatórios
 
@@ -40,6 +40,9 @@ public class Api {
     public static final String URL_CADASTRAR_VAGA = BASE_URL + "Api.php?apicall=cadastrarVaga";
     public static final String URL_EXCLUIR_VAGA = BASE_URL + "Api.php?apicall=excluirVaga";
     public static final String URL_ATUALIZAR_VAGA = BASE_URL + "Api.php?apicall=atualizarVaga";
+
+
+
 
     // Endpoints de candidaturas
     public static final String URL_CANDIDATAR_VAGA = BASE_URL + "Api.php?apicall=candidatarVaga";

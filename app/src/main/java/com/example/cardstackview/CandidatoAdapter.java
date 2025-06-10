@@ -52,7 +52,6 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
     public void onBindViewHolder(@NonNull CandidatoViewHolder holder, int position) {
         Usuario candidato = candidatosList.get(position);
 
-        // Configuração dos dados básicos
         holder.tvNome.setText(candidato.getNome());
         holder.tvEmail.setText(candidato.getEmail());
         holder.tvCargo.setText(candidato.getCargo());
@@ -64,16 +63,6 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
 
         holder.tvStatus.setBackgroundColor(getStatusColor(holder, candidato.getStatus()));
 
-        // Configuração dos listeners
-        holder.btnAceitar.setOnClickListener(v -> {
-            if (!candidato.getStatus().equalsIgnoreCase("aprovada")) {
-                if (statusChangeListener != null) {
-                    statusChangeListener.onStatusChanged(position, "aprovada");
-                }
-            }
-        });
-
-        // Modifique os listeners dos botões para garantir consistência
         holder.btnAceitar.setOnClickListener(v -> {
             String currentStatus = candidato.getStatus().toLowerCase();
             if (!currentStatus.equals("aprovada")) {
@@ -91,7 +80,15 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
                 }
             }
         });
+
+        // Clique no item para abrir perfil
+        holder.itemView.setOnClickListener(v -> {
+            if (listener != null) {
+                listener.onCandidatoClick(candidato);
+            }
+        });
     }
+
 
     private void updateButtonVisibility(CandidatoViewHolder holder, String status) {
         switch (status.toLowerCase()) {
