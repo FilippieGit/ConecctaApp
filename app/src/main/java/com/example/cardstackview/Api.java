@@ -12,9 +12,9 @@ import java.util.Map;
 
 public class Api {
     // IP base para todas as requisições
-    //private static final String BASE_IP = "192.168.1.9"; // Filippie
+    private static final String BASE_IP = "192.168.1.9"; // Filippie
     //private static final String BASE_IP = "192.168.22.160"; // Lula
-    private static final String BASE_IP = "26.205.58.94"; // IPs aleatórios
+    //private static final String BASE_IP = "26.205.58.94"; // IPs aleatórios
 
     // Endpoints principais
     public static final String BASE_URL = "http://" + BASE_IP + "/ConecctaAPI/v1/";
@@ -56,6 +56,7 @@ public class Api {
 
     // Método para verificar conexão com a internet
     public static boolean isURLReachable(Context context) {
+        // Primeiro verifica se há conexão de rede
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean isConnected = activeNetwork != null && activeNetwork.isConnectedOrConnecting();
@@ -65,26 +66,38 @@ public class Api {
             return false;
         }
 
-        HttpURLConnection connection = null;
-        try {
-            URL url = new URL(BASE_URL);
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("HEAD");
-            connection.setConnectTimeout(CONNECT_TIMEOUT);
-            connection.setReadTimeout(READ_TIMEOUT);
+        // Verifica se o servidor está acessível em uma thread separada
+        final boolean[] isReachable = {false};
+        Thread thread = new Thread(() -> {
+            HttpURLConnection connection = null;
+            try {
+                URL url = new URL(BASE_URL);
+                connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("HEAD");
+                connection.setConnectTimeout(CONNECT_TIMEOUT);
+                connection.setReadTimeout(READ_TIMEOUT);
 
-            int responseCode = connection.getResponseCode();
-            boolean isReachable = (responseCode == HttpURLConnection.HTTP_OK);
-            Log.d("API", "Base URL reachable: " + isReachable);
-            return isReachable;
-        } catch (Exception e) {
-            Log.e("API", "Erro ao verificar conexão com base URL", e);
-            return false;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
+                int responseCode = connection.getResponseCode();
+                isReachable[0] = (responseCode == HttpURLConnection.HTTP_OK);
+                Log.d("API", "Base URL reachable: " + isReachable[0]);
+            } catch (Exception e) {
+                Log.e("API", "Erro ao verificar conexão com base URL", e);
+                isReachable[0] = false;
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
+        });
+
+        thread.start();
+        try {
+            thread.join(); // Aguarda a thread terminar (não ideal para UI thread, mas ok aqui)
+        } catch (InterruptedException e) {
+            Log.e("API", "Thread interrupted", e);
         }
+
+        return isReachable[0];
     }
 
 

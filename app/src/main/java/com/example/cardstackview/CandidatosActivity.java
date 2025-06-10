@@ -41,6 +41,7 @@ import java.util.Locale;
 import java.util.Map;
 
 public class CandidatosActivity extends AppCompatActivity {
+    private static final String TAG = "CandidatosActivity";
     private RecyclerView recyclerViewCandidatos;
     private CandidatoAdapter adapter;
     private List<Usuario> candidatosList = new ArrayList<>();
@@ -53,10 +54,12 @@ public class CandidatosActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.candidatos_layout);
 
+        // Inicializa os componentes
         btnNotificarAprovados = findViewById(R.id.btnNotificarAprovados);
-        btnNotificarAprovados.setOnClickListener(v -> notificarTodosAprovados());
-
+        recyclerViewCandidatos = findViewById(R.id.recyclerViewCandidatos);
         Toolbar toolbar = findViewById(R.id.toolbar);
+
+        // Configura a Toolbar
         setSupportActionBar(toolbar);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -66,17 +69,22 @@ public class CandidatosActivity extends AppCompatActivity {
         vagaId = getIntent().getIntExtra("vaga_id", 0);
         setTitle("Candidatos - Vaga #" + vagaId);
 
-        recyclerViewCandidatos = findViewById(R.id.recyclerViewCandidatos);
+        // Configura o adapter UMA ÚNICA VEZ
         adapter = new CandidatoAdapter(candidatosList, this::onCandidatoClick);
 
-        // Configura o listener para mudanças de status
-        adapter.setOnStatusChangeListener((position, novoStatus, motivo) -> {
-            atualizarStatusCandidato(position, novoStatus, motivo);
+        // Configura o listener corretamente
+        adapter.setOnStatusChangeListener((position, novoStatus) -> {
+            Log.d(TAG, "Solicitada mudança de status para: " + novoStatus);
+            atualizarStatusCandidato(position, novoStatus);
         });
 
         recyclerViewCandidatos.setLayoutManager(new LinearLayoutManager(this));
         recyclerViewCandidatos.setAdapter(adapter);
 
+        // Configura listeners
+        btnNotificarAprovados.setOnClickListener(v -> notificarTodosAprovados());
+
+        // Carrega os candidatos
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Carregando candidatos...");
         progressDialog.setCancelable(false);
@@ -84,6 +92,7 @@ public class CandidatosActivity extends AppCompatActivity {
 
         buscarCandidatos();
     }
+
 
     private void notificarTodosAprovados() {
         // Contar candidatos aprovados
@@ -235,122 +244,126 @@ public class CandidatosActivity extends AppCompatActivity {
         }).start();
     }
 
+    private void atualizarStatusCandidato(int position, String novoStatus) {
+        Log.d(TAG, "Atualizando status para posição " + position + " para " + novoStatus);
 
-
-
-
-
-
-
-
-
-    private void atualizarStatusCandidato(int position, String novoStatus, String motivo) {
-        // Verificar conexão antes de continuar
-        if (!Api.isURLReachable(this)) {
-            Toast.makeText(this, "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+        if (position < 0 || position >= candidatosList.size()) {
+            Log.e(TAG, "Posição inválida: " + position);
             return;
         }
 
         Usuario candidato = candidatosList.get(position);
+        Log.d(TAG, "Status atual: " + candidato.getStatus() + ", Novo status: " + novoStatus);
 
-        // Verificação de motivo para rejeição
-        if ("rejeitada".equalsIgnoreCase(novoStatus) && (motivo == null || motivo.trim().isEmpty())) {
-            Toast.makeText(this, "Motivo da rejeição é obrigatório", Toast.LENGTH_SHORT).show();
-            return;
-        }
+        // Atualiza localmente primeiro para feedback imediato
+        String statusAnterior = candidato.getStatus(); // Guarda o status anterior
+        candidato.setStatus(novoStatus);
+        adapter.notifyItemChanged(position);
 
+        // Mostra diálogo de confirmação
         new AlertDialog.Builder(this)
                 .setTitle("Confirmar alteração")
                 .setMessage("Deseja realmente alterar o status para \"" + novoStatus + "\"?")
-                .setPositiveButton("Sim", (dialogInterface, i) -> {
-                    ProgressDialog dialog = new ProgressDialog(this);
-                    dialog.setMessage("Atualizando status...");
-                    dialog.setCancelable(false);
-                    dialog.show();
-
-                    new Thread(() -> {
-                        try {
-                            SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-                            long recrutadorId = prefs.getLong("user_id", 0);
-
-                            // Configurar parâmetros
-                            Map<String, String> params = new HashMap<>();
-                            params.put("apicall", "atualizarStatusCandidatura");
-                            params.put("candidatura_id", String.valueOf(candidato.getIdCandidatura()));
-                            params.put("novo_status", novoStatus);
-                            params.put("vaga_id", String.valueOf(vagaId));
-                            params.put("recrutador_id", String.valueOf(recrutadorId));
-
-                            if (motivo != null && !motivo.isEmpty()) {
-                                params.put("motivo", motivo);
-                            }
-
-                            // Configurar conexão
-                            URL url = new URL(Api.URL_ATUALIZAR_STATUS_CANDIDATURA);
-                            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                            connection.setRequestMethod("POST");
-                            connection.setDoOutput(true);
-                            connection.setConnectTimeout(Api.CONNECT_TIMEOUT);
-                            connection.setReadTimeout(Api.READ_TIMEOUT);
-                            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-                            // Enviar dados
-                            OutputStream os = connection.getOutputStream();
-                            BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
-                            writer.write(getPostDataString(params));
-                            writer.flush();
-                            writer.close();
-                            os.close();
-
-                            // Verificar resposta
-                            int responseCode = connection.getResponseCode();
-                            if (responseCode == HttpURLConnection.HTTP_OK) {
-                                // Ler resposta completa
-                                BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-                                StringBuilder response = new StringBuilder();
-                                String line;
-                                while ((line = in.readLine()) != null) {
-                                    response.append(line);
-                                }
-                                in.close();
-
-                                JSONObject jsonResponse = new JSONObject(response.toString());
-                                if (!jsonResponse.getBoolean("error")) {
-                                    runOnUiThread(() -> {
-                                        candidato.setStatus(novoStatus);
-                                        if (novoStatus.equals("rejeitada")) {
-                                            candidato.setMotivoRejeicao(motivo);
-                                        }
-                                        candidato.setRecrutadorId(recrutadorId);
-                                        adapter.notifyItemChanged(position);
-                                        Toast.makeText(CandidatosActivity.this,
-                                                "Status atualizado com sucesso!",
-                                                Toast.LENGTH_SHORT).show();
-                                    });
-                                } else {
-                                    throw new Exception(jsonResponse.getString("message"));
-                                }
-                            } else {
-                                throw new Exception("Erro HTTP: " + responseCode);
-                            }
-                        } catch (Exception e) {
-                            runOnUiThread(() -> {
-                                Log.e("API_ERROR", "Erro ao atualizar status", e);
-                                Toast.makeText(CandidatosActivity.this,
-                                        "Erro ao atualizar status: " + e.getMessage(),
-                                        Toast.LENGTH_LONG).show();
-                            });
-                        } finally {
-                            runOnUiThread(dialog::dismiss);
-                        }
-                    }).start();
+                .setPositiveButton("Sim", (dialog, which) -> {
+                    atualizarStatusNoServidor(position, novoStatus, candidato);
                 })
-                .setNegativeButton("Cancelar", null)
+                .setNegativeButton("Cancelar", (dialog, which) -> {
+                    // Reverte se o usuário cancelar
+                    candidato.setStatus(statusAnterior);
+                    adapter.notifyItemChanged(position);
+                })
                 .show();
     }
 
+    private void atualizarStatusNoServidor(int position, String novoStatus, Usuario candidato) {
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Atualizando status...");
+        dialog.setCancelable(false);
+        dialog.show();
 
-    // Método auxiliar para converter Map para string de parâmetros
+        new Thread(() -> {
+            try {
+                // Verificar dados
+                if (candidato.getIdCandidatura() == 0 || vagaId == 0) {
+                    throw new Exception("Dados inválidos para atualização");
+                }
+
+                // Configurar parâmetros
+                Map<String, String> params = new HashMap<>();
+                params.put("apicall", "atualizarStatusCandidatura");
+                params.put("candidatura_id", String.valueOf(candidato.getIdCandidatura()));
+                params.put("novo_status", novoStatus.toLowerCase());
+                params.put("vaga_id", String.valueOf(vagaId));
+
+                Log.d(TAG, "Enviando para o servidor: " + params);
+
+                // Configurar conexão
+                URL url = new URL(Api.URL_ATUALIZAR_STATUS_CANDIDATURA);
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setRequestMethod("POST");
+                connection.setDoOutput(true);
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
+                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+
+                // Enviar dados
+                OutputStream os = connection.getOutputStream();
+                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+                writer.write(getPostDataString(params));
+                writer.flush();
+                writer.close();
+                os.close();
+
+                // Processar resposta
+                int responseCode = connection.getResponseCode();
+                InputStream inputStream = responseCode == HttpURLConnection.HTTP_OK ?
+                        connection.getInputStream() : connection.getErrorStream();
+
+                BufferedReader in = new BufferedReader(new InputStreamReader(inputStream));
+                StringBuilder response = new StringBuilder();
+                String line;
+                while ((line = in.readLine()) != null) {
+                    response.append(line);
+                }
+                in.close();
+
+                Log.d(TAG, "Resposta bruta do servidor: " + response.toString());
+
+                // Verificar se a resposta é JSON válido
+                if (response.toString().startsWith("<")) {
+                    throw new Exception("Erro no servidor: resposta em formato inválido");
+                }
+
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                if (!jsonResponse.getBoolean("error")) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Status atualizado com sucesso!", Toast.LENGTH_SHORT).show();
+                        // Atualizar localmente
+                        candidatosList.get(position).setStatus(novoStatus);
+                        adapter.notifyItemChanged(position);
+                    });
+                } else {
+                    throw new Exception(jsonResponse.getString("message"));
+                }
+            } catch (Exception e) {
+                Log.e(TAG, "Erro ao atualizar status", e);
+                runOnUiThread(() -> {
+                    // Reverter mudança local
+                    adapter.notifyItemChanged(position);
+
+                    // Mostrar mensagem de erro adequada
+                    String errorMsg = e.getMessage();
+                    if (errorMsg != null && errorMsg.contains("JSONObject")) {
+                        errorMsg = "Erro no formato da resposta do servidor";
+                    }
+                    Toast.makeText(this, "Erro: " + errorMsg, Toast.LENGTH_LONG).show();
+                });
+            } finally {
+                runOnUiThread(dialog::dismiss);
+            }
+        }).start();
+    }
+
     private String getPostDataString(Map<String, String> params) throws UnsupportedEncodingException {
         StringBuilder result = new StringBuilder();
         boolean first = true;
@@ -367,13 +380,12 @@ public class CandidatosActivity extends AppCompatActivity {
         return result.toString();
     }
 
-
-
     private void buscarCandidatos() {
+        Log.d(TAG, "Buscando candidatos para vaga: " + vagaId);
         new Thread(() -> {
             try {
                 String urlCompleta = Api.URL_LISTAR_CANDIDATURAS + "&vaga_id=" + vagaId;
-                Log.d("API_REQUEST", "URL: " + urlCompleta);
+                Log.d(TAG, "URL: " + urlCompleta);
                 URL url = new URL(urlCompleta);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -442,22 +454,17 @@ public class CandidatosActivity extends AppCompatActivity {
                     throw new Exception("Código de erro HTTP: " + responseCode);
                 }
             } catch (Exception e) {
-                Log.e("NETWORK_ERROR", "Erro na requisição", e);
+                Log.e(TAG, "Erro ao buscar candidatos", e);
                 runOnUiThread(() -> {
                     progressDialog.dismiss();
-                    Toast.makeText(CandidatosActivity.this,
-                            "Erro ao carregar candidatos: " + e.getMessage(),
-                            Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
             }
         }).start();
     }
 
     private void onCandidatoClick(Usuario usuario) {
-        // Criar uma Intent para abrir a PerfilActivity
         Intent intent = new Intent(CandidatosActivity.this, PerfilActivity.class);
-
-        // Passar os dados do candidato como extras
         intent.putExtra("id", usuario.getId());
         intent.putExtra("nome", usuario.getNome());
         intent.putExtra("email", usuario.getEmail());
@@ -467,8 +474,6 @@ public class CandidatosActivity extends AppCompatActivity {
         intent.putExtra("experiencia", usuario.getExperienciaProfissional());
         intent.putExtra("formacao", usuario.getFormacaoAcademica());
         intent.putExtra("certificados", usuario.getCertificados());
-
-        // Iniciar a atividade
         startActivity(intent);
     }
 

@@ -1,11 +1,10 @@
 package com.example.cardstackview;
 
-import android.app.AlertDialog;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 
 public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.CandidatoViewHolder> {
+    private static final String TAG = "CandidatoAdapter";
     private List<Usuario> candidatosList;
     private OnCandidatoClickListener listener;
     private OnStatusChangeListener statusChangeListener;
@@ -27,15 +27,17 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
     }
 
     public interface OnStatusChangeListener {
-        void onStatusChanged(int position, String novoStatus, String motivo);
+        void onStatusChanged(int position, String novoStatus);
     }
 
     public CandidatoAdapter(List<Usuario> candidatosList, OnCandidatoClickListener listener) {
         this.candidatosList = candidatosList;
         this.listener = listener;
     }
+
     public void setOnStatusChangeListener(OnStatusChangeListener listener) {
         this.statusChangeListener = listener;
+        Log.d(TAG, "StatusChangeListener setado: " + (listener != null));
     }
 
     @NonNull
@@ -50,6 +52,7 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
     public void onBindViewHolder(@NonNull CandidatoViewHolder holder, int position) {
         Usuario candidato = candidatosList.get(position);
 
+        // Configuração dos dados básicos
         holder.tvNome.setText(candidato.getNome());
         holder.tvEmail.setText(candidato.getEmail());
         holder.tvCargo.setText(candidato.getCargo());
@@ -59,63 +62,50 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
             holder.tvData.setText(dateFormat.format(candidato.getDataCandidatura()));
         }
 
-        int statusColor = getStatusColor(holder, candidato.getStatus());
-        holder.tvStatus.setBackgroundColor(statusColor);
+        holder.tvStatus.setBackgroundColor(getStatusColor(holder, candidato.getStatus()));
 
-        // Configuração dos botões
+        // Configuração dos listeners
         holder.btnAceitar.setOnClickListener(v -> {
-            int adapterPosition = holder.getAdapterPosition();
-            if (adapterPosition != RecyclerView.NO_POSITION && statusChangeListener != null) {
-                statusChangeListener.onStatusChanged(adapterPosition, "aprovada", null);
+            if (!candidato.getStatus().equalsIgnoreCase("aprovada")) {
+                if (statusChangeListener != null) {
+                    statusChangeListener.onStatusChanged(position, "aprovada");
+                }
+            }
+        });
+
+        // Modifique os listeners dos botões para garantir consistência
+        holder.btnAceitar.setOnClickListener(v -> {
+            String currentStatus = candidato.getStatus().toLowerCase();
+            if (!currentStatus.equals("aprovada")) {
+                if (statusChangeListener != null) {
+                    statusChangeListener.onStatusChanged(position, "aprovada");
+                }
             }
         });
 
         holder.btnRecusar.setOnClickListener(v -> {
-            int adapterPosition = holder.getAdapterPosition();
-            if (adapterPosition != RecyclerView.NO_POSITION) {
-                // Mostrar diálogo para inserir motivo
-                AlertDialog.Builder builder = new AlertDialog.Builder(holder.itemView.getContext());
-                builder.setTitle("Motivo da recusa");
-
-                final EditText input = new EditText(holder.itemView.getContext());
-                builder.setView(input);
-
-                builder.setPositiveButton("Confirmar", (dialog, which) -> {
-                    String motivo = input.getText().toString();
-                    if (statusChangeListener != null) {
-                        statusChangeListener.onStatusChanged(adapterPosition, "rejeitada", motivo);
-                    }
-                });
-
-                builder.setNegativeButton("Cancelar", (dialog, which) -> dialog.cancel());
-                builder.show();
-            }
-        });
-
-        // Atualiza a visibilidade dos botões com base no status atual
-        updateButtonVisibility(holder, candidato.getStatus());
-
-        holder.itemView.setOnClickListener(v -> {
-            if (listener != null) {
-                listener.onCandidatoClick(candidato);
+            String currentStatus = candidato.getStatus().toLowerCase();
+            if (!currentStatus.equals("rejeitada")) {
+                if (statusChangeListener != null) {
+                    statusChangeListener.onStatusChanged(position, "rejeitada");
+                }
             }
         });
     }
 
     private void updateButtonVisibility(CandidatoViewHolder holder, String status) {
-        if (status.equalsIgnoreCase("aprovada")) {
-            holder.btnAceitar.setVisibility(View.GONE);
-            holder.btnRecusar.setVisibility(View.VISIBLE);
-            holder.btnRecusar.setText("Cancelar Aceite");
-        } else if (status.equalsIgnoreCase("rejeitada")) {
-            holder.btnAceitar.setVisibility(View.VISIBLE);
-            holder.btnRecusar.setVisibility(View.GONE);
-            holder.btnAceitar.setText("Reverter Recusa");
-        } else {
-            holder.btnAceitar.setVisibility(View.VISIBLE);
-            holder.btnRecusar.setVisibility(View.VISIBLE);
-            holder.btnAceitar.setText("Aceitar");
-            holder.btnRecusar.setText("Recusar");
+        switch (status.toLowerCase()) {
+            case "aprovada":
+                holder.btnAceitar.setVisibility(View.GONE);
+                holder.btnRecusar.setVisibility(View.VISIBLE);
+                break;
+            case "rejeitada":
+                holder.btnAceitar.setVisibility(View.VISIBLE);
+                holder.btnRecusar.setVisibility(View.GONE);
+                break;
+            default:
+                holder.btnAceitar.setVisibility(View.VISIBLE);
+                holder.btnRecusar.setVisibility(View.VISIBLE);
         }
     }
 
@@ -132,19 +122,19 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
             tvData = itemView.findViewById(R.id.tvDataCandidato);
             btnAceitar = itemView.findViewById(R.id.btnAceitar);
             btnRecusar = itemView.findViewById(R.id.btnRecusar);
+
+            if (btnAceitar == null || btnRecusar == null) {
+                Log.e("ViewHolder", "Botões não encontrados no layout!");
+            }
         }
     }
 
     private int getStatusColor(CandidatoViewHolder holder, String status) {
         switch (status.toLowerCase()) {
-            case "aprovada":
-                return ContextCompat.getColor(holder.itemView.getContext(), R.color.verde);
-            case "rejeitada":
-                return ContextCompat.getColor(holder.itemView.getContext(), R.color.vermelho);
-            case "visualizada":
-                return ContextCompat.getColor(holder.itemView.getContext(), R.color.azul);
-            default:
-                return ContextCompat.getColor(holder.itemView.getContext(), R.color.cinza);
+            case "aprovada": return ContextCompat.getColor(holder.itemView.getContext(), R.color.verde);
+            case "rejeitada": return ContextCompat.getColor(holder.itemView.getContext(), R.color.vermelho);
+            case "visualizada": return ContextCompat.getColor(holder.itemView.getContext(), R.color.azul);
+            default: return ContextCompat.getColor(holder.itemView.getContext(), R.color.cinza);
         }
     }
 
@@ -152,5 +142,4 @@ public class CandidatoAdapter extends RecyclerView.Adapter<CandidatoAdapter.Cand
     public int getItemCount() {
         return candidatosList.size();
     }
-
 }
