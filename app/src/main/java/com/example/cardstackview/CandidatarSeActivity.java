@@ -23,6 +23,8 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -148,24 +150,30 @@ public class CandidatarSeActivity extends AppCompatActivity {
 
         new Thread(() -> {
             HttpURLConnection connection = null;
+            BufferedReader reader = null;
             try {
-                // Verificar conexão novamente antes de iniciar
                 if (!isNetworkAvailable()) {
                     throw new Exception("Sem conexão com a internet");
                 }
+
+                // Obter recrutador_id da Intent
+                String recrutadorId = getIntent().getStringExtra("recrutador_id");
 
                 // Criar JSON com estrutura completa
                 JSONObject requestBody = new JSONObject();
                 requestBody.put("apicall", "candidatarVaga");
                 requestBody.put("user_id", userId);
                 requestBody.put("vaga_id", vagaId);
+                if (recrutadorId != null) {
+                    requestBody.put("recrutador_id", recrutadorId);
+                }
 
-                // Criar objeto de respostas como JSON string
+                // Criar objeto de respostas
                 JSONObject respostasObj = new JSONObject();
                 respostasObj.put("interesse", resposta1);
                 respostasObj.put("expectativas", resposta2);
                 respostasObj.put("valores", resposta3);
-                requestBody.put("respostas", respostasObj.toString());
+                requestBody.put("respostas", respostasObj.toString()); // Enviar como string JSON
 
                 // Configurar conexão
                 URL url = new URL(Api.URL_CANDIDATAR_VAGA);
@@ -173,7 +181,6 @@ public class CandidatarSeActivity extends AppCompatActivity {
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/json");
                 connection.setRequestProperty("Accept", "application/json");
-                connection.setRequestProperty("Connection", "close");
                 connection.setDoOutput(true);
                 connection.setConnectTimeout(15000);
                 connection.setReadTimeout(15000);
@@ -186,65 +193,63 @@ public class CandidatarSeActivity extends AppCompatActivity {
                     writer.flush();
                 }
 
-                // Verificar resposta
+                // Verificar status da resposta
                 int responseCode = connection.getResponseCode();
-                if (responseCode == HttpURLConnection.HTTP_OK) {
-                    // Ler resposta
-                    StringBuilder response = new StringBuilder();
-                    try (BufferedReader in = new BufferedReader(
-                            new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
-                        String line;
-                        while ((line = in.readLine()) != null) {
-                            response.append(line);
-                        }
-                    }
-
-                    JSONObject jsonResponse = new JSONObject(response.toString());
-                    boolean error = jsonResponse.getBoolean("error");
-                    String message = jsonResponse.getString("message");
-
-                    runOnUiThread(() -> {
-                        progressDialog.dismiss();
-                        if (!error) {
-                            Toast.makeText(CandidatarSeActivity.this, message, Toast.LENGTH_SHORT).show();
-                            setResult(RESULT_OK);
-                            finish();
-                        } else {
-                            Toast.makeText(CandidatarSeActivity.this, "Erro: " + message, Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                InputStream inputStream;
+                if (responseCode >= HttpURLConnection.HTTP_BAD_REQUEST) {
+                    inputStream = connection.getErrorStream();
                 } else {
-                    // Tratar erro do servidor
-                    String errorMsg = "Erro no servidor (HTTP " + responseCode + ")";
-                    try (BufferedReader errorReader = new BufferedReader(
-                            new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
-                        StringBuilder errorResponse = new StringBuilder();
-                        String errorLine;
-                        while ((errorLine = errorReader.readLine()) != null) {
-                            errorResponse.append(errorLine);
-                        }
-                        if (errorResponse.length() > 0) {
-                            JSONObject errorJson = new JSONObject(errorResponse.toString());
-                            errorMsg = errorJson.optString("message", errorMsg);
-                        }
-                    } catch (Exception e) {
-                        Log.e("Candidatura", "Erro ao ler mensagem de erro", e);
-                    }
-
-                    final String finalErrorMsg = errorMsg;
-                    runOnUiThread(() -> {
-                        progressDialog.dismiss();
-                        Toast.makeText(CandidatarSeActivity.this, finalErrorMsg, Toast.LENGTH_LONG).show();
-                    });
+                    inputStream = connection.getInputStream();
                 }
+
+                // Ler resposta
+                StringBuilder response = new StringBuilder();
+                if (inputStream != null) {
+                    reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        response.append(line);
+                    }
+                }
+
+                // Verificar se a resposta está vazia
+                if (response.length() == 0) {
+                    throw new Exception("Resposta vazia do servidor");
+                }
+
+                // Parse da resposta JSON
+                JSONObject jsonResponse = new JSONObject(response.toString());
+                boolean error = jsonResponse.getBoolean("error");
+                String message = jsonResponse.getString("message");
+
+                runOnUiThread(() -> {
+                    progressDialog.dismiss();
+                    if (!error) {
+                        Toast.makeText(CandidatarSeActivity.this, message, Toast.LENGTH_SHORT).show();
+                        setResult(RESULT_OK);
+                        finish();
+                    } else {
+                        Toast.makeText(CandidatarSeActivity.this, "Erro: " + message, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
             } catch (Exception e) {
                 Log.e("Candidatura", "Erro ao enviar candidatura", e);
+                final String errorMessage = (e.getMessage() != null) ? e.getMessage() : "Erro desconhecido";
                 runOnUiThread(() -> {
                     progressDialog.dismiss();
                     Toast.makeText(CandidatarSeActivity.this,
-                            "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                            "Erro ao enviar candidatura: " + errorMessage,
+                            Toast.LENGTH_LONG).show();
                 });
             } finally {
+                if (reader != null) {
+                    try {
+                        reader.close();
+                    } catch (IOException e) {
+                        Log.e("Candidatura", "Erro ao fechar reader", e);
+                    }
+                }
                 if (connection != null) {
                     connection.disconnect();
                 }

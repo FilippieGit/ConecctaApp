@@ -100,9 +100,15 @@ public class DetalheVagaActivity extends AppCompatActivity {
 
         btnCandidatar.setOnClickListener(v -> {
             if (vaga != null) {
+                // Adicione este log para depuração
+                Log.d("DetalheVagaActivity", "vaga_id: " + vaga.getVaga_id());
+                Log.d("DetalheVagaActivity", "vaga_titulo: " + vaga.getTitulo());
+                Log.d("DetalheVagaActivity", "recrutador_id antes de enviar: " + vaga.getRecrutadorId()); // <--- AQUI
+
                 Intent intent = new Intent(DetalheVagaActivity.this, CandidatarSeActivity.class);
                 intent.putExtra("vaga_id", String.valueOf(vaga.getVaga_id()));
                 intent.putExtra("vaga_titulo", vaga.getTitulo());
+                intent.putExtra("recrutador_id", vaga.getRecrutadorId());
                 startActivity(intent);
             }
         });
@@ -230,6 +236,7 @@ public class DetalheVagaActivity extends AppCompatActivity {
         Intent intent = new Intent(this, CandidatarSeActivity.class);
         intent.putExtra("vaga_id", vaga.getVaga_id());
         intent.putExtra("vaga_titulo", vaga.getTitulo());
+        intent.putExtra("recrutador_id", vaga.getRecrutadorId()); // Adicionando o recrutador_id
         startActivity(intent);
     }
 

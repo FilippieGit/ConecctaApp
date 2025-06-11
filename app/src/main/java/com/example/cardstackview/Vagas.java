@@ -27,7 +27,7 @@ public class Vagas implements Serializable {
     private String requisitos;
 
     @SerializedName("id_usuario")
-    private long id_usuario;
+    private Long id_usuario; // CHANGED: From 'long' to 'Long'
 
     @SerializedName("nivel_experiencia")
     private String nivel_experiencia;
@@ -60,7 +60,7 @@ public class Vagas implements Serializable {
     public Vagas() {}
 
     public Vagas(int vaga_id, String titulo, String descricao, String localizacao,
-                 String salario, String requisitos, long id_usuario, String nivel_experiencia,
+                 String salario, String requisitos, Long id_usuario, String nivel_experiencia, // CHANGED: Parameter type to 'Long'
                  String tipo_contrato, String area_atuacao, String beneficios,
                  String vinculo, String ramo, int empresa_id, String nome_empresa,
                  String habilidadesDesejaveisStr) {
@@ -80,6 +80,11 @@ public class Vagas implements Serializable {
         this.empresa_id = empresa_id;
         this.nome_empresa = nome_empresa;
         this.habilidadesDesejaveisStr = habilidadesDesejaveisStr;
+    }
+
+    // Método adicionado para obter o ID do recrutador
+    public Long getRecrutadorId() { // CHANGED: Return type to 'Long'
+        return id_usuario;
     }
 
     // Getters e Setters
@@ -131,11 +136,11 @@ public class Vagas implements Serializable {
         this.requisitos = requisitos;
     }
 
-    public long getId_usuario() {
+    public Long getId_usuario() { // CHANGED: Return type to 'Long'
         return id_usuario;
     }
 
-    public void setId_usuario(long id_usuario) {
+    public void setId_usuario(Long id_usuario) { // CHANGED: Parameter type to 'Long'
         this.id_usuario = id_usuario;
     }
 
@@ -270,7 +275,8 @@ public class Vagas implements Serializable {
     }
 
     public boolean pertenceAoUsuario(long userId) {
-        return this.id_usuario == userId;
+        // You'll need to handle the Long comparison carefully here, as it can be null
+        return this.id_usuario != null && this.id_usuario == userId;
     }
 
     @Override
@@ -281,7 +287,7 @@ public class Vagas implements Serializable {
                 ", empresa='" + nome_empresa + '\'' +
                 ", localizacao='" + localizacao + '\'' +
                 ", salario='" + salario + '\'' +
-                ", id_usuario=" + id_usuario +
+                ", id_usuario=" + id_usuario + // This will now show 'null' if it's null
                 ", habilidades=" + habilidadesDesejaveisStr +
                 '}';
     }

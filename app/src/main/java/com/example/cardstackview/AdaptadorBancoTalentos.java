@@ -10,56 +10,66 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.text.SimpleDateFormat;
 import java.util.List;
+import java.util.Locale;
 
-public class AdaptadorBancoTalentos extends RecyclerView.Adapter<AdaptadorBancoTalentos.ViewHolder> {
+public class AdaptadorBancoTalentos extends RecyclerView.Adapter<AdaptadorBancoTalentos.CandidatoViewHolder> {
 
     private Context context;
-    private List<Lista> listaList;
+    private List<CandidatoRecusado> candidatosList;
+    private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-    public AdaptadorBancoTalentos(Context context, List<Lista> listaList) {
+    public AdaptadorBancoTalentos(Context context, List<CandidatoRecusado> candidatosList) {
         this.context = context;
-        this.listaList = listaList;
+        this.candidatosList = candidatosList;
     }
 
     @NonNull
     @Override
-    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Infla o layout de item da lista
-        LayoutInflater inflater = LayoutInflater.from(context);
-        View view = inflater.inflate(R.layout.modelo_lista_activity, parent, false);
-
-        return new ViewHolder(view);
+    public CandidatoViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(context).inflate(R.layout.item_candidato_recusado, parent, false);
+        return new CandidatoViewHolder(view);
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-        // Verifica se a posição é válida dentro da lista
-        if (position < listaList.size()) {
-            // Preenche os dados do item no ViewHolder
-            Lista listaItem = listaList.get(position);
-            holder.modeloinfoempresa.setText(listaItem.getTitulo());  // Setando o nome da empresa
-            holder.modelofotoempresa.setImageResource(listaItem.getImage());  // Setando a imagem da empresa
+    public void onBindViewHolder(@NonNull CandidatoViewHolder holder, int position) {
+        CandidatoRecusado candidato = candidatosList.get(position);
+
+        holder.nomeTextView.setText(candidato.getNome());
+        holder.cargoTextView.setText(candidato.getCargoDesejado());
+        holder.areaTextView.setText(candidato.getAreaAtuacao());
+        holder.nivelTextView.setText(candidato.getNivelExperiencia());
+
+        if (candidato.getDataRecusa() != null) {
+            holder.dataRecusaTextView.setText(dateFormat.format(candidato.getDataRecusa()));
         }
+
+        holder.motivoTextView.setText(candidato.getMotivoRecusa());
+
+        // Você pode adicionar uma imagem padrão ou carregar uma foto do candidato se tiver
+        // holder.fotoImageView.setImageResource(R.drawable.ic_person);
     }
 
     @Override
     public int getItemCount() {
-        // Limita o número de itens a 5, como no exemplo anterior
-        return Math.min(listaList.size(), 5);
+        return candidatosList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public static class CandidatoViewHolder extends RecyclerView.ViewHolder {
+        TextView nomeTextView, cargoTextView, areaTextView, nivelTextView, dataRecusaTextView, motivoTextView;
+        ImageView fotoImageView;
 
-        // Definindo os componentes do item da lista
-        ImageView modelofotoempresa;
-        TextView modeloinfoempresa;
-
-        public ViewHolder(@NonNull View itemView) {
+        public CandidatoViewHolder(@NonNull View itemView) {
             super(itemView);
-            // Inicializando os componentes com os IDs do layout
-            modelofotoempresa = itemView.findViewById(R.id.idlogodaempresa);
-            modeloinfoempresa = itemView.findViewById(R.id.idinfoempresa);
+
+            nomeTextView = itemView.findViewById(R.id.nomeTextView);
+            cargoTextView = itemView.findViewById(R.id.cargoTextView);
+            areaTextView = itemView.findViewById(R.id.areaTextView);
+            nivelTextView = itemView.findViewById(R.id.nivelTextView);
+            dataRecusaTextView = itemView.findViewById(R.id.dataRecusaTextView);
+            motivoTextView = itemView.findViewById(R.id.motivoTextView);
+            fotoImageView = itemView.findViewById(R.id.fotoImageView);
         }
     }
 }

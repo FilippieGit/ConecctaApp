@@ -87,12 +87,16 @@ public class MainActivity extends AppCompatActivity {
         navigationView = findViewById(R.id.navigation_view);
 
         if (navigationView != null) {
+            // A lógica de visibilidade dos itens do menu para diferentes tipos de usuário
+            // parece estar invertida ou configurada para esconder os itens em ambos os casos.
+            // Revise esta parte se a intenção é que usuários "Jurídica" vejam "Criar Vagas"
+            // e "Login", e "Física" não vejam.
             if (isEmpresa) {
-                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
-                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(true); // Exemplo: para empresas
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false); // Exemplo: já logado, não precisa de login
             } else {
                 navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
-                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
+                navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(true); // Exemplo: para usuários físicos se quiserem fazer login
             }
         }
     }
@@ -118,6 +122,7 @@ public class MainActivity extends AppCompatActivity {
                         if (direction == Direction.Right) {
                             processarLike(vaga);
                         } else if (direction == Direction.Left) {
+                            // Ao deslizar para a esquerda, registra interesse, mas não salva nos favoritos
                             registrarInteresse(vaga);
                         }
 
@@ -168,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
                 int pos = layoutManager.getTopPosition();
                 if (pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
-                    processarLike(vaga);
+                    processarLike(vaga); // Processa o like (favorita e registra interesse)
                 }
 
                 SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
@@ -197,7 +202,8 @@ public class MainActivity extends AppCompatActivity {
                 int pos = layoutManager.getTopPosition();
                 if (pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
-                    registrarInteresse(vaga);
+                    // Ação para rejeitar: apenas registrar interesse (ou ignorar)
+                    registrarInteresse(vaga); // Apenas registra interesse para rejeição
                 }
 
                 new Handler(Looper.getMainLooper()).postDelayed(() -> isSwiping = false, 500);
@@ -240,6 +246,9 @@ public class MainActivity extends AppCompatActivity {
     private void processarLike(Vagas vaga) {
         if (vaga == null) return;
 
+        // Registrar interesse sempre, independente de favoritar ou não
+        registrarInteresse(vaga);
+
         runOnUiThread(() -> {
             if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
                 boolean salvou = dbHelper.adicionarVagaFavorita(vaga);
@@ -247,11 +256,13 @@ public class MainActivity extends AppCompatActivity {
                     Toast.makeText(MainActivity.this, "Vaga favoritada com sucesso!", Toast.LENGTH_SHORT).show();
                     Log.d("FAVORITOS", "Vaga " + vaga.getVaga_id() + " salva nos favoritos");
 
-                    int index = vagasList.indexOf(vaga);
-                    if (index != -1) {
-                        vagasList.remove(index);
-                        adapter.notifyItemRemoved(index);
-                    }
+                    // Não remove mais a vaga da lista imediatamente se o objetivo é apenas favoritar
+                    // Se você quer que a vaga desapareça depois de favoritar, mantenha a remoção
+                    // int index = vagasList.indexOf(vaga);
+                    // if (index != -1) {
+                    //     vagasList.remove(index);
+                    //     adapter.notifyItemRemoved(index);
+                    // }
 
                     if (vagasList.size() < 5 && currentPosition < allVagas.size()) {
                         loadNextBatch();
@@ -262,7 +273,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 Toast.makeText(MainActivity.this, "Esta vaga já está nos seus favoritos", Toast.LENGTH_SHORT).show();
             }
-            registrarInteresse(vaga);
         });
     }
 
@@ -335,6 +345,8 @@ public class MainActivity extends AppCompatActivity {
         AppExecutor.getExecutor().execute(() -> {
             HashMap<String, String> params = new HashMap<>();
             params.put("vaga_id", String.valueOf(vaga.getVaga_id()));
+            // ATENÇÃO: 'usuario_id' está fixo como "1" aqui.
+            // Certifique-se de que isso é intencional ou substitua pelo ID do usuário logado.
             params.put("usuario_id", "1");
 
             try {
@@ -407,7 +419,15 @@ public class MainActivity extends AppCompatActivity {
                             vaga.setEmpresa_id(vagaJson.optInt("id_empresa"));
                             vaga.setNome_empresa(vagaJson.optString("nome_empresa", "Empresa não informada"));
                             vaga.setHabilidadesDesejaveisStr(null);
-                            vaga.setId_usuario(0);
+
+                            // MODIFICADO: Corrigindo o problema do id_usuario.
+                            // Agora, lê o id_usuario do JSON em vez de hardcodar 0.
+                            // Verifica se o campo existe e não é nulo no JSON.
+                            if (vagaJson.has("id_usuario") && !vagaJson.isNull("id_usuario")) {
+                                vaga.setId_usuario(vagaJson.optLong("id_usuario"));
+                            } else {
+                                vaga.setId_usuario(null); // Define como null se o campo não existir ou for nulo
+                            }
 
                             allVagas.add(vaga);
                         }
@@ -450,6 +470,8 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == REQUEST_CODE_FAVORITOS) {
+            // Após retornar dos favoritos, recarrega todas as vagas para garantir
+            // que as alterações de favoritar/desfavoritar sejam refletidas.
             allVagas.clear();
             vagasList.clear();
             currentPosition = 0;

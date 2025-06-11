@@ -13,7 +13,12 @@ import java.util.List;
 public class VagaDatabaseHelper extends SQLiteOpenHelper {
     // Nome do banco de dados e versão
     private static final String DATABASE_NAME = "vagas.db";
-    private static final int DATABASE_VERSION = 1;
+    // ATENÇÃO: A versão do banco de dados foi incrementada para '2'.
+    // Isso fará com que o método onUpgrade seja chamado, que por sua vez
+    // EXCLUIRÁ (DROPPA) suas tabelas existentes e as recriará.
+    // Se você tiver dados de vagas favoritas salvas, ELES SERÃO PERDIDOS!
+    // Faça um backup ou esteja ciente disso antes de rodar a atualização.
+    private static final int DATABASE_VERSION = 2; // MODIFICADO: Incrementada a versão
 
     // Nomes das tabelas
     private static final String TABLE_VAGAS = "vagas_favoritas";
@@ -38,6 +43,7 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
     private static final String COLUMN_EMPRESA_ID = "empresa_id";
     private static final String COLUMN_NOME_EMPRESA = "nome_empresa";
     private static final String COLUMN_HABILIDADES = "habilidades";
+    private static final String COLUMN_ID_USUARIO = "id_usuario"; // NOVO: Coluna para o ID do recrutador
 
     public VagaDatabaseHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -62,7 +68,8 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
                 + COLUMN_RAMO + " TEXT,"
                 + COLUMN_EMPRESA_ID + " INTEGER,"
                 + COLUMN_NOME_EMPRESA + " TEXT,"
-                + COLUMN_HABILIDADES + " TEXT)";
+                + COLUMN_HABILIDADES + " TEXT,"
+                + COLUMN_ID_USUARIO + " INTEGER)"; // MODIFICADO: Adicionada a coluna id_usuario
         db.execSQL(CREATE_TABLE_VAGAS);
 
         // Criação da tabela de favoritos (simplificada apenas para controle)
@@ -74,6 +81,8 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        // MODIFICADO: Este método irá remover as tabelas existentes e recriá-las.
+        // Cuidado com a perda de dados!
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_VAGAS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_FAVORITOS);
         onCreate(db);
@@ -103,8 +112,16 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
             values.put(COLUMN_BENEFICIOS, vaga.getBeneficios());
             values.put(COLUMN_VINCULO, vaga.getVinculo());
             values.put(COLUMN_RAMO, vaga.getRamo());
+            values.put(COLUMN_EMPRESA_ID, vaga.getEmpresa_id()); // Certifique-se que empresa_id está sendo salvo
             values.put(COLUMN_NOME_EMPRESA, vaga.getNome_empresa());
-            values.put(COLUMN_HABILIDADES, "");
+            values.put(COLUMN_HABILIDADES, vaga.getHabilidadesDesejaveisStr());
+
+            // NOVO: Adiciona o id_usuario (ID do recrutador)
+            if (vaga.getId_usuario() != null) {
+                values.put(COLUMN_ID_USUARIO, vaga.getId_usuario());
+            } else {
+                values.putNull(COLUMN_ID_USUARIO); // Salva como NULL se o valor for null
+            }
 
             long vagasId = db.insertWithOnConflict(TABLE_VAGAS, null, values, SQLiteDatabase.CONFLICT_REPLACE);
 
@@ -179,7 +196,8 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
                 COLUMN_RAMO,
                 COLUMN_EMPRESA_ID,
                 COLUMN_NOME_EMPRESA,
-                COLUMN_HABILIDADES
+                COLUMN_HABILIDADES,
+                COLUMN_ID_USUARIO // MODIFICADO: Adicionada a nova coluna
         };
 
         Cursor cursor = db.query(TABLE_VAGAS,
@@ -188,7 +206,6 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
         if (cursor != null && cursor.moveToFirst()) {
             do {
                 try {
-                    // Create a new Vagas object using empty constructor and setters
                     Vagas vaga = new Vagas();
                     vaga.setVaga_id(getIntSafe(cursor, COLUMN_VAGA_ID));
                     vaga.setTitulo(getStringSafe(cursor, COLUMN_TITULO));
@@ -206,8 +223,13 @@ public class VagaDatabaseHelper extends SQLiteOpenHelper {
                     vaga.setNome_empresa(getStringSafe(cursor, COLUMN_NOME_EMPRESA));
                     vaga.setHabilidadesDesejaveisStr(getStringSafe(cursor, COLUMN_HABILIDADES));
 
-                    // Set default values for missing fields
-                    vaga.setId_usuario(0); // You might want to store this in the database if needed
+                    // MODIFICADO: Agora lê o id_usuario do banco de dados
+                    int idUsuarioColumnIndex = cursor.getColumnIndex(COLUMN_ID_USUARIO);
+                    if (idUsuarioColumnIndex != -1 && !cursor.isNull(idUsuarioColumnIndex)) {
+                        vaga.setId_usuario(cursor.getLong(idUsuarioColumnIndex));
+                    } else {
+                        vaga.setId_usuario(null); // Define como null se a coluna não existe ou o valor é null
+                    }
 
                     vagasList.add(vaga);
                 } catch (Exception e) {

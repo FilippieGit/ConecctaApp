@@ -1,4 +1,3 @@
-
 package com.example.cardstackview;
 
 import android.content.Intent;
@@ -21,17 +20,22 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 public class ModeloBancoTalentosFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private List<Lista> listaList;
+    private List<CandidatoRecusado> candidatosList;
+    private AdaptadorBancoTalentos adapter;
     private MaterialToolbar idTopAppBar;
     private DrawerLayout idDrawer;
     private NavigationView idNavView;
+    private FirebaseFirestore db;
 
     public ModeloBancoTalentosFragment() {
         // Construtor público vazio obrigatório
@@ -41,22 +45,22 @@ public class ModeloBancoTalentosFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // Infla o layout
         View view = inflater.inflate(R.layout.bancodetalentos_layout, container, false);
 
-        // Aplicando paddings para barras de sistema (status bar, navigation bar)
         ViewCompat.setOnApplyWindowInsetsListener(view.findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
 
-        // Inicialização dos componentes
-        //idTopAppBar = view.findViewById(R.id.idBancoTopAppBar);
+        // Inicialização do Firestore
+        db = FirebaseFirestore.getInstance();
+
+
         idDrawer = view.findViewById(R.id.idDrawer);
         idNavView = view.findViewById(R.id.idNavView);
 
-        // Configuração do DrawerToggle (para o menu lateral)
+        // Configuração do DrawerToggle
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 getActivity(),
                 idDrawer,
@@ -67,7 +71,7 @@ public class ModeloBancoTalentosFragment extends Fragment {
         idDrawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        // Configuração do NavigationView (Menu lateral)
+        // Configuração do NavigationView
         idNavView.setNavigationItemSelectedListener(item -> {
             int id = item.getItemId();
 
@@ -95,42 +99,54 @@ public class ModeloBancoTalentosFragment extends Fragment {
 
         // Configuração do RecyclerView
         recyclerView = view.findViewById(R.id.idRecLista);
+        candidatosList = new ArrayList<>();
+        adapter = new AdaptadorBancoTalentos(requireContext(), candidatosList);
 
-        listaList = new ArrayList<>();
-        listaList.add(new Lista("Empresa1", R.drawable.logo));
-        listaList.add(new Lista("Empresa2", R.drawable.logo));
-        listaList.add(new Lista("Empresa3", R.drawable.logo));
-        listaList.add(new Lista("Empresa4", R.drawable.logo));
-        listaList.add(new Lista("Empresa5", R.drawable.logo));
-
-        // Adapter e LayoutManager para o RecyclerView
-        AdaptadorBancoTalentos adapter = new AdaptadorBancoTalentos(requireContext(), listaList);
-        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext())); // Layout linear
-        recyclerView.setHasFixedSize(true); // Melhora performance
+        recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
+        recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
+
+        // Carregar candidatos recusados do Firestore
+        carregarCandidatosRecusados();
 
         return view;
     }
 
-    // Função para redirecionar para a tela de Login
+    private void carregarCandidatosRecusados() {
+        db.collection("candidatosRecusados")
+                .get()
+                .addOnCompleteListener(task -> {
+                    if (task.isSuccessful()) {
+                        candidatosList.clear();
+                        for (QueryDocumentSnapshot document : task.getResult()) {
+                            CandidatoRecusado candidato = document.toObject(CandidatoRecusado.class);
+                            candidato.setId(document.getId());
+                            candidatosList.add(candidato);
+                        }
+                        adapter.notifyDataSetChanged();
+                    } else {
+                        Toast.makeText(getContext(), "Erro ao carregar candidatos", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
         startActivity(intent);
-        getActivity().finish(); // Fecha tela atual após login
+        getActivity().finish();
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
-        // Comportamento customizado para o botão de voltar
         requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
             @Override
             public void handleOnBackPressed() {
                 if (idDrawer.isDrawerOpen(GravityCompat.START)) {
-                    idDrawer.closeDrawer(GravityCompat.START); // Fecha o drawer se estiver aberto
+                    idDrawer.closeDrawer(GravityCompat.START);
                 } else {
-                    requireActivity().onBackPressed(); // Comportamento normal de voltar
+                    requireActivity().onBackPressed();
                 }
             }
         });

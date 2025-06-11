@@ -147,7 +147,15 @@ public class ModeloTelaPrincipalFragment extends Fragment {
         vaga.setTipo_contrato(vagaJson.optString("tipo_contrato", "Não informado"));
         vaga.setArea_atuacao(vagaJson.optString("area_atuacao", "Não informado"));
         vaga.setHabilidadesDesejaveisStr(vagaJson.optString("habilidades_desejaveis", "Não informado"));
-        vaga.setId_usuario(vagaJson.optInt("id_usuario", 0));
+
+        // MODIFICADO: Corrigindo a leitura do id_usuario.
+        // Agora, lê o id_usuario do JSON como Long e define como null se não existir ou for nulo.
+        if (vagaJson.has("id_usuario") && !vagaJson.isNull("id_usuario")) {
+            vaga.setId_usuario(vagaJson.optLong("id_usuario"));
+        } else {
+            vaga.setId_usuario(null); // Define como null se o campo não existir ou for nulo
+        }
+
         vaga.setNome_empresa(vagaJson.optString("nome_empresa", "Empresa não informada"));
         return vaga;
     }
