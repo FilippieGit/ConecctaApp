@@ -9,6 +9,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
     private TextView txtAreaAtuacao, txtBeneficios, txtHabilidades;
     private MaterialButton btnPublicar;
     private ImageButton btnEditar;
+
+    private ImageView btnVoltar;
     private Vagas vaga;
 
     private long userId; // Adicione esta variável
@@ -78,11 +81,18 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
 
         btnPublicar = findViewById(R.id.btnPreVisualizacaoPublicar);
         btnEditar = findViewById(R.id.btnPreVisualizacaoBEditar);
+        btnVoltar = findViewById(R.id.btnVoltarDetalheVagaPre);
     }
-
     private void configurarListeners() {
         btnPublicar.setOnClickListener(v -> publicarVaga());
         btnEditar.setOnClickListener(v -> finish()); // Volta para editar
+        btnVoltar.setOnClickListener(v -> {
+            // Simplesmente finaliza a activity atual (volta para a tela anterior)
+            finish();
+
+            // Se quiser uma animação de voltar (opcional)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right);
+        });
     }
 
     private void carregarDadosVaga() {
@@ -123,22 +133,32 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        HashMap<String, String> params = new HashMap<>();
-        params.put("titulo", vaga.getTitulo());
-        params.put("localizacao", vaga.getLocalizacao());
-        params.put("descricao", vaga.getDescricao());
-        params.put("requisitos", vaga.getRequisitos());
-        params.put("salario", vaga.getSalario());
-        params.put("tipo_contrato", vaga.getTipo_contrato());
-        params.put("area_atuacao", vaga.getArea_atuacao());
-        params.put("beneficios", vaga.getBeneficios());
-        params.put("nivel_experiencia", vaga.getNivel_experiencia());
-        params.put("habilidades_desejaveis", vaga.getHabilidadesDesejaveisStr() != null ? vaga.getHabilidadesDesejaveisStr() : "");
-        params.put("ramo", vaga.getRamo());
-        params.put("vinculo", vaga.getVinculo());
-        params.put("id_usuario", String.valueOf(userId)); // Enviar o ID do usuário logado
+        try {
+            HashMap<String, String> params = new HashMap<>();
+            params.put("apicall", "cadastrarVaga"); // Parâmetro obrigatório
+            params.put("titulo", vaga.getTitulo());
+            params.put("localizacao", vaga.getLocalizacao());
+            params.put("descricao", vaga.getDescricao());
+            params.put("requisitos", vaga.getRequisitos());
+            params.put("salario", vaga.getSalario());
+            params.put("tipo_contrato", vaga.getTipo_contrato());
+            params.put("area_atuacao", vaga.getArea_atuacao());
+            params.put("beneficios", vaga.getBeneficios());
+            params.put("nivel_experiencia", vaga.getNivel_experiencia());
+            params.put("habilidades_desejaveis", vaga.getHabilidadesDesejaveisStr() != null ? vaga.getHabilidadesDesejaveisStr() : "");
+            params.put("ramo", vaga.getRamo());
+            params.put("vinculo", vaga.getVinculo());
+            params.put("id_usuario", String.valueOf(userId));
 
-        new PublicarVagaTask(progressDialog).execute(params);
+            // Log dos parâmetros para debug
+            Log.d("API_PARAMS", "Parâmetros: " + params.toString());
+
+            new PublicarVagaTask(progressDialog).execute(params);
+        } catch (Exception e) {
+            progressDialog.dismiss();
+            Toast.makeText(this, "Erro ao preparar dados: " + e.getMessage(), Toast.LENGTH_LONG).show();
+            Log.e("API_ERROR", "Erro ao preparar dados", e);
+        }
     }
 
     private boolean isNetworkAvailable() {
@@ -163,19 +183,16 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
 
             try {
                 URL url = new URL(Api.URL_CADASTRAR_VAGA);
+                Log.d("API_URL", "URL: " + url.toString()); // Log da URL
+
                 connection = (HttpURLConnection) url.openConnection();
 
                 // Configuração da conexão
                 connection.setRequestMethod("POST");
                 connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-                connection.setConnectTimeout(15000); // 15 segundos
-                connection.setReadTimeout(15000);    // 15 segundos
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
                 connection.setDoOutput(true);
-
-                // Verificar se a conexão foi criada corretamente
-                if (connection == null) {
-                    return "{\"error\":true,\"message\":\"Falha ao criar conexão\"}";
-                }
 
                 // Construir parâmetros POST
                 StringBuilder postData = new StringBuilder();
@@ -186,16 +203,20 @@ public class VagaPreVisualizacaoActivity extends AppCompatActivity {
                     postData.append(URLEncoder.encode(param.getValue(), "UTF-8"));
                 }
 
+                String postDataString = postData.toString();
+                Log.d("API_POST_DATA", "Dados POST: " + postDataString); // Log dos dados enviados
+
                 // Enviar dados
                 OutputStream os = connection.getOutputStream();
                 BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(postData.toString());
+                writer.write(postDataString);
                 writer.flush();
                 writer.close();
                 os.close();
 
                 // Obter resposta
                 int responseCode = connection.getResponseCode();
+                Log.d("API_RESPONSE_CODE", "Código de resposta: " + responseCode);
                 InputStream inputStream;
 
                 if (responseCode >= 200 && responseCode < 300) {

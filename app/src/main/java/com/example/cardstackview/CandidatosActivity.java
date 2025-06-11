@@ -137,8 +137,8 @@ public class CandidatosActivity extends AppCompatActivity {
     private void buscarDetalhesVaga() {
         new Thread(() -> {
             try {
-                // URL corrigida - removendo o apicall duplicado
-                String urlCompleta = Api.URL_GET_VAGAS + "&apicall=getVagaById&vaga_id=" + vagaId;
+                // URL corrigida - removendo o parâmetro duplicado
+                String urlCompleta = Api.BASE_URL + "Api.php?apicall=getVagaById&vaga_id=" + vagaId;
                 Log.d(TAG, "URL corrigida: " + urlCompleta);
 
                 URL url = new URL(urlCompleta);
@@ -166,34 +166,18 @@ public class CandidatosActivity extends AppCompatActivity {
                     JSONObject jsonResponse = new JSONObject(response.toString());
 
                     if (!jsonResponse.getBoolean("error")) {
-                        if (jsonResponse.has("vaga")) {
-                            JSONObject vagaJson = jsonResponse.getJSONObject("vaga");
+                        JSONObject vagaJson = jsonResponse.getJSONObject("vaga");
 
-                            // Extrai os valores com fallbacks seguros
-                            tituloVaga = vagaJson.has("titulo_vagas") ?
-                                    vagaJson.getString("titulo_vagas") : "Vaga sem título";
+                        tituloVaga = vagaJson.optString("titulo_vagas", "Vaga sem título");
+                        nomeEmpresa = vagaJson.optString("nome_empresa", "Empresa não especificada");
 
-                            nomeEmpresa = vagaJson.has("nome_empresa") ?
-                                    vagaJson.getString("nome_empresa") : "Empresa não especificada";
+                        Log.d(TAG, "Dados extraídos - Título: " + tituloVaga + ", Empresa: " + nomeEmpresa);
 
-                            Log.d(TAG, "Dados extraídos - Título: " + tituloVaga + ", Empresa: " + nomeEmpresa);
-
-                            runOnUiThread(() -> {
-                                setTitle(nomeEmpresa + " - Processo Seletivo: " + tituloVaga);
-                                // Atualiza outros componentes que usam esses dados, se necessário
-                            });
-                        } else {
-                            Log.e(TAG, "Objeto 'vaga' não encontrado na resposta");
-                            runOnUiThread(() -> {
-                                Toast.makeText(this, "Dados da vaga não encontrados", Toast.LENGTH_SHORT).show();
-                            });
-                        }
-                    } else {
-                        String errorMsg = jsonResponse.getString("message");
-                        Log.e(TAG, "Erro na resposta: " + errorMsg);
                         runOnUiThread(() -> {
-                            Toast.makeText(this, "Erro: " + errorMsg, Toast.LENGTH_LONG).show();
+                            setTitle(nomeEmpresa + " - Processo Seletivo: " + tituloVaga);
                         });
+                    } else {
+                        Log.e(TAG, "Erro na resposta: " + jsonResponse.optString("message", ""));
                     }
                 } else {
                     throw new Exception("HTTP error code: " + responseCode);
@@ -201,15 +185,17 @@ public class CandidatosActivity extends AppCompatActivity {
             } catch (Exception e) {
                 Log.e(TAG, "Erro ao buscar detalhes da vaga", e);
                 runOnUiThread(() -> {
-                    // Define valores padrão como fallback
-                    tituloVaga = "Vaga";
+                    tituloVaga = "Vaga ID: " + vagaId;
                     nomeEmpresa = "Empresa";
-                    setTitle(nomeEmpresa + " - Processo Seletivo: " + tituloVaga);
-                    Toast.makeText(this, "Não foi possível carregar os detalhes da vaga", Toast.LENGTH_SHORT).show();
+                    setTitle("Processo Seletivo");
+                    Toast.makeText(this, "Não foi possível carregar todos os detalhes da vaga",
+                            Toast.LENGTH_SHORT).show();
                 });
             }
         }).start();
     }
+
+    private boolean isEnvioEmAndamento = false; // Variável de controle de estado
 
     private void enviarEmailsAprovados(List<Usuario> aprovados, String tituloVaga, String nomeEmpresa) {
         ProgressDialog progressDialog = new ProgressDialog(this);
@@ -217,16 +203,16 @@ public class CandidatosActivity extends AppCompatActivity {
         progressDialog.setCancelable(false);
         progressDialog.show();
 
-        new Thread(() -> {
-            int emailsEnviados = 0;
-            int falhas = 0;
-            StringBuilder erros = new StringBuilder();
+        // Usamos um array para contornar a restrição de final/effectively final
+        final int[] contadores = new int[2]; // [0] = emailsEnviados, [1] = falhas
+        final StringBuilder erros = new StringBuilder();
 
+        new Thread(() -> {
             // Tratamento para valores nulos ou vazios
             String tituloFinal = (tituloVaga == null || tituloVaga.isEmpty()) ? "Vaga" : tituloVaga;
             String empresaFinal = (nomeEmpresa == null || nomeEmpresa.isEmpty()) ? "Empresa" : nomeEmpresa;
 
-            // Template do email com fallback seguro
+            // Template do email
             String assunto = "Parabéns! Você foi aprovado para a vaga: " + tituloFinal;
             String corpo = "Prezado candidato,\n\n" +
                     "É com grande satisfação que informamos que você foi aprovado no processo seletivo da " +
@@ -235,11 +221,7 @@ public class CandidatosActivity extends AppCompatActivity {
                     "Atenciosamente,\n" +
                     "Equipe de Recrutamento da " + empresaFinal;
 
-            // Credenciais do email (considere usar um serviço mais seguro no futuro)
-            String emailRemetente = "vagas.coneccta@gmail.com";
-            String senhaRemetente = "wxka yvsw luer kfgv";
-
-            EmailSender emailSender = new EmailSender(emailRemetente, senhaRemetente);
+            EmailSender emailSender = new EmailSender("vagas.coneccta@gmail.com", "wxka yvsw luer kfgv");
 
             // Validação adicional da lista de aprovados
             if (aprovados == null || aprovados.isEmpty()) {
@@ -253,49 +235,42 @@ public class CandidatosActivity extends AppCompatActivity {
 
             // Processamento dos emails
             for (Usuario candidato : aprovados) {
-                if (candidato == null || candidato.getEmail() == null) {
-                    falhas++;
-                    erros.append("• Candidato inválido (email não disponível)\n");
-                    continue;
-                }
-
                 try {
-                    // Validação básica do email
+                    if (candidato == null || candidato.getEmail() == null) {
+                        throw new Exception("Candidato inválido (email não disponível)");
+                    }
+
                     if (!candidato.getEmail().contains("@")) {
                         throw new Exception("Email inválido");
                     }
 
                     emailSender.enviarEmail(candidato.getEmail(), assunto, corpo);
-                    emailsEnviados++;
+                    contadores[0]++; // Incrementa emailsEnviados
 
                     // Pequeno delay para evitar bloqueio do SMTP
                     Thread.sleep(500);
                 } catch (Exception e) {
-                    falhas++;
-                    erros.append("• ").append(candidato.getEmail())
+                    contadores[1]++; // Incrementa falhas
+                    erros.append("• ").append(candidato != null ? candidato.getEmail() : "null")
                             .append(": ").append(e.getMessage()).append("\n");
-                    Log.e("EMAIL_ERROR", "Erro ao enviar para " + candidato.getEmail(), e);
+                    Log.e("EMAIL_ERROR", "Erro ao enviar email", e);
                 }
             }
 
             // Preparação do relatório final
-            final int enviadosFinal = emailsEnviados;
-            final int falhasFinal = falhas;
-            final String errosFinal = erros.toString();
-
             runOnUiThread(() -> {
                 progressDialog.dismiss();
 
                 String mensagemFinal = "Relatório de Envio:\n\n" +
                         "• Total de candidatos: " + aprovados.size() + "\n" +
-                        "• Emails enviados: " + enviadosFinal + "\n" +
-                        "• Falhas: " + falhasFinal;
+                        "• Emails enviados: " + contadores[0] + "\n" +
+                        "• Falhas: " + contadores[1];
 
-                if (falhasFinal > 0) {
-                    mensagemFinal += "\n\nErros encontrados:\n" + errosFinal;
+                if (contadores[1] > 0) {
+                    mensagemFinal += "\n\nErros encontrados:\n" + erros.toString();
 
                     new AlertDialog.Builder(CandidatosActivity.this)
-                            .setTitle("Envio Parcial")
+                            .setTitle(contadores[1] == aprovados.size() ? "Falha no Envio" : "Envio Parcial")
                             .setMessage(mensagemFinal)
                             .setPositiveButton("OK", null)
                             .show();
@@ -303,13 +278,30 @@ public class CandidatosActivity extends AppCompatActivity {
                     mensagemFinal += "\n\nTodos os emails foram enviados com sucesso!";
 
                     new AlertDialog.Builder(CandidatosActivity.this)
-                            .setTitle("Envio Concluído")
+                            .setTitle("Sucesso")
                             .setMessage(mensagemFinal)
                             .setPositiveButton("OK", null)
                             .show();
                 }
             });
         }).start();
+    }
+
+    // Método auxiliar para criar mensagem de resultado
+    private String criarMensagemResultado(int total, int enviados, int falhas, String erros) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Relatório de Envio:\n\n")
+                .append("• Total de candidatos: ").append(total).append("\n")
+                .append("• Emails enviados: ").append(enviados).append("\n")
+                .append("• Falhas: ").append(falhas);
+
+        if (falhas > 0) {
+            sb.append("\n\nErros encontrados:\n").append(erros);
+        } else {
+            sb.append("\n\nTodos os emails foram enviados com sucesso!");
+        }
+
+        return sb.toString();
     }
 
 

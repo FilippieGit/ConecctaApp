@@ -218,39 +218,63 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void buscarDadosUsuarioNoBanco(String firebaseUid, String email) {
+        // Adicionar contador de tentativas como variável de classe
+        if (loginAttempts >= MAX_LOGIN_ATTEMPTS) {
+            Toast.makeText(this, "Número máximo de tentativas excedido", Toast.LENGTH_LONG).show();
+            return;
+        }
+        loginAttempts++;
+
         String url = Api.buildUrl(Api.URL_GET_USER_BY_UID, new HashMap<String, String>() {{
             put("uid", firebaseUid);
         }});
 
         Log.d(TAG, "Buscando dados do usuário na URL: " + url);
 
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Carregando dados do usuário...");
+        dialog.setCancelable(false);
+        dialog.show();
+
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 response -> {
-                    Log.d(TAG, "Resposta da API: " + response);
+                    dialog.dismiss();
                     try {
                         JSONObject json = new JSONObject(response);
 
-                        // Verificação flexível de sucesso
-                        boolean success = !json.has("error") || !json.getBoolean("error");
-
-                        if (success) {
+                        if (!json.getBoolean("error")) {
                             JSONObject userData = json.getJSONObject("user");
                             salvarDadosUsuarioCompletos(userData);
                             redirecionarUsuario();
                         } else {
-                            Log.w(TAG, "Usuário não encontrado, tentando sincronizar");
-                            sincronizarUsuarioFirebase(firebaseUid, email);
+                            // Se usuário não existe, sincroniza UMA vez
+                            if (loginAttempts == 1) {
+                                sincronizarUsuarioFirebase(firebaseUid, email);
+                            } else {
+                                Toast.makeText(LoginActivity.this,
+                                        "Usuário não encontrado no sistema",
+                                        Toast.LENGTH_LONG).show();
+                                mAuth.signOut();
+                            }
                         }
                     } catch (Exception e) {
+                        dialog.dismiss();
                         Log.e(TAG, "Erro ao processar resposta", e);
-                        Toast.makeText(LoginActivity.this, "Erro ao processar dados do usuário", Toast.LENGTH_SHORT).show();
-                        sincronizarUsuarioFirebase(firebaseUid, email);
+                        Toast.makeText(LoginActivity.this,
+                                "Erro ao processar dados do usuário",
+                                Toast.LENGTH_SHORT).show();
+                        // Não tenta sincronizar novamente
+                        mAuth.signOut();
                     }
                 },
                 error -> {
+                    dialog.dismiss();
                     Log.e(TAG, "Erro na requisição: " + error.getMessage());
-                    Toast.makeText(LoginActivity.this, "Erro ao conectar com o servidor", Toast.LENGTH_SHORT).show();
-                    sincronizarUsuarioFirebase(firebaseUid, email);
+                    Toast.makeText(LoginActivity.this,
+                            "Erro ao conectar com o servidor",
+                            Toast.LENGTH_SHORT).show();
+                    // Não tenta sincronizar em caso de erro de rede
+                    mAuth.signOut();
                 });
 
         request.setRetryPolicy(new DefaultRetryPolicy(
@@ -261,6 +285,10 @@ public class LoginActivity extends AppCompatActivity {
         RequestQueue queue = Volley.newRequestQueue(this);
         queue.add(request);
     }
+
+    // Adicionar estas variáveis na classe
+    private int loginAttempts = 0;
+    private static final int MAX_LOGIN_ATTEMPTS = 2;
 
     private void salvarDadosUsuarioCompletos(JSONObject userData) throws Exception {
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);

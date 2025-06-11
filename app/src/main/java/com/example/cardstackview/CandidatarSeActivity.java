@@ -1,7 +1,10 @@
 package com.example.cardstackview;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,7 +28,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 public class CandidatarSeActivity extends AppCompatActivity {
 
@@ -42,47 +45,37 @@ public class CandidatarSeActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
-        // Obter dados da Intent de forma segura
-        Intent intent = getIntent();
-        if (intent != null) {
-            // Tratar vaga_id que pode ser Integer ou String
-            if (intent.hasExtra("vaga_id")) {
-                Object vagaIdObj = intent.getExtras().get("vaga_id");
-                if (vagaIdObj instanceof Integer) {
-                    vagaId = String.valueOf((Integer) vagaIdObj);
-                } else if (vagaIdObj instanceof String) {
-                    vagaId = (String) vagaIdObj;
-                }
-            }
-
-            vagaTitulo = intent.getStringExtra("vaga_titulo");
-        }
-
-        // Verificar se os dados necessários estão presentes
-        if (vagaId == null) {
-            Toast.makeText(this, "Erro: ID da vaga não informado", Toast.LENGTH_SHORT).show();
+        // Verificar autenticação do usuário
+        if (mAuth.getCurrentUser() == null) {
+            Toast.makeText(this, "Por favor, faça login primeiro", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        inicializarComponentes();
-        configurarListeners();
-
-        // No método onCreate()
-        if (getIntent() == null || getIntent().getExtras() == null) {
+        // Obter dados da Intent
+        Intent intent = getIntent();
+        if (intent == null || intent.getExtras() == null) {
             Toast.makeText(this, "Erro: Dados da vaga não encontrados", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
 
-        vagaId = getIntent().getStringExtra("vaga_id");
-        vagaTitulo = getIntent().getStringExtra("vaga_titulo");
-
-        if (vagaId == null) {
-            Toast.makeText(this, "Erro: ID da vaga não informado", Toast.LENGTH_SHORT).show();
+        // Tratar vaga_id que pode ser Integer ou String
+        Object vagaIdObj = intent.getExtras().get("vaga_id");
+        if (vagaIdObj instanceof Integer) {
+            vagaId = String.valueOf((Integer) vagaIdObj);
+        } else if (vagaIdObj instanceof String) {
+            vagaId = (String) vagaIdObj;
+        } else {
+            Toast.makeText(this, "Erro: ID da vaga inválido", Toast.LENGTH_SHORT).show();
             finish();
             return;
         }
+
+        vagaTitulo = intent.getStringExtra("vaga_titulo");
+
+        inicializarComponentes();
+        configurarListeners();
     }
 
     private void inicializarComponentes() {
@@ -102,10 +95,23 @@ public class CandidatarSeActivity extends AppCompatActivity {
         imgVoltar.setOnClickListener(v -> finish());
 
         btnEnviar.setOnClickListener(v -> {
+            if (!isNetworkAvailable()) {
+                Toast.makeText(CandidatarSeActivity.this,
+                        "Sem conexão com a internet", Toast.LENGTH_SHORT).show();
+                return;
+            }
+
             if (validarCampos()) {
                 enviarRespostas();
             }
         });
+    }
+
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 
     private boolean validarCampos() {
@@ -131,16 +137,6 @@ public class CandidatarSeActivity extends AppCompatActivity {
 
     private void enviarRespostas() {
         String userId = mAuth.getCurrentUser().getUid();
-        if (userId == null) {
-            Toast.makeText(this, "Erro: Usuário não autenticado", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
-        if (vagaId == null) {
-            Toast.makeText(this, "Erro: ID da vaga não definido", Toast.LENGTH_SHORT).show();
-            return;
-        }
-
         String resposta1 = editP1.getText().toString().trim();
         String resposta2 = editP2.getText().toString().trim();
         String resposta3 = editP3.getText().toString().trim();
@@ -151,47 +147,57 @@ public class CandidatarSeActivity extends AppCompatActivity {
         progressDialog.show();
 
         new Thread(() -> {
+            HttpURLConnection connection = null;
             try {
-                // Criar JSON com todas as respostas
-                JSONObject respostasJson = new JSONObject();
-                respostasJson.put("interesse", resposta1);
-                respostasJson.put("expectativas", resposta2);
-                respostasJson.put("valores", resposta3);
+                // Verificar conexão novamente antes de iniciar
+                if (!isNetworkAvailable()) {
+                    throw new Exception("Sem conexão com a internet");
+                }
 
-                // Configurar conexão - usar application/x-www-form-urlencoded
+                // Criar JSON com estrutura completa
+                JSONObject requestBody = new JSONObject();
+                requestBody.put("apicall", "candidatarVaga");
+                requestBody.put("user_id", userId);
+                requestBody.put("vaga_id", vagaId);
+
+                // Criar objeto de respostas como JSON string
+                JSONObject respostasObj = new JSONObject();
+                respostasObj.put("interesse", resposta1);
+                respostasObj.put("expectativas", resposta2);
+                respostasObj.put("valores", resposta3);
+                requestBody.put("respostas", respostasObj.toString());
+
+                // Configurar conexão
                 URL url = new URL(Api.URL_CANDIDATAR_VAGA);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("POST");
+                connection.setRequestProperty("Content-Type", "application/json");
+                connection.setRequestProperty("Accept", "application/json");
+                connection.setRequestProperty("Connection", "close");
                 connection.setDoOutput(true);
-                connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-
-                // Criar os parâmetros no formato correto para POST
-                String postData = "user_id=" + URLEncoder.encode(userId, "UTF-8") +
-                        "&vaga_id=" + URLEncoder.encode(vagaId, "UTF-8") +
-                        "&respostas=" + URLEncoder.encode(respostasJson.toString(), "UTF-8");
-
-                Log.d("Candidatura", "Dados enviados: " + postData);
+                connection.setConnectTimeout(15000);
+                connection.setReadTimeout(15000);
 
                 // Enviar dados
-                OutputStream os = connection.getOutputStream();
-                BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(os, "UTF-8"));
-                writer.write(postData);
-                writer.flush();
-                writer.close();
-                os.close();
+                try (OutputStream os = connection.getOutputStream();
+                     BufferedWriter writer = new BufferedWriter(
+                             new OutputStreamWriter(os, StandardCharsets.UTF_8))) {
+                    writer.write(requestBody.toString());
+                    writer.flush();
+                }
 
-                // Processar resposta
+                // Verificar resposta
                 int responseCode = connection.getResponseCode();
                 if (responseCode == HttpURLConnection.HTTP_OK) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+                    // Ler resposta
                     StringBuilder response = new StringBuilder();
-                    String line;
-                    while ((line = in.readLine()) != null) {
-                        response.append(line);
+                    try (BufferedReader in = new BufferedReader(
+                            new InputStreamReader(connection.getInputStream(), StandardCharsets.UTF_8))) {
+                        String line;
+                        while ((line = in.readLine()) != null) {
+                            response.append(line);
+                        }
                     }
-                    in.close();
-
-                    Log.d("Candidatura", "Resposta do servidor: " + response.toString());
 
                     JSONObject jsonResponse = new JSONObject(response.toString());
                     boolean error = jsonResponse.getBoolean("error");
@@ -208,32 +214,40 @@ public class CandidatarSeActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    StringBuilder errorResponse = new StringBuilder();
-                    try {
-                        BufferedReader errorReader = new BufferedReader(new InputStreamReader(connection.getErrorStream()));
+                    // Tratar erro do servidor
+                    String errorMsg = "Erro no servidor (HTTP " + responseCode + ")";
+                    try (BufferedReader errorReader = new BufferedReader(
+                            new InputStreamReader(connection.getErrorStream(), StandardCharsets.UTF_8))) {
+                        StringBuilder errorResponse = new StringBuilder();
                         String errorLine;
                         while ((errorLine = errorReader.readLine()) != null) {
                             errorResponse.append(errorLine);
                         }
-                        errorReader.close();
+                        if (errorResponse.length() > 0) {
+                            JSONObject errorJson = new JSONObject(errorResponse.toString());
+                            errorMsg = errorJson.optString("message", errorMsg);
+                        }
                     } catch (Exception e) {
-                        errorResponse.append("Não foi possível ler a mensagem de erro");
+                        Log.e("Candidatura", "Erro ao ler mensagem de erro", e);
                     }
 
-                    final String finalErrorMsg = "HTTP error code: " + responseCode + "\n" + errorResponse.toString();
-                    Log.e("Candidatura", finalErrorMsg);
-
+                    final String finalErrorMsg = errorMsg;
                     runOnUiThread(() -> {
                         progressDialog.dismiss();
-                        Toast.makeText(CandidatarSeActivity.this, "Erro no servidor: " + finalErrorMsg, Toast.LENGTH_LONG).show();
+                        Toast.makeText(CandidatarSeActivity.this, finalErrorMsg, Toast.LENGTH_LONG).show();
                     });
                 }
             } catch (Exception e) {
                 Log.e("Candidatura", "Erro ao enviar candidatura", e);
                 runOnUiThread(() -> {
                     progressDialog.dismiss();
-                    Toast.makeText(CandidatarSeActivity.this, "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(CandidatarSeActivity.this,
+                            "Erro: " + e.getMessage(), Toast.LENGTH_LONG).show();
                 });
+            } finally {
+                if (connection != null) {
+                    connection.disconnect();
+                }
             }
         }).start();
     }

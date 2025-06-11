@@ -37,7 +37,6 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends AppCompatActivity {
     private MaterialToolbar idTopAppBar;
@@ -50,12 +49,12 @@ public class MainActivity extends AppCompatActivity {
     private List<Vagas> allVagas = new ArrayList<>();
     private ProgressBar progressBar;
     private int currentPosition = 0;
-    private static final int BATCH_SIZE = 10;
+    private static final int BATCH_SIZE = 20;
     private boolean isLoading = false;
     private NavigationView navigationView;
     private boolean isSwiping = false;
     private long lastSwipeTime = 0;
-    private static final long MIN_SWIPE_INTERVAL = 500; // 0.5 segundos entre swipes
+    private static final long MIN_SWIPE_INTERVAL = 500;
 
     private static final int CODE_GET_REQUEST = 1024;
     private static final int CODE_POST_REQUEST = 1025;
@@ -63,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ExecutorService executor;
     private VagaDatabaseHelper dbHelper;
+    private boolean showFavoritesOnly = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +71,7 @@ public class MainActivity extends AppCompatActivity {
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
         setContentView(binding.getRoot());
 
-        // Inicializa o executor
         executor = AppExecutor.getExecutor();
-
         dbHelper = new VagaDatabaseHelper(this);
         progressBar = findViewById(R.id.progressBar);
         adapter = new CardAdapter(this, vagasList);
@@ -83,19 +81,16 @@ public class MainActivity extends AppCompatActivity {
         buscarVagas();
 
         SharedPreferences prefs = getSharedPreferences("user_prefs", MODE_PRIVATE);
-        String userType = prefs.getString("user_type", "Física"); // Default: candidato
+        String userType = prefs.getString("user_type", "Física");
         boolean isEmpresa = userType.equalsIgnoreCase("Jurídica");
 
         navigationView = findViewById(R.id.navigation_view);
 
-        // Filtra itens do menu de acordo com o tipo de usuário
         if (navigationView != null) {
             if (isEmpresa) {
-                // Empresa: esconde itens que só fazem sentido para candidatos
                 navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
                 navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
             } else {
-                // Candidato: esconde itens que só fazem sentido para empresas
                 navigationView.getMenu().findItem(R.id.idCriarVagasItemMenu).setVisible(false);
                 navigationView.getMenu().findItem(R.id.idLoginItemMenu).setVisible(false);
             }
@@ -123,11 +118,11 @@ public class MainActivity extends AppCompatActivity {
                         if (direction == Direction.Right) {
                             processarLike(vaga);
                         } else if (direction == Direction.Left) {
-                            registrarInteresse(vaga); // Adicione esta linha para registrar rejeição
+                            registrarInteresse(vaga);
                         }
 
                         runOnUiThread(() -> {
-                            if (pos >= vagasList.size() - 3 && currentPosition < allVagas.size()) {
+                            if (pos >= vagasList.size() - 5 && currentPosition < allVagas.size()) {
                                 loadNextBatch();
                             }
                             isSwiping = false;
@@ -139,45 +134,32 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onCardDragging(Direction direction, float ratio) {
-                if (direction == Direction.Bottom && ratio > 0.5f) {
-                    binding.cardStack.rewind();
-                    binding.cardStack.swipe();
-                }
-            }
+            public void onCardDragging(Direction direction, float ratio) {}
 
-            @Override
-            public void onCardRewound() {
-            }
-
-            @Override
-            public void onCardCanceled() {
-            }
-
-            @Override
-            public void onCardAppeared(View view, int position) {
-            }
-
-            @Override
-            public void onCardDisappeared(View view, int position) {
-            }
+            @Override public void onCardRewound() {}
+            @Override public void onCardCanceled() {}
+            @Override public void onCardAppeared(View view, int position) {}
+            @Override public void onCardDisappeared(View view, int position) {}
         };
 
         layoutManager = new CardStackLayoutManager(this, cardStackListener);
         layoutManager.setStackFrom(StackFrom.None);
         layoutManager.setVisibleCount(3);
-        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right, Direction.Bottom));
+        layoutManager.setDirections(Arrays.asList(Direction.Left, Direction.Right));
 
         binding.cardStack.setLayoutManager(layoutManager);
         binding.cardStack.setAdapter(adapter);
 
+        setupButtonListeners();
+    }
+
+    private void setupButtonListeners() {
         ImageButton btnReject = findViewById(R.id.btnReject);
         ImageButton btnLike = findViewById(R.id.btnLike);
-        ImageButton btnDown = findViewById(R.id.btnDown);
+        ImageButton btnRefresh = findViewById(R.id.btnRefresh);
 
         btnLike.setOnClickListener(v -> {
             if (canSwipe()) {
-                // Feedback visual
                 v.animate().scaleX(0.8f).scaleY(0.8f).setDuration(100)
                         .withEndAction(() -> v.animate().scaleX(1f).scaleY(1f).setDuration(100));
                 isSwiping = true;
@@ -186,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
                 int pos = layoutManager.getTopPosition();
                 if (pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
-                    processarLike(vaga); // Processa o like antes do swipe
+                    processarLike(vaga);
                 }
 
                 SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
@@ -196,9 +178,7 @@ public class MainActivity extends AppCompatActivity {
                 layoutManager.setSwipeAnimationSetting(setting);
                 binding.cardStack.swipe();
 
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    isSwiping = false;
-                }, 500);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> isSwiping = false, 500);
             }
         });
 
@@ -217,33 +197,36 @@ public class MainActivity extends AppCompatActivity {
                 int pos = layoutManager.getTopPosition();
                 if (pos < vagasList.size()) {
                     Vagas vaga = vagasList.get(pos);
-                    registrarInteresse(vaga); // Registra o interesse (rejeição)
+                    registrarInteresse(vaga);
                 }
 
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    isSwiping = false;
-                }, 500);
+                new Handler(Looper.getMainLooper()).postDelayed(() -> isSwiping = false, 500);
             }
         });
 
-        btnDown.setOnClickListener(v -> {
-            if (canSwipe()) {
-                isSwiping = true;
-                lastSwipeTime = System.currentTimeMillis();
-
-                SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                        .setDirection(Direction.Bottom)
-                        .setDuration(400)
-                        .build();
-                layoutManager.setSwipeAnimationSetting(setting);
-                binding.cardStack.swipe();
-
-                new Handler(Looper.getMainLooper()).postDelayed(() -> {
-                    isSwiping = false;
-                    // Para o botão de baixo, não processamos nada adicional
-                }, 500);
-            }
+        btnRefresh.setOnClickListener(v -> {
+            v.animate().rotationBy(360).setDuration(500);
+            recarregarCards();
         });
+    }
+
+    private void recarregarCards() {
+        allVagas.clear();
+        vagasList.clear();
+        currentPosition = 0;
+        adapter.notifyDataSetChanged();
+
+        progressBar.setVisibility(View.VISIBLE);
+        binding.cardStack.setVisibility(View.GONE);
+
+        buscarVagas();
+
+        new Handler(Looper.getMainLooper()).postDelayed(() -> {
+            if (layoutManager != null) {
+                layoutManager.setTopPosition(0);
+            }
+            binding.cardStack.setVisibility(View.VISIBLE);
+        }, 500);
     }
 
     private boolean canSwipe() {
@@ -261,52 +244,62 @@ public class MainActivity extends AppCompatActivity {
             if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
                 boolean salvou = dbHelper.adicionarVagaFavorita(vaga);
                 if (salvou) {
-                    Toast.makeText(MainActivity.this, "Vaga favoritada!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Vaga favoritada com sucesso!", Toast.LENGTH_SHORT).show();
                     Log.d("FAVORITOS", "Vaga " + vaga.getVaga_id() + " salva nos favoritos");
 
-                    // Remove da lista atual
                     int index = vagasList.indexOf(vaga);
                     if (index != -1) {
                         vagasList.remove(index);
                         adapter.notifyItemRemoved(index);
                     }
 
-                    // Carrega mais vagas se necessário
-                    if (vagasList.size() < 3 && currentPosition < allVagas.size()) {
+                    if (vagasList.size() < 5 && currentPosition < allVagas.size()) {
                         loadNextBatch();
                     }
                 } else {
                     Toast.makeText(MainActivity.this, "Erro ao favoritar vaga", Toast.LENGTH_SHORT).show();
                 }
+            } else {
+                Toast.makeText(MainActivity.this, "Esta vaga já está nos seus favoritos", Toast.LENGTH_SHORT).show();
             }
             registrarInteresse(vaga);
         });
     }
 
     private void loadNextBatch() {
-        if (isLoading || isSwiping || currentPosition >= allVagas.size()) return;
+        Log.d("LOAD_BATCH", "Carregando lote. Posição atual: " + currentPosition +
+                "/" + allVagas.size() + ", isLoading: " + isLoading);
+
+        if (isLoading || isSwiping || currentPosition >= allVagas.size()) {
+            Log.d("LOAD_BATCH", "Não carregou - Condição não atendida");
+            return;
+        }
 
         isLoading = true;
         binding.progressBar.setVisibility(View.VISIBLE);
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
-            List<Integer> idsFavoritos = dbHelper.getIdsVagasFavoritas();
-
             List<Vagas> batch = new ArrayList<>();
-            while (currentPosition < allVagas.size() && batch.size() < BATCH_SIZE) {
+            int loadedCount = 0;
+
+            while (currentPosition < allVagas.size() && loadedCount < BATCH_SIZE) {
                 Vagas vaga = allVagas.get(currentPosition);
-                if (!idsFavoritos.contains(vaga.getVaga_id())) {
+                // Skip favorited cards
+                if (!dbHelper.isVagaFavorita(vaga.getVaga_id())) {
                     batch.add(vaga);
+                    loadedCount++;
                 }
                 currentPosition++;
             }
+
+            Log.d("LOAD_BATCH", batch.size() + " vagas carregadas");
 
             if (!batch.isEmpty()) {
                 int startPosition = vagasList.size();
                 vagasList.addAll(batch);
                 adapter.notifyItemRangeInserted(startPosition, batch.size());
             } else if (currentPosition >= allVagas.size()) {
-                Toast.makeText(MainActivity.this, "Nenhuma vaga nova para mostrar", Toast.LENGTH_SHORT).show();
+                Toast.makeText(MainActivity.this, "Todas as vagas foram carregadas", Toast.LENGTH_SHORT).show();
             }
 
             isLoading = false;
@@ -318,18 +311,23 @@ public class MainActivity extends AppCompatActivity {
     private void preloadImages(List<Vagas> batch) {
         try {
             AppExecutor.getExecutor().execute(() -> {
-                // Implemente o pré-carregamento de imagens aqui se necessário
                 for (Vagas vaga : batch) {
-                    // Simulação de pré-carregamento
-                    Log.d("Preload", "Pré-carregando dados para vaga: " + vaga.getVaga_id());
+                    Log.d("Preload", "Pré-carregando vaga: " + vaga.getVaga_id());
                 }
             });
         } catch (RejectedExecutionException e) {
-            Log.e("MainActivity", "Erro ao executar pré-carregamento", e);
+            Log.e("MainActivity", "Erro no pré-carregamento", e);
         }
     }
 
     private void buscarVagas() {
+        Log.d("API", "Iniciando busca por vagas...");
+        // Clear existing data
+        allVagas.clear();
+        vagasList.clear();
+        currentPosition = 0;
+        adapter.notifyDataSetChanged();
+
         new PerformNetworkRequest(Api.URL_GET_VAGAS, null, CODE_GET_REQUEST).execute();
     }
 
@@ -409,25 +407,17 @@ public class MainActivity extends AppCompatActivity {
                             vaga.setEmpresa_id(vagaJson.optInt("id_empresa"));
                             vaga.setNome_empresa(vagaJson.optString("nome_empresa", "Empresa não informada"));
                             vaga.setHabilidadesDesejaveisStr(null);
-                            vaga.setId_usuario(0); // Set default value or get from JSON if available
-
+                            vaga.setId_usuario(0);
 
                             allVagas.add(vaga);
                         }
 
-                        List<Integer> idsFavoritos = dbHelper.getIdsVagasFavoritas();
-                        List<Vagas> vagasNaoFavoritadas = new ArrayList<>();
-                        for (Vagas vaga : allVagas) {
-                            if (!idsFavoritos.contains(vaga.getVaga_id())) {
-                                vagasNaoFavoritadas.add(vaga);
-                            }
-                        }
-                        allVagas = vagasNaoFavoritadas;
+                        Log.d("API", "Total de vagas recebidas: " + allVagas.size());
 
                         if (!allVagas.isEmpty()) {
                             loadNextBatch();
                         } else {
-                            Toast.makeText(MainActivity.this, "Nenhuma vaga nova para mostrar", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Nenhuma vaga disponível", Toast.LENGTH_SHORT).show();
                         }
                     }
                 } else {
@@ -520,7 +510,6 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        // Não desligamos o executor aqui porque é compartilhado (singleton)
         if (dbHelper != null) {
             dbHelper.close();
         }
