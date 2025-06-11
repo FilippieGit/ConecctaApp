@@ -30,7 +30,6 @@ import java.util.List;
 public class ModeloBancoTalentosFragment extends Fragment {
 
     private RecyclerView recyclerView;
-    private List<CandidatoRecusado> candidatosList;
     private AdaptadorBancoTalentos adapter;
     private MaterialToolbar idTopAppBar;
     private DrawerLayout idDrawer;
@@ -99,36 +98,14 @@ public class ModeloBancoTalentosFragment extends Fragment {
 
         // Configuração do RecyclerView
         recyclerView = view.findViewById(R.id.idRecLista);
-        candidatosList = new ArrayList<>();
-        adapter = new AdaptadorBancoTalentos(requireContext(), candidatosList);
 
         recyclerView.setLayoutManager(new LinearLayoutManager(requireContext()));
         recyclerView.setHasFixedSize(true);
         recyclerView.setAdapter(adapter);
 
-        // Carregar candidatos recusados do Firestore
-        carregarCandidatosRecusados();
-
         return view;
     }
 
-    private void carregarCandidatosRecusados() {
-        db.collection("candidatosRecusados")
-                .get()
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        candidatosList.clear();
-                        for (QueryDocumentSnapshot document : task.getResult()) {
-                            CandidatoRecusado candidato = document.toObject(CandidatoRecusado.class);
-                            candidato.setId(document.getId());
-                            candidatosList.add(candidato);
-                        }
-                        adapter.notifyDataSetChanged();
-                    } else {
-                        Toast.makeText(getContext(), "Erro ao carregar candidatos", Toast.LENGTH_SHORT).show();
-                    }
-                });
-    }
 
     private void goToLoginCandidato() {
         Intent intent = new Intent(getActivity(), LoginActivity.class);
